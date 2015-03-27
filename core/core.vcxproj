@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\og_schema.cpp" />
+    <ClCompile Include="src\og_schema_object.cpp" />
+    <ClCompile Include="src\og_schema_parameter.cpp" />
+    <ClCompile Include="src\og_schema_relation.cpp" />
+    <ClCompile Include="src\og_session.cpp" />
+    <ClCompile Include="src\og_session_object.cpp" />
+    <ClCompile Include="src\og_session_parameter.cpp" />
+    <ClCompile Include="src\og_session_relation.cpp" />
+    <ClCompile Include="src\og_transaction.cpp" />
+    <ClCompile Include="src\schema.cpp" />
+    <ClCompile Include="src\schema_base.cpp" />
+    <ClCompile Include="src\schema_object.cpp" />
+    <ClCompile Include="src\schema_parameter.cpp" />
+    <ClCompile Include="src\schema_relation.cpp" />
+    <ClCompile Include="src\session.cpp" />
+    <ClCompile Include="src\session_object.cpp" />
+    <ClCompile Include="src\session_parameter.cpp" />
+    <ClCompile Include="src\session_relation.cpp" />
+    <ClCompile Include="src\transaction.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\og\core\base.h" />
+    <ClInclude Include="include\og\core\og.h" />
+    <ClInclude Include="include\og\core\exception.h" />
+    <ClInclude Include="include\og\core\fetcher.h" />
+    <ClInclude Include="include\og\core\mapping.h" />
+    <ClInclude Include="include\og\core\multiplicity.h" />
+    <ClInclude Include="include\og\core\schema.h" />
+    <ClInclude Include="include\og\core\schema_base.h" />
+    <ClInclude Include="include\og\core\schema_object.h" />
+    <ClInclude Include="include\og\core\schema_parameter.h" />
+    <ClInclude Include="include\og\core\schema_relation.h" />
+    <ClInclude Include="include\og\core\schema_sql.h" />
+    <ClInclude Include="include\og\core\serializer.h" />
+    <ClInclude Include="include\og\core\session.h" />
+    <ClInclude Include="include\og\core\session_base.h" />
+    <ClInclude Include="include\og\core\session_object.h" />
+    <ClInclude Include="include\og\core\session_parameter.h" />
+    <ClInclude Include="include\og\core\session_relation.h" />
+    <ClInclude Include="include\og\core\transaction.h" />
+    <ClInclude Include="include\og\core\where_condition.h" />
+    <ClInclude Include="include\og\core\xml_stream.h" />
+    <ClInclude Include="include\og\og_converter.h" />
+    <ClInclude Include="include\og\og_schema.h" />
+    <ClInclude Include="include\og\og_schema_object.h" />
+    <ClInclude Include="include\og\og_schema_parameter.h" />
+    <ClInclude Include="include\og\og_schema_relation.h" />
+    <ClInclude Include="include\og\og_session.h" />
+    <ClInclude Include="include\og\og_session_object.h" />
+    <ClInclude Include="include\og\og_session_parameter.h" />
+    <ClInclude Include="include\og\og_session_relation.h" />
+    <ClInclude Include="include\og\og_transaction.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9D5186DE-9EF7-48F3-8F72-5A51F3ABA19B}</ProjectGuid>
+    <RootNamespace>sample</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>cored</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>$(ProjectName)</TargetName>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SOCI)/include/soci;$(BOOST);$(SQLITE3);include</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SOCI)/include/soci;$(BOOST);$(SQLITE3);include</IncludePath>
+    <TargetName>$(ProjectName)</TargetName>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SOCI)\lib64;$(SQLITE3);$(BOOST)/lib64-msvc-12.0</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <PreprocessorDefinitions>_DEBUG;BOOST_ALL_DYN_LINK;_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);libsoci_core_3_2.lib;libsoci_empty_3_2.lib;libsoci_sqlite3_3_2.lib;sqlite3.lib;boost_chrono-vc120-mt-1_57.lib;boost_system-vc120-mt-1_57.lib;boost_filesystem-vc120-mt-1_57.lib;boost_thread-vc120-mt-1_57.lib;;boost_log-vc120-mt-1_57.lib;boost_log_setup-vc120-mt-1_57.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;WIN32;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
