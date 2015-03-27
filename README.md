@@ -25,7 +25,7 @@ And support files :
 ObjectGenoise depends on the following package
 * [boost] 1.57
 	Note: while using boost_log from c++/cli, I'm faced with crash.
-	So, i use this [buildscript].
+	So, i use this [buildscript]. 
 
 * [soci] 3.2 
 * [SQLite3] 3.8.7
@@ -44,6 +44,41 @@ BOOST=c:\path\to\boost
 SOCI=c:\path\to\soci
 > set SQLITE3
 SQLITE3=c:\path\to\sqlite3
+```
+
+And then, create lib directory and copy libraries as follows:
+```
+> $ find lib -type f
+> 
+> lib/debug/boost_chrono-vc120-mt-gd-1_57.dll
+> lib/debug/boost_date_time-vc120-mt-gd-1_57.dll
+> lib/debug/boost_filesystem-vc120-mt-gd-1_57.dll
+> lib/debug/boost_iostreams-vc120-mt-gd-1_57.dll
+> lib/debug/boost_locale-vc120-mt-gd-1_57.dll
+> lib/debug/boost_log-vc120-mt-gd-1_57.dll
+> lib/debug/boost_log_setup-vc120-mt-gd-1_57.dll
+> lib/debug/boost_regex-vc120-mt-gd-1_57.dll
+> lib/debug/boost_system-vc120-mt-gd-1_57.dll
+> lib/debug/boost_thread-vc120-mt-gd-1_57.dll
+> lib/debug/boost_timer-vc120-mt-gd-1_57.dll
+> lib/debug/boost_unit_test_framework-vc120-mt-gd-1_57.dll
+> lib/debug/boost_zlib-vc120-mt-gd-1_57.dll
+> lib/release/boost_chrono-vc120-mt-1_57.dll
+> lib/release/boost_date_time-vc120-mt-1_57.dll
+> lib/release/boost_filesystem-vc120-mt-1_57.dll
+> lib/release/boost_iostreams-vc120-mt-1_57.dll
+> lib/release/boost_locale-vc120-mt-1_57.dll
+> lib/release/boost_log-vc120-mt-1_57.dll
+> lib/release/boost_log_setup-vc120-mt-1_57.dll
+> lib/release/boost_regex-vc120-mt-1_57.dll
+> lib/release/boost_system-vc120-mt-1_57.dll
+> lib/release/boost_thread-vc120-mt-1_57.dll
+> lib/release/boost_timer-vc120-mt-1_57.dll
+> lib/release/boost_unit_test_framework-vc120-mt-1_57.dll
+> lib/release/boost_zlib-vc120-mt-1_57.dll
+> lib/soci_core_3_2.dll
+> lib/soci_empty_3_2.dll
+> lib/soci_sqlite3_3_2.dll
 ```
 
 *** Windows
