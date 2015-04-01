@@ -144,6 +144,16 @@ BOOST_AUTO_TEST_CASE( schema_1002 )
     cleaned_session_.schema()->get_object_by_type(otype_list, &obj_list1);
 
     BOOST_REQUIRE_EQUAL(obj_list1.size(), 2);
+
+    list<string> types;
+    cleaned_session_.schema()->get_object_type(&types);
+
+    BOOST_REQUIRE(types.size() == 2);
+
+    BOOST_FOREACH(string &t, types)
+    {
+      BOOST_REQUIRE(t.compare(OTYPE1) == 0 || t.compare(OTYPE2) == 0);;
+    }
   }
 
   {
@@ -290,6 +300,11 @@ BOOST_AUTO_TEST_CASE( schema_2000 )
 
     rel_ptr->set_comment("hoge");
     rel_ptr->set_name(RELNAME);
+
+	list<string> rels;
+	cleaned_session_.schema()->get_relation_type(&rels);
+
+	BOOST_REQUIRE_EQUAL(rels.size(), 1);
   }
 
   {

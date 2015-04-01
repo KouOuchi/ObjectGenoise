@@ -9,8 +9,7 @@ BOOST_FIXTURE_TEST_SUITE(large_data, fixture_clean_session);
 BOOST_AUTO_TEST_CASE(large_data_1001)
 {
 #ifdef WINDOWS
-  // TODO: CrtCheckMemory detects memory leak in this test.
-  //og::core::CrtCheckMemory __check__;
+  og::core::CrtCheckMemory __check__;
 #endif
 
   // initialize db

@@ -108,6 +108,11 @@ namespace test_og_net
                 cleaned_session_.schema().get_object_by_type(otype_list, obj_list1);
 
                 Assert.AreEqual(obj_list1.Count, 2);
+
+                List<string> types = new List<string>();
+                cleaned_session_.schema().get_object_type(types);
+                Assert.IsTrue(types.Contains(OTYPE1));
+                Assert.IsTrue(types.Contains(OTYPE2));
             }
 
             {
@@ -220,6 +225,10 @@ namespace test_og_net
 
                 rel_ptr.set_comment("hoge");
                 rel_ptr.set_name(RELNAME);
+
+                List<string> rels = new List<string>();
+                cleaned_session_.schema().get_relation_type(rels);
+                Assert.AreEqual(rels.Count, 1);
             }
 
             {

@@ -69,33 +69,33 @@ void schema::add_object(schema_object_ptr _schm_obj)
 }
 
 schema_relation_ptr schema::create_relation(string _rel_type, string _rel_name,
-	string _from_oid, string _to_oid)
+    string _from_oid, string _to_oid)
 {
-	//create sequence
-	int id_seed;
-	*session_->soci_session_ <<
-		"INSERT INTO schema_relation_seq(id_seed) VALUES(NULL)";
-	*session_->soci_session_ << "SELECT MAX(id_seed) FROM schema_relation_seq",
-		soci::into(id_seed);
-	string rel_id(SCHEMA_RELATION_ID_PREFIX + boost::lexical_cast < string >
-		(id_seed));
+  //create sequence
+  int id_seed;
+  *session_->soci_session_ <<
+                           "INSERT INTO schema_relation_seq(id_seed) VALUES(NULL)";
+  *session_->soci_session_ << "SELECT MAX(id_seed) FROM schema_relation_seq",
+                           soci::into(id_seed);
+  string rel_id(SCHEMA_RELATION_ID_PREFIX + boost::lexical_cast < string >
+                (id_seed));
 
-	//create object
-	schema_relation_ptr schm_rel(new schema_relation(this, rel_id, _rel_type,
-		_rel_name,
-		_from_oid, _to_oid));
+  //create object
+  schema_relation_ptr schm_rel(new schema_relation(this, rel_id, _rel_type,
+                               _rel_name,
+                               _from_oid, _to_oid));
 
-	// set date
-	pt::ptime now = pt::microsec_clock::local_time();
-	schm_rel->set_create_date(pt::to_simple_string(now));
-	schm_rel->set_update_date(pt::to_simple_string(now));
+  // set date
+  pt::ptime now = pt::microsec_clock::local_time();
+  schm_rel->set_create_date(pt::to_simple_string(now));
+  schm_rel->set_update_date(pt::to_simple_string(now));
 
-	// set revision
-	schm_rel->set_revision(REVISION_INIT_VALUE);
+  // set revision
+  schm_rel->set_revision(REVISION_INIT_VALUE);
 
-	add_relation(schm_rel);
+  add_relation(schm_rel);
 
-	return schm_rel;
+  return schm_rel;
 }
 
 void schema::add_relation(schema_relation_ptr _schm_rel)
@@ -194,17 +194,17 @@ optional<schema_object_ptr> schema::get_object(string _id)
 
 void schema::get_object_type(list<string>* _type_list)
 {
-//  *session_->soci_session_
-//      <<
-//      "SELECT DISTINCT type FROM schema_object WHERE 1 = 1",
-//      soci::into(*_type_list);
+  fetcher<string>::fetch(
+    *session_->soci_session_
+    , "SELECT DISTINCT type FROM schema_object WHERE 1 = 1"
+    , _type_list);
 }
 void schema::get_relation_type(list<string>* _rel_type_list)
 {
-//  *session_->soci_session_
-//      <<
-//      "SELECT DISTINCT type FROM schema_object WHERE 1 = 1",
-//      soci::into(*_rel_type_list);
+  fetcher<string>::fetch(
+    *session_->soci_session_
+    , "SELECT DISTINCT type FROM schema_relation WHERE 1 = 1"
+    , _rel_type_list);
 }
 
 void schema::get_object(list<string>& _oid_list,
@@ -489,7 +489,7 @@ bool schema::import_from_file(string _path)
       // deserialize
       schema_relation_ptr schm_rel(new schema_relation(this));
 
-	  if(serializer<schema_relation_ptr>::deserialize(child, schm_rel))
+      if(serializer<schema_relation_ptr>::deserialize(child, schm_rel))
       {
         import_relation(schm_rel);
       }
@@ -501,11 +501,11 @@ bool schema::import_from_file(string _path)
 
 void schema::import_object(schema_object_ptr _schm_obj)
 {
-	add_object(_schm_obj);
+  add_object(_schm_obj);
 }
 void schema::import_relation(schema_relation_ptr _schm_rel)
 {
-	add_relation(_schm_rel);
+  add_relation(_schm_rel);
 }
 /*
 void schema::import_parameter(schema_parameter_ptr _schm_par,

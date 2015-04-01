@@ -30,7 +30,7 @@
 #include <string>
 #include <exception>
 
-#define DBPATH "../../sql/og.db"
+#define DBPATH "../sql/og.db"
 
 namespace pt = boost::posix_time;
 using namespace std;
