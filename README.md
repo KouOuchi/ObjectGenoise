@@ -76,9 +76,6 @@ And then, create lib directory and copy libraries as follows:
 > lib/release/boost_timer-vc120-mt-1_57.dll
 > lib/release/boost_unit_test_framework-vc120-mt-1_57.dll
 > lib/release/boost_zlib-vc120-mt-1_57.dll
-> lib/soci_core_3_2.dll
-> lib/soci_empty_3_2.dll
-> lib/soci_sqlite3_3_2.dll
 ```
 
 *** Windows
