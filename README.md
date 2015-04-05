@@ -9,6 +9,18 @@ ObjectGenoise is a ORM, database middle ware and C++/.Net library.
 ![schema pdf](https://github.com/KouOuchi/ObjectGenoise/blob/master/sql/OG-Schema.png)
 [Schema PDF] and [Schema SQL]
 
+### ObjectGenoise is divided into 2 features:
+- schema : `schema' means a definition like a class. 
+- session : `session' means an instance.
+ 
+```features
+       | Schema                | Session
+       +---                    +---
+       | SchemaObject     ===> SessionObject
+       | SchemaRelation   ===> SessionRelation
+       | SchemaParamaeter ===> SessionParameter
+```
+
 
 ## Development
 This package includes 4 projects:
