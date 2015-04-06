@@ -6,8 +6,41 @@ ObjectGenoise is a ORM, database middle ware and C++/.Net library.
 
 ## Technical Overview
 
-![schema pdf](https://github.com/KouOuchi/ObjectGenoise/blob/master/sql/OG-Schema.png)
-[Schema PDF] and [Schema SQL]
+### ObjectGenoise is divided into 2 features:
+- schema : `schema' means a definition like a class. 
+- session : `session' means an instance.
+ 
+```features
+       | Schema                | Session
+       +---                    +---
+       | SchemaObject     ===> SessionObject
+       | SchemaRelation   ===> SessionRelation
+       | SchemaParamaeter ===> SessionParameter
+```
+
+ 
+```notation_of_session
+       +-------------------+
+       |<SessionObject>    | 0..*
+       +-------------------+<----+
+       |<SessionParameters>|     |
+       +---------+---------+     |
+                 | 0..*          |
+                 +---------------+
+                                  \
+                             +-------------------+
+                             |<SessionRelation>  |
+                             +-------------------+
+                             |<SessionParameters>|
+                             +-------------------+
+```
+
+### ObjectGenoise Example : CAM system schema
+![internal schema pdf](https://github.com/KouOuchi/ObjectGenoise/blob/master/sql/example.png)
+
+### ObjectGenoise internal
+![internal schema pdf](https://github.com/KouOuchi/ObjectGenoise/blob/master/sql/OG-Schema.png)
+[Internal Schema PDF] and [InternalSchema SQL]
 
 
 ## Development
@@ -76,9 +109,6 @@ And then, create lib directory and copy libraries as follows:
 > lib/release/boost_timer-vc120-mt-1_57.dll
 > lib/release/boost_unit_test_framework-vc120-mt-1_57.dll
 > lib/release/boost_zlib-vc120-mt-1_57.dll
-> lib/soci_core_3_2.dll
-> lib/soci_empty_3_2.dll
-> lib/soci_sqlite3_3_2.dll
 ```
 
 *** Windows
@@ -120,6 +150,6 @@ for C, C++, C++/CLI, Objective?C, C#, and Java Source Code
 [SQLite3]:http://soci.sourceforge.net/
 [Astyle]:http://astyle.sourceforge.net/
 [Google C++ Style Guid]:http://google-styleguide.googlecode.com/svn/trunk/cppguide.html
-[Schema PDF]:https://github.com/KouOuchi/ObjectGenoise/blob/master/sql/OG-Schema.pdf
-[Schema SQL]:https://github.com/KouOuchi/ObjectGenoise/blob/master/sql/OG-Schema.sql
+[Internal Schema PDF]:https://github.com/KouOuchi/ObjectGenoise/blob/master/sql/OG-Schema.pdf
+[Internal Schema SQL]:https://github.com/KouOuchi/ObjectGenoise/blob/master/sql/OG-Schema.sql
 [buildscript]:https://github.com/KouOuchi/ObjectGenoise/blob/master/etc/boost_build.bat
