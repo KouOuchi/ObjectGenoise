@@ -21,6 +21,7 @@ class og_schema_object
 {
 public:
   og_schema_object(og::core::schema_object_ptr _o_ptr);
+  og_schema_object(og::core::schema_object_ptr _o_ptr, bool _auto_sync);
   virtual ~og_schema_object();
 
   ///////////////////////////////
@@ -35,6 +36,7 @@ public:
   string get_revision();
   string get_create_date();
   string get_update_date();
+  void revision_up();
 
   // property ends.
 

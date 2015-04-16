@@ -23,7 +23,7 @@ og_schema_object_ptr og_schema::create_object(string _otype, string _oname)
 {
   og::core::schema_object_ptr o = schema_->create_object(_otype, _oname);
 
-  return og_schema_object_ptr(new og_schema_object(o));
+  return og_schema_object_ptr(new og_schema_object(o, true));
 }
 
 void og_schema::export_to_file(string _path)
@@ -65,7 +65,7 @@ boost::optional<og_schema_object_ptr> og_schema::get_object(string _oid)
   else
   {
     return boost::optional<og_schema_object_ptr>(og_schema_object_ptr(
-             new og_schema_object(obj.get())));
+             new og_schema_object(obj.get(), true)));
   }
 }
 void og_schema::get_object_by_type(list<string>& _otype_list,
@@ -138,7 +138,7 @@ optional<og_schema_relation_ptr> og_schema::get_relation(string _relid)
   {
     return optional<og_schema_relation_ptr>(
              og_schema_relation_ptr(
-               new og_schema_relation(r.get())
+               new og_schema_relation(r.get(), true)
              ));
   }
 }

@@ -22,14 +22,12 @@ public:
   void set_from_id(string _from_id)
   {
     from_id_ = _from_id;
-    set_updated(/*true*/);
-    if(!bulk_sync) { sync(); }
+    set_updated();
   }
   void set_to_id(string _to_id)
   {
     to_id_ = _to_id;
-    set_updated(/*true*/);
-    if(!bulk_sync) { sync(); }
+    set_updated();
   }
 
   ///////////////////////////////
@@ -60,8 +58,7 @@ public:
 
 
   // concrete object  --->
-  session_relation_ptr create_session_relation();
-
+  //session_relation_ptr create_session_relation();
   // <--- concrete object
 
   ///////////////////////////////
@@ -71,7 +68,11 @@ public:
   multiplicity& get_to_multiplicity() { return to_multiplicity_; }
   // multiplicity ends.
 
+  // by defualt, sync is automatically.
   virtual void sync();
+
+  // by default, revision up is automatically.
+  virtual void revision_up();
 
 private:
   string from_id_;
@@ -79,9 +80,6 @@ private:
 
   multiplicity from_multiplicity_;
   multiplicity to_multiplicity_;
-
-  //map<string, schema_relation_parameter> parameters_;
-
 };
 
 

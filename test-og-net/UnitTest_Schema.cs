@@ -38,12 +38,15 @@ namespace test_og_net
             string ONAME = "Dcument-Name";
 
             OGSchemaObject obj = cleaned_session_.schema().create_object(OTYPE, ONAME);
+            Assert.AreEqual(obj.get_revision(), "0");
+            obj.revision_up();
 
             // instance check
             _check_OGSchemaObject(obj, obj.get_id(), OTYPE, ONAME);
 
             // get_object_id
             OGSchemaObject soptr = cleaned_session_.schema().get_object(obj.get_id());
+            Assert.AreEqual(soptr.get_revision(), "1");
 
             _check_OGSchemaObject(soptr, obj.get_id(), OTYPE, ONAME);
 
@@ -220,11 +223,13 @@ namespace test_og_net
                 from_id = p1.get_id();
                 to_id = p2.get_id();
                 OGSchemaRelation rel_ptr = p1.connect_to(p2, RELTYPE);
+                Assert.AreEqual(rel_ptr.get_revision(), "0");
 
                 rel_id = rel_ptr.get_id();
 
                 rel_ptr.set_comment("hoge");
                 rel_ptr.set_name(RELNAME);
+                rel_ptr.revision_up();
 
                 List<string> rels = new List<string>();
                 cleaned_session_.schema().get_relation_type(rels);
@@ -240,6 +245,7 @@ namespace test_og_net
                 {
                     Assert.AreEqual(rp.get_comment(), "hoge");
                     Assert.AreEqual(rp.get_name(), RELNAME);
+                    Assert.AreEqual(rp.get_revision(), "1");
                 }
 
                 OGSchemaRelation rp1 = cleaned_session_.schema().get_relation(rel_id);

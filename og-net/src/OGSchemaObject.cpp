@@ -82,7 +82,7 @@ OGSchemaRelation^ OGSchemaObject::connect_to(OGSchemaObject^ _to,
   OGConverter::convert_clr_to_std<String, std::string>(_rel_type, &str);
 
   return gcnew OGSchemaRelation(
-           OGSharedPtr<og::og_schema_relation>(og_schema_object_->connect_from(
+           OGSharedPtr<og::og_schema_relation>(og_schema_object_->connect_to(
                  _to->og_schema_object_, str)));
 }
 
@@ -204,13 +204,17 @@ OGSchemaObject::get_parameter_basetype_enum_by_param_name(
 }
 
 void OGSchemaObject::add_parameter_definition(String^ _param_name,
-                              OGSchemaParameter^ _schm_par)
+    OGSchemaParameter^ _schm_par)
 {
   std::string str;
   OGConverter::convert_clr_to_std<String, std::string>(_param_name, &str);
 
   og_schema_object_->add_parameter_definition(str,
       _schm_par->og_schema_parameter_);
+}
+void OGSchemaObject::revision_up()
+{
+  og_schema_object_->revision_up();
 }
 }
 }

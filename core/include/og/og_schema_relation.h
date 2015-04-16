@@ -22,6 +22,7 @@ class og_schema_relation
 {
 public:
   og_schema_relation(og::core::schema_relation_ptr _rel_ptr);
+  og_schema_relation(og::core::schema_relation_ptr _rel_ptr, bool _auto_sync);
   virtual ~og_schema_relation();
 
   ///////////////////////////////
@@ -36,6 +37,7 @@ public:
   string get_revision();
   string get_create_date();
   string get_update_date();
+  void revision_up();
 
   string get_from_id();
   string get_to_id();

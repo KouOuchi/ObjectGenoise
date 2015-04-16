@@ -24,6 +24,9 @@ public:
   string pid_;
   string param_name_;
 //  string comment_;
+
+protected:
+  void revision_up();
 };
 
 class schema_relation_parameter
@@ -38,6 +41,9 @@ public:
   string pid_;
   string param_name_;
 //  string comment_;
+
+protected:
+  void revision_up();
 };
 
 template <typename T>
@@ -236,6 +242,7 @@ public:
   };
 
   virtual void sync();
+  virtual void revision_up() {};
 
 private:
 //  parameter_basetype_enum basetype_;

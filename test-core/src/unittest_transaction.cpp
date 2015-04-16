@@ -38,6 +38,7 @@ BOOST_AUTO_TEST_CASE( transaction_1000 )
     og::og_schema_object_ptr schm_obj1 = cleaned_session_.schema()->create_object(OTYPE1,
                                   ONAME1);
     id = schm_obj1->get_id();
+	schm_obj1->set_comment("aaa");
 
     og::og_schema_object_ptr schm_obj2 = cleaned_session_.schema()->create_object(OTYPE2,
                                   ONAME2);
@@ -55,6 +56,7 @@ BOOST_AUTO_TEST_CASE( transaction_1000 )
     list<og::og_schema_object_ptr> schm_children;
     schm_obj1.get()->get_connected_object_to(reltype_list, &schm_children);
     BOOST_REQUIRE(schm_children.size() == 1);
+	BOOST_REQUIRE_EQUAL(schm_obj1->get()->get_comment(), "aaa");
   }
 }
 
@@ -91,6 +93,7 @@ BOOST_AUTO_TEST_CASE( transaction_1001 )
     // create schema obj
     og::og_schema_object_ptr schm_obj1 = cleaned_session_.schema()->create_object(OTYPE1,
                                   ONAME1);
+	schm_obj1->set_comment("aaa");
     id = schm_obj1->get_id();
 
     og::og_schema_object_ptr schm_obj2 = cleaned_session_.schema()->create_object(OTYPE2,
@@ -187,6 +190,7 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
 
     og::og_session_object_ptr o1 = cleaned_session_.create_object(p1);
     //o1->sync();
+
     std::string oid = o1->get_id();
 
     tran.rollback();
@@ -206,6 +210,7 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
       og::og_transaction tran(cleaned_session_);
 
       o1->set_parameter_value<double>("H1", 1.1234);
+      o1->set_comment("aaa");
 
     } // rollback
 
@@ -218,6 +223,7 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
       o1_2.get()->get_parameter_value<double>("H2", &h1);
       // confirm rollback
       BOOST_REQUIRE_EQUAL(h1, 2.236);
+	  BOOST_REQUIRE_EQUAL(o1_2.get()->get_comment(), "");
     }
   }
 
@@ -229,6 +235,7 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
       og::og_transaction tran(cleaned_session_);
 
       o1->set_parameter_value<double>("H1", 1.1234);
+      o1->set_comment("aaa");
 
       tran.commit();
     } // commit;
@@ -242,6 +249,8 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
       o1_2.get()->get_parameter_value<double>("H2", &h1);
       // confirm commit
       BOOST_REQUIRE_EQUAL(h1, 2.236);
+	  BOOST_REQUIRE_EQUAL(o1_2.get()->get_comment(), "aaa");
+
     }
   }
 
@@ -272,7 +281,7 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
       og::og_session_relation_ptr o1o2 = o1->connect_to(o2, RELTYPE);
       string relid(o1o2->get_id());
 
-    } //explicit rollback;
+    } //implicit rollback;
 
     list<og::og_session_object_ptr> connected;
     o1->get_connected_object(&connected);
@@ -287,6 +296,7 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
     og::og_transaction tran(cleaned_session_);
     og::og_session_relation_ptr o1o2 = o1->connect_to(o2, RELTYPE);
     string relid(o1o2->get_id());
+    o1o2->set_comment("aaa");
     //o1o2->sync();
 
     tran.commit();
@@ -294,6 +304,7 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
     list<og::og_session_object_ptr> connected;
     o1->get_connected_object(&connected);
 	BOOST_REQUIRE_EQUAL(connected.size(), 1);
+    BOOST_REQUIRE_EQUAL(o1o2.get()->get_comment(), "aaa");
   }
 
   // session object test (implicit)

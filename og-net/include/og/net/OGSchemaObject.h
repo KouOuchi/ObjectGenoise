@@ -37,6 +37,7 @@ public:
   String^ get_revision();
   String^ get_create_date();
   String^ get_update_date();
+  void revision_up();
   // property ends.
 
   ///////////////////////////////

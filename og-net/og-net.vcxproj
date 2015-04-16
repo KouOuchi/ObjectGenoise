@@ -74,7 +74,7 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);include;../core/include;$(BOOST);$(SOCI)\include\soci;$(SQLITE3)</IncludePath>
     <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration)\;$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSDK_LibraryPath_x64);$(SOCI)\debug\lib64;$(SQLITE3);$(BOOST)\lib64-msvc-12.0</LibraryPath>
     <ReferencePath>$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(ReferencePath)</ReferencePath>
@@ -115,19 +115,29 @@
       </CallingConvention>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <MinimalRebuild>false</MinimalRebuild>
+      <MinimalRebuild>
+      </MinimalRebuild>
+      <FunctionLevelLinking>
+      </FunctionLevelLinking>
+      <BrowseInformation>false</BrowseInformation>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>libsoci_core_3_2.lib;libsoci_empty_3_2.lib;libsoci_sqlite3_3_2.lib;sqlite3.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
-      <SubSystem>NotSet</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <AddModuleNamesToAssembly>
       </AddModuleNamesToAssembly>
-      <FixedBaseAddress>false</FixedBaseAddress>
+      <FixedBaseAddress>true</FixedBaseAddress>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -149,7 +159,7 @@
       <PrecompiledHeaderFile>og/net/stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>libsoci_core_3_2.lib;libsoci_empty_3_2.lib;libsoci_sqlite3_3_2.lib;sqlite3.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -159,12 +169,6 @@ XCOPY.EXE /Y "$(SolutionDir)lib\release\*.dll" "$(TargetDir)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AssemblyInfo.cpp" />
     <ClCompile Include="src\OGSchemaParameter.cpp" />
@@ -217,6 +221,9 @@ XCOPY.EXE /Y "$(SolutionDir)lib\release\*.dll" "$(TargetDir)"
     <ProjectReference Include="..\core\core.vcxproj">
       <Project>{9d5186de-9ef7-48f3-8f72-5a51f3aba19b}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Core" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

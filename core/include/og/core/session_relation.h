@@ -22,14 +22,12 @@ public:
   void set_from_id(string _from_id)
   {
     from_id_ = _from_id;
-    set_updated(/*true*/);
-    if(!bulk_sync) { sync(); }
+    set_updated();
   }
   void set_to_id(string _to_id)
   {
     to_id_ = _to_id;
-    set_updated(/*true*/);
-    if(!bulk_sync) { sync(); }
+    set_updated();
   }
 
   void delete_relation();
@@ -98,6 +96,7 @@ public:
   // <=== schema
 
   virtual void sync();
+  virtual void revision_up(){};
 
   session* get_session()
   {

@@ -53,14 +53,6 @@ public:
 
   template <typename P>
   void get_parameter_definition(string _param_name, P* _param_basetype) {}
-
-  //void insert_parameter(string _param_name, string _pid);
-
-  /*
-  template <>
-  void get_parameter_definition(string _param_name,
-                                parameter_basetype_boolean* _param_basetype);
-  */
   // parameters end.
 
   ///////////////////////////////
@@ -73,14 +65,16 @@ public:
   bool validate_parameter_valuerange();
   // validations end.
 
-  // concrete object  --->
-//  session_object_ptr create_session_object();
+  // by defualt, sync is automatically.
   virtual void sync();
 
-  // <--- concrete object
+  // by default, revision up is automatically.
+  virtual void revision_up();
+
+protected:
 
 private:
-  //map<string, schema_object_parameter> parameters_;
+
 };
 
 } //namespace core;

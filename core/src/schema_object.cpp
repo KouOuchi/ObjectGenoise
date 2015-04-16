@@ -50,7 +50,7 @@ schema_relation_ptr schema_object::connect_to(schema_object_ptr _to,
 
 //schema_object_ptr schema_object::copy_object()
 //{
-// 
+//
 //}
 
 void schema_object::delete_object()
@@ -150,27 +150,16 @@ void schema_object::get_parameters(
 {
   _param_name_types->clear();
   schema_->get_object_parameters(id_, _param_name_types);
-
-  //map<string, schema_object_parameter>::iterator it = parameters_.begin();
-  //for (; it != parameters_.end(); it++)
-  //{
-  //  optional<schema_parameter_ptr> p = schema_->get_parameter(it->second.pid_);
-  //  if (p.is_initialized())
-  //  {
-  //    _param_name_types->push_back(
-  //      boost::make_tuple<string, schema_parameter_ptr>(it->first, p.get()));
-  //  }
-  //}
 }
 
 void schema_object::add_parameter_definition(string _param_name,
     schema_parameter_ptr _schm_par)
 {
   schema_->add_object_parameter_definition(id_, _param_name, _schm_par);
-  //parameters_.insert(
-  //  std::make_pair<string, schema_object_parameter>(
-  //    string(_param_name),
-  //    schema_object_parameter(id_, _schm_par->get_id(), _param_name)));
+
+  // set update date and revision
+  set_updated();
+  if(auto_revision_up_) { revision_up(); }
 }
 
 parameter_basetype_enum
@@ -212,12 +201,11 @@ bool schema_object::validate_parameter_valuerange()
 
   return false;
 }
-//void schema_object::insert_parameter(string _param_name, string _pid)
-//{
-//  parameters_.insert(
-//    std::make_pair<string, schema_object_parameter>(string(_param_name),
-//        schema_object_parameter(id_, _pid, _param_name)));
-//}
+
+void schema_object::revision_up()
+{
+  schema_->revision_up_object(this);
+}
 
 } // namespace core
 } // namespace og

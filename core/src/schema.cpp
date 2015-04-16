@@ -50,6 +50,10 @@ schema_object_ptr schema::create_object(string _otype, string _oname)
 
   add_object(schm_obj);
 
+  // drop updated/bulk sync flag
+  //schm_obj->set_bulk_revision_up(false);
+  //schm_obj->set_bulk_sync(false);
+
   return schm_obj;
 }
 
@@ -63,9 +67,6 @@ void schema::add_object(schema_object_ptr _schm_obj)
       "values(:id_, :comment, :type, "
       ":name, :revision, :create_date, :update_date)",
       soci::use(*(_schm_obj.get()));
-
-// drop updated/bulk sync flag
-  //_schm_obj->set_updated(false);
 }
 
 schema_relation_ptr schema::create_relation(string _rel_type, string _rel_name,
@@ -110,7 +111,8 @@ void schema::add_relation(schema_relation_ptr _schm_rel)
       soci::use(*(_schm_rel.get()));
 
   // drop updated/bulk sync flag
-  //_schm_rel->set_updated(false);
+  //_schm_rel->set_bulk_revision_up(false);
+  //_schm_rel->set_bulk_sync(false);
 }
 
 //schema_object_ptr schema::copy_object(schema_object _object)
@@ -159,6 +161,18 @@ void schema::sync_relation(schema_relation* _schm_rel)
       soci::use(*_schm_rel);
 }
 
+void schema::revision_up_object(schema_object* _schm_obj)
+{
+  string rev(_schm_obj->get_revision());
+  _schm_obj->set_revision(revision_up_revision(rev));
+}
+
+void schema::revision_up_relation(schema_relation* _schm_rel)
+{
+  string rev(_schm_rel->get_revision());
+  _schm_rel->set_revision(revision_up_revision(rev));
+}
+
 optional<schema_object_ptr> schema::get_object(string _id)
 {
   schema_object_ptr schm_obj(new schema_object(this));
@@ -173,21 +187,9 @@ optional<schema_object_ptr> schema::get_object(string _id)
     return optional<schema_object_ptr>();
   }
 
-  // fetch schema_object_parameter
-  //list<boost::tuple<string, string>> pname_id;
-
-  //tuple_fetcher<string, string>::fetch_use1(
-  //  *session_->soci_session_
-  //  , "SELECT param_name, pid FROM schema_object_parameter "
-  //  "WHERE schema_object_id = :_o_id "
-  //  , soci::use(_id)
-  //  , &pname_id);
-
-  //list<boost::tuple<string, string>>::iterator it = pname_id.begin();
-  //for (; it != pname_id.end(); it++)
-  //{
-  //  schm_obj->insert_parameter(it->get<0>(), it->get<1>());
-  //}
+  // drop updated/bulk sync flag
+  //schm_obj->set_bulk_revision_up(false);
+  //schm_obj->set_bulk_sync(false);
 
   return optional<schema_object_ptr>(schm_obj);
 }
@@ -264,21 +266,9 @@ optional<schema_relation_ptr> schema::get_relation(string _rel_id)
     return optional<schema_relation_ptr>();
   }
 
-  //list<boost::tuple<string, string>> pname_id;
-
-  //tuple_fetcher<string, string>::fetch_use1(
-  //  *session_->soci_session_
-  //  , "SELECT param_name, pid FROM schema_relation_parameter "
-  //  "WHERE schema_relation_id = :_o_id "
-  //  , soci::use(_rel_id)
-  //  , &pname_id);
-
-  //list<boost::tuple<string, string>>::iterator it = pname_id.begin();
-  //for (; it != pname_id.end(); it++)
-  //{
-  //  schm_rel->insert_parameter((*it).get<0>(), (*it).get<1>());
-
-  //}
+  // drop updated/bulk sync flag
+  //schm_rel->set_bulk_revision_up(false);
+  //schm_rel->set_bulk_sync(false);
 
   return optional<schema_relation_ptr>(schm_rel);
 
@@ -1042,5 +1032,10 @@ optional<schema_parameter_ptr> schema::get_parameter(string _par_id)
   return optional<schema_parameter_ptr>(schm_par);
 }
 
+string schema::revision_up_revision(const string& _revision)
+{
+  int rev = boost::lexical_cast<int>(_revision);
+  return boost::lexical_cast<string>(++rev);
+}
 } // namespace core;
 } // namespace og;

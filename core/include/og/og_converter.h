@@ -72,7 +72,8 @@ struct og_converter
          it != _source.end();
          it++)
     {
-		_target->push_back(og_schema_object_ptr(new og_schema_object(*it)));
+		// auto sync true
+		_target->push_back(og_schema_object_ptr(new og_schema_object(*it, true)));
     }
   }
   template <>
@@ -85,7 +86,8 @@ struct og_converter
          it != _source.end();
          it++)
     {
-		_target->push_back(og_schema_relation_ptr(new og_schema_relation(*it)));
+		// auto sync true
+		_target->push_back(og_schema_relation_ptr(new og_schema_relation(*it, true)));
     }
   }
 

@@ -101,6 +101,10 @@ void OGSchemaRelation::add_parameter_definition(String^ _param_name,
   og_schema_relation_->add_parameter_definition(str,
       _schm_par->og_schema_parameter_);
 }
+void OGSchemaRelation::revision_up()
+{
+  og_schema_relation_->revision_up();
+}
 
 }
 }

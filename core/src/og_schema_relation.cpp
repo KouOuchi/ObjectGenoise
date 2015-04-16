@@ -12,6 +12,13 @@ og_schema_relation::og_schema_relation(og::core::schema_relation_ptr _o) :
 {
 }
 
+og_schema_relation::og_schema_relation(og::core::schema_relation_ptr _o,
+                                       bool _auto_sync) :
+  schema_relation_ptr_(_o)
+{
+  schema_relation_ptr_->set_auto_sync(_auto_sync);
+}
+
 og_schema_relation::~og_schema_relation()
 {}
 
@@ -65,7 +72,9 @@ string og_schema_relation::get_name()
 void og_schema_relation::set_name(string _name)
 {
   schema_relation_ptr_->set_name(_name);
-  schema_relation_ptr_->sync();
+
+  schema_relation_ptr_->revision_up_auto();
+  schema_relation_ptr_->sync_auto();
 }
 string og_schema_relation::get_comment()
 {
@@ -74,7 +83,9 @@ string og_schema_relation::get_comment()
 void og_schema_relation::set_comment(string _comment)
 {
   schema_relation_ptr_->set_comment(_comment);
-  schema_relation_ptr_->sync();
+
+  schema_relation_ptr_->revision_up_auto();
+  schema_relation_ptr_->sync_auto();
 }
 string og_schema_relation::get_revision()
 {
@@ -95,6 +106,12 @@ string og_schema_relation::get_from_id()
 string og_schema_relation::get_to_id()
 {
   return schema_relation_ptr_->get_to_id();
+}
+void og_schema_relation::revision_up()
+{
+  // force revision up
+  schema_relation_ptr_->revision_up();
+  schema_relation_ptr_->sync_auto();
 }
 
 

@@ -40,6 +40,7 @@ public:
 
   String^ get_from_id();
   String^ get_to_id();
+  void revision_up();
 
   ///////////////////////////////
   // multiplicity(TODO)

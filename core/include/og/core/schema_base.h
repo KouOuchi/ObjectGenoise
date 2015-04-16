@@ -17,6 +17,8 @@ public:
 protected:
   schema* schema_;
 
+  virtual void revison_up() {};
+
   // covered constructor
   schema_base();
 };

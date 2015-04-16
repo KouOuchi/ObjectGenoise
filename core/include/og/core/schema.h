@@ -58,10 +58,14 @@ public:
   void disconnect(string _rel_id);
 
   // ===> transaction and synchronizing
-  //void sync();
   void sync_object(schema_object* _schm_obj);
   void sync_relation(schema_relation* _schm_rel);
   // <=== transaction and synchronizing
+
+  // ===> revision management
+  void revision_up_object(schema_object* _schm_obj);
+  void revision_up_relation(schema_relation* _schm_rel);
+  // <=== revision management
 
   void get_object(list<string>& _oid_list,
                   list<schema_object_ptr>* _schm_obj_list);
@@ -260,6 +264,8 @@ private:
   void import_relation(schema_relation_ptr _schm_rel);
   void import_parameter(schema_parameter_ptr _schm_par,
                         const ptree::value_type& _pt);
+
+  string revision_up_revision(const string& _rev);
 };
 } //namespace core;
 } //namespace og;

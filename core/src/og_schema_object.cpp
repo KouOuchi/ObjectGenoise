@@ -13,6 +13,13 @@ og_schema_object::og_schema_object(og::core::schema_object_ptr _o) :
 {
 }
 
+og_schema_object::og_schema_object(og::core::schema_object_ptr _o,
+                                   bool _auto_sync) :
+  schema_object_ptr_(_o)
+{
+  schema_object_ptr_->set_auto_sync(_auto_sync);
+}
+
 og_schema_object::~og_schema_object()
 {}
 
@@ -20,13 +27,13 @@ og_schema_relation_ptr og_schema_object::connect_from(og_schema_object_ptr
     _from, string _otype)
 {
   return og_schema_relation_ptr(new og_schema_relation(
-                                  schema_object_ptr_->connect_to(_from->schema_object_ptr_, _otype)));
+                                  schema_object_ptr_->connect_from(_from->schema_object_ptr_, _otype), true));
 }
 og_schema_relation_ptr og_schema_object::connect_to(og_schema_object_ptr _to,
     string _otype)
 {
   return og_schema_relation_ptr(new og_schema_relation(
-                                  schema_object_ptr_->connect_to(_to->schema_object_ptr_, _otype)));
+                                  schema_object_ptr_->connect_to(_to->schema_object_ptr_, _otype), true));
 }
 //void og_schema_object::disconnect()
 //{
@@ -150,7 +157,9 @@ string og_schema_object::get_name()
 void og_schema_object::set_name(string _name)
 {
   schema_object_ptr_->set_name(_name);
-  schema_object_ptr_->sync();
+
+  schema_object_ptr_->revision_up_auto();
+  schema_object_ptr_->sync_auto();
 }
 string og_schema_object::get_comment()
 {
@@ -159,7 +168,9 @@ string og_schema_object::get_comment()
 void og_schema_object::set_comment(string _comment)
 {
   schema_object_ptr_->set_comment(_comment);
-  schema_object_ptr_->sync();
+
+  schema_object_ptr_->revision_up_auto();
+  schema_object_ptr_->sync_auto();
 }
 string og_schema_object::get_revision()
 {
@@ -176,6 +187,12 @@ string og_schema_object::get_update_date()
 void og_schema_object::delete_object()
 {
   return schema_object_ptr_->delete_object();
+}
+void og_schema_object::revision_up()
+{
+  // force revision up
+  schema_object_ptr_->revision_up();
+  schema_object_ptr_->sync_auto();
 }
 
 } // namespace og;

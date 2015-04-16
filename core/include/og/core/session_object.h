@@ -111,6 +111,7 @@ public:
   // <=== schema
 
   virtual void sync();
+  virtual void revision_up(){};
 
   // accessor
   session* get_session()

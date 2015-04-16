@@ -56,7 +56,7 @@ class base
 
 public:
   base()
-    : bulk_sync(true)
+    : auto_revision_up_(false), auto_sync_(false)
   { }
 
   virtual ~base() { }
@@ -80,41 +80,34 @@ public:
   {
     id_ = _oid;
     set_updated();
-    if(!bulk_sync) { sync(); }
   }
   virtual void set_comment(string _comment)
   {
     comment_ = _comment;
     set_updated();
-    if(!bulk_sync) { sync(); }
   }
   virtual void set_name(string _oname)
   {
     name_ = _oname;
     set_updated();
-    if(!bulk_sync) { sync(); }
   }
   virtual void set_type(string _otype)
   {
     type_ = _otype;
     set_updated();
-    if(!bulk_sync) { sync(); }
   }
   virtual void set_revision(string _rev)
   {
     revision_ = _rev;
     set_updated();
-    if(!bulk_sync) { sync(); }
   }
   virtual void set_create_date(string _date)
   {
     create_date_ = pt::to_tm(pt::time_from_string(_date));
-    if(!bulk_sync) { sync(); }
   }
   virtual void set_update_date(string _date)
   {
     update_date_ = pt::to_tm(pt::time_from_string(_date));
-    if(!bulk_sync) { sync(); }
   }
 
   void set_updated()
@@ -122,15 +115,31 @@ public:
     update_date_ = pt::to_tm(pt::microsec_clock::local_time());
   }
 
-  virtual void sync()
-  {}
-
-  void set_bulk_sync(bool _s)
+  void set_auto_revision_up(bool _s)
   {
-    bulk_sync = _s;
+    auto_revision_up_ = _s;
+  }
+  bool get_auto_revision_up() { return auto_revision_up_; }
+  void set_auto_sync(bool _s)
+  {
+    auto_sync_ = _s;
+  }
+  bool get_auto_sync() { return auto_sync_; }
+
+  virtual void sync() = 0;
+  virtual void revision_up() = 0;
+
+  void sync_auto()
+  {
+	  if (auto_sync_) sync();
+  }
+  void revision_up_auto()
+  {
+	  if (auto_revision_up_) revision_up();
   }
 
 protected:
+
   string id_;
   string comment_;
   string name_;
@@ -138,7 +147,9 @@ protected:
   string revision_;
   tm create_date_;
   tm update_date_;
-  bool bulk_sync;
+
+  bool auto_revision_up_;
+  bool auto_sync_;
 };
 
 } //namespace core;

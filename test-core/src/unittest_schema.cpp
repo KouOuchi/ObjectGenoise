@@ -51,6 +51,9 @@ BOOST_AUTO_TEST_CASE( schema_1000 )
     og::og_schema_object_ptr soptr = cleaned_session_.schema()->create_object(OTYPE,
                                      ONAME);
 
+	BOOST_REQUIRE_EQUAL(soptr->get_revision(), "0");
+	soptr->revision_up();
+
     // instance check
     _check_schema_object(soptr, soptr->get_id(), OTYPE, ONAME);
 
@@ -62,6 +65,7 @@ BOOST_AUTO_TEST_CASE( schema_1000 )
     BOOST_REQUIRE(soptr2.is_initialized());
 
     _check_schema_object(soptr, soptr2.get()->get_id(), OTYPE, ONAME);
+	BOOST_REQUIRE_EQUAL(soptr2.get()->get_revision(), "1");
 
     // get_object_id
     list<string> type_list;
@@ -296,10 +300,13 @@ BOOST_AUTO_TEST_CASE( schema_2000 )
     to_id = p2->get_id();
     og::og_schema_relation_ptr rel_ptr = p1->connect_to(p2, RELTYPE);
 
-    rel_id = rel_ptr->get_id();
+	BOOST_REQUIRE_EQUAL(rel_ptr->get_revision(), "0");
+
+	rel_id = rel_ptr->get_id();
 
     rel_ptr->set_comment("hoge");
     rel_ptr->set_name(RELNAME);
+	rel_ptr->revision_up();
 
 	list<string> rels;
 	cleaned_session_.schema()->get_relation_type(&rels);
@@ -316,6 +323,7 @@ BOOST_AUTO_TEST_CASE( schema_2000 )
     {
       BOOST_REQUIRE(rp->get_comment() == "hoge");
       BOOST_REQUIRE(rp->get_name() == RELNAME);
+      BOOST_REQUIRE_EQUAL(rp->get_revision(), "1");
     }
 
     optional<og::og_schema_relation_ptr> rp1(
