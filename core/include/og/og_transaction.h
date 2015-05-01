@@ -17,11 +17,11 @@ using namespace std;
 class og_transaction
 {
 public:
-  og_transaction(og_session& _session);
-  virtual ~og_transaction();
+  OG_COREAPI og_transaction(og_session& _session);
+  OG_COREAPI virtual ~og_transaction();
 
-  void rollback();
-  void commit();
+  OG_COREAPI void rollback();
+  OG_COREAPI void commit();
 
 private:
   og_transaction();

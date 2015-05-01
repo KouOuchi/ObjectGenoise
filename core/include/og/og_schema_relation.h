@@ -21,26 +21,26 @@ using namespace std;
 class og_schema_relation
 {
 public:
-  og_schema_relation(og::core::schema_relation_ptr _rel_ptr);
-  og_schema_relation(og::core::schema_relation_ptr _rel_ptr, bool _auto_sync);
-  virtual ~og_schema_relation();
+  OG_COREAPI og_schema_relation(og::core::schema_relation_ptr _rel_ptr);
+  OG_COREAPI og_schema_relation(og::core::schema_relation_ptr _rel_ptr, bool _auto_sync);
+  OG_COREAPI virtual ~og_schema_relation();
 
   ///////////////////////////////
   // property
   ///////////////////////////////
-  string get_id();
-  string get_type();
-  string get_name();
-  void set_name(string _name);
-  string get_comment();
-  void set_comment(string _comment);
-  string get_revision();
-  string get_create_date();
-  string get_update_date();
-  void revision_up();
+  OG_COREAPI string get_id();
+  OG_COREAPI string get_type();
+  OG_COREAPI string get_name();
+  OG_COREAPI void set_name(string _name);
+  OG_COREAPI string get_comment();
+  OG_COREAPI void set_comment(string _comment);
+  OG_COREAPI string get_revision();
+  OG_COREAPI string get_create_date();
+  OG_COREAPI string get_update_date();
+  OG_COREAPI void revision_up();
 
-  string get_from_id();
-  string get_to_id();
+  OG_COREAPI string get_from_id();
+  OG_COREAPI string get_to_id();
 
   ///////////////////////////////
   // multiplicity(TODO)
@@ -54,14 +54,14 @@ public:
   ///////////////////////////////
   // parameters
   ///////////////////////////////
-  void get_parameters(
+  OG_COREAPI void get_parameters(
     list<boost::tuple<string, og_schema_parameter_ptr>>*
     _param_name_types);
 
-  og::core::parameter_basetype_enum get_parameter_basetype_enum_by_param_name(
+  OG_COREAPI og::core::parameter_basetype_enum get_parameter_basetype_enum_by_param_name(
     string _param_name);
 
-  void add_parameter_definition(string _param_name,
+  OG_COREAPI void add_parameter_definition(string _param_name,
                                 const og_schema_parameter_ptr _schm_par);
 
   template <typename P>

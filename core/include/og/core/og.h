@@ -22,15 +22,15 @@
 #define OG_LOG std::cerr
 #endif
 
-//#if defined(WIN32)
-//#if defined(CORE_LIBRARY_EXPORT)
-//#define COREAPI  __declspec( dllexport )
-//#else
-//#define COREAPI  __declspec( dllimport )
-//#endif
-//#else //WIN32
-//#define COREAPI
-//#endif
+#if defined(WIN32)
+#if defined(OG_CORE_LIBRARY_EXPORT)
+#define OG_COREAPI  __declspec( dllexport )
+#else
+#define OG_COREAPI  __declspec( dllimport )
+#endif
+#else //WIN32
+#define COREAPI
+#endif
 
 namespace og
 {

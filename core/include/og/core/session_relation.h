@@ -13,9 +13,9 @@ class session_relation : public session_base
 {
 
 public:
-  session_relation(session* _session, string _id, schema_relation_ptr _schm_rel);
-  session_relation(session* _session);
-  virtual ~session_relation();
+  OG_COREAPI session_relation(session* _session, string _id, schema_relation_ptr _schm_rel);
+  OG_COREAPI session_relation(session* _session);
+  OG_COREAPI virtual ~session_relation();
 
   string get_from_id() { return from_id_; }
   string get_to_id() { return to_id_; }
@@ -82,8 +82,8 @@ public:
     (param.get()->values_, _values);
   }
 
-  optional<session_parameter_ptr> get_parameter(std::string _param_name);
-  void set_parameter(string _param_name, list<parameter_value_variant>& _values);
+  OG_COREAPI optional<session_parameter_ptr> get_parameter(std::string _param_name);
+  OG_COREAPI void set_parameter(string _param_name, list<parameter_value_variant>& _values);
   // <== parameter
 
   // schema ===>

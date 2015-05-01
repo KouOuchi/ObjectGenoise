@@ -15,9 +15,9 @@ namespace core
 class schema_object_parameter
 {
 public:
-  virtual ~schema_object_parameter() {}
-  schema_object_parameter() {}
-  schema_object_parameter(string _schm_id, string _pid, string _param_name)
+  OG_COREAPI virtual ~schema_object_parameter() {}
+  OG_COREAPI schema_object_parameter() {}
+  OG_COREAPI schema_object_parameter(string _schm_id, string _pid, string _param_name)
     : schema_object_id_(_schm_id), pid_(_pid), param_name_(_param_name)
   {}
   string schema_object_id_;
@@ -32,9 +32,9 @@ protected:
 class schema_relation_parameter
 {
 public:
-  virtual ~schema_relation_parameter() {}
-  schema_relation_parameter() {}
-  schema_relation_parameter(string _schm_id, string _pid, string _param_name)
+  OG_COREAPI virtual ~schema_relation_parameter() {}
+  OG_COREAPI schema_relation_parameter() {}
+  OG_COREAPI schema_relation_parameter(string _schm_id, string _pid, string _param_name)
     : schema_relation_id_(_schm_id), pid_(_pid), param_name_(_param_name)
   {}
   string schema_relation_id_;
@@ -100,19 +100,19 @@ class schema_parameter : public schema_base
 {
 
 public:
-  schema_parameter(schema* _schema);
-  schema_parameter(schema* _schema,
+  OG_COREAPI schema_parameter(schema* _schema);
+  OG_COREAPI schema_parameter(schema* _schema,
                    /*                   parameter_basetype_enum _basetype,*/
                    string _param_id, string _param_type,
                    string _comment, int _default_array_size, int _min_array_size,
                    int _max_array_size);
-  schema_parameter(schema* _schema, schema_parameter& _s);
+  OG_COREAPI schema_parameter(schema* _schema, schema_parameter& _s);
 
-  virtual ~schema_parameter();
+  OG_COREAPI virtual ~schema_parameter();
 
   parameter_basetype_variant basetype_variant_;
 
-  void initialize_basetype(parameter_basetype_enum _bid, string _id)
+  OG_COREAPI void initialize_basetype(parameter_basetype_enum _bid, string _id)
   {
     switch (_bid)
     {
@@ -171,7 +171,7 @@ public:
   }
   */
 
-  int get_basetype()
+  OG_COREAPI int get_basetype()
   {
     if (basetype_variant_.which() == (int)parameter_basetype_enum::blank)
     { throw og::core::exception() << exception_message("empty variant."); }
@@ -179,37 +179,37 @@ public:
     return basetype_variant_.which();
   }
 
-  int get_default_array_size()
+  OG_COREAPI int get_default_array_size()
   {
     return default_array_size_;
   }
-  int get_min_array_size()
+  OG_COREAPI int get_min_array_size()
   {
     return min_array_size_;
   }
-  int get_max_array_size()
+  OG_COREAPI int get_max_array_size()
   {
     return max_array_size_;
   }
 
-  void set_default_array_size(int _size)
+  OG_COREAPI void set_default_array_size(int _size)
   {
     default_array_size_ = _size;
   }
-  void set_min_array_size(int _size)
+  OG_COREAPI void set_min_array_size(int _size)
   {
     min_array_size_ = _size;
   }
-  void set_max_array_size(int _size)
+  OG_COREAPI void set_max_array_size(int _size)
   {
     max_array_size_ = _size;
   }
 
   //void get_parameter_names(list<string>* _names);
 
-  parameter_basetype_enum get_parameter_basetype_by_parameter_name(string _name);
+  OG_COREAPI parameter_basetype_enum get_parameter_basetype_by_parameter_name(string _name);
 
-  virtual string get_name()
+  OG_COREAPI virtual string get_name()
   {
     BOOST_THROW_EXCEPTION(og::core::exception() <<
                           exception_message("not have get_name() method."));
@@ -241,8 +241,8 @@ public:
     }
   };
 
-  virtual void sync();
-  virtual void revision_up() {};
+  OG_COREAPI virtual void sync();
+  OG_COREAPI virtual void revision_up() {};
 
 private:
 //  parameter_basetype_enum basetype_;

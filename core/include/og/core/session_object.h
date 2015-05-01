@@ -13,9 +13,9 @@ class session_object : public session_base
 {
 
 public:
-  session_object(session* _session, string _id, schema_object_ptr _schm_obj);
-  session_object(session* _session);
-  virtual ~session_object();
+  OG_COREAPI session_object(session* _session, string _id, schema_object_ptr _schm_obj);
+  OG_COREAPI session_object(session* _session);
+  OG_COREAPI virtual ~session_object();
 
   void delete_object();
 
@@ -96,8 +96,8 @@ public:
     (param.get()->values_, _values);
   }
 
-  optional<session_parameter_ptr> get_parameter(string _param_name);
-  void set_parameter(string _param_name, list<parameter_value_variant>& _values);
+  OG_COREAPI optional<session_parameter_ptr> get_parameter(string _param_name);
+  OG_COREAPI void set_parameter(string _param_name, list<parameter_value_variant>& _values);
 
   // object parameters end.
 

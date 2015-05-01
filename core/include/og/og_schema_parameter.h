@@ -17,8 +17,8 @@ using namespace std;
 class og_schema_parameter
 {
 public:
-  og_schema_parameter(og::core::schema_parameter_ptr _rel_ptr);
-  virtual ~og_schema_parameter();
+  OG_COREAPI og_schema_parameter(og::core::schema_parameter_ptr _rel_ptr);
+  OG_COREAPI virtual ~og_schema_parameter();
 
   // member variables
   og::core::schema_parameter_ptr schema_parameter_ptr_;
@@ -26,15 +26,15 @@ public:
   ///////////////////////////////
   // property
   ///////////////////////////////
-  string get_id();
-  string get_type();
-  string get_name();
-  void set_name(string _name);
-  string get_comment();
-  void set_comment(string _comment);
-  string get_revision();
-  string get_create_date();
-  string get_update_date();
+  OG_COREAPI string get_id();
+  OG_COREAPI string get_type();
+  OG_COREAPI string get_name();
+  OG_COREAPI void set_name(string _name);
+  OG_COREAPI string get_comment();
+  OG_COREAPI void set_comment(string _comment);
+  OG_COREAPI string get_revision();
+  OG_COREAPI string get_create_date();
+  OG_COREAPI string get_update_date();
 
   // property ends.
 

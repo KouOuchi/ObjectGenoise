@@ -18,8 +18,8 @@ using namespace std;
 class og_session_relation
 {
 public:
-  og_session_relation(og::core::session_relation_ptr _rel_ptr);
-  virtual ~og_session_relation();
+  OG_COREAPI og_session_relation(og::core::session_relation_ptr _rel_ptr);
+  OG_COREAPI virtual ~og_session_relation();
 
   ///////////////////////////////
   // parameters
@@ -47,32 +47,32 @@ public:
     session_relation_ptr_->get_parameter_values(_param_name, _values);
   }
 
-  boost::optional<og_session_parameter_ptr> get_parameter(
+  OG_COREAPI boost::optional<og_session_parameter_ptr> get_parameter(
     std::string _param_name);
-  void set_parameter(string _param_name,
+  OG_COREAPI void set_parameter(string _param_name,
                      list<og::core::parameter_value_variant>& _values);
 
   ///////////////////////////////
   // property
   ///////////////////////////////
-  string get_id();
-  string get_instance_name();
-  void set_instance_name(string _name);
-  string get_comment();
-  void set_comment(string _comment);
-  string get_revision();
-  string get_create_date();
-  string get_update_date();
+  OG_COREAPI string get_id();
+  OG_COREAPI string get_instance_name();
+  OG_COREAPI void set_instance_name(string _name);
+  OG_COREAPI string get_comment();
+  OG_COREAPI void set_comment(string _comment);
+  OG_COREAPI string get_revision();
+  OG_COREAPI string get_create_date();
+  OG_COREAPI string get_update_date();
 
-  string get_from_id();
-  string get_to_id();
+  OG_COREAPI string get_from_id();
+  OG_COREAPI string get_to_id();
 
-  string get_schema_relation_id();
-  string get_schema_relation_type();
-  string get_schema_relation_name();
-  string get_schema_relation_comment();
-  string get_schema_relation_create_date();
-  string get_schema_relation_update_date();
+  OG_COREAPI string get_schema_relation_id();
+  OG_COREAPI string get_schema_relation_type();
+  OG_COREAPI string get_schema_relation_name();
+  OG_COREAPI string get_schema_relation_comment();
+  OG_COREAPI string get_schema_relation_create_date();
+  OG_COREAPI string get_schema_relation_update_date();
   // property ends.
 
   // member variables

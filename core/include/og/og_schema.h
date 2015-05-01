@@ -44,45 +44,45 @@ typedef og::core::parameter_basetype_integer og_bool;
 class og_schema
 {
 public:
-  og_schema(og::core::schema* _schema);
-  virtual ~og_schema();
+  OG_COREAPI og_schema(og::core::schema* _schema);
+  OG_COREAPI virtual ~og_schema();
 
   ///////////////////////////////
   // object and its relation
   ///////////////////////////////
-  og_schema_object_ptr create_object(string _otype, string _oname);
+  OG_COREAPI og_schema_object_ptr create_object(string _otype, string _oname);
 
-  void get_object(list<string>& _oid_list,
+  OG_COREAPI void get_object(list<string>& _oid_list,
                   list<og_schema_object_ptr>* _schm_obj_list);
-  void get_object(list<og_schema_object_ptr>* _schm_obj_list);
-  void delete_object(string _oid);
-  boost::optional<og_schema_object_ptr> get_object(string _oid);
-  void get_object_by_type(list<string>& _otype_list,
+  OG_COREAPI void get_object(list<og_schema_object_ptr>* _schm_obj_list);
+  OG_COREAPI void delete_object(string _oid);
+  OG_COREAPI boost::optional<og_schema_object_ptr> get_object(string _oid);
+  OG_COREAPI void get_object_by_type(list<string>& _otype_list,
                           list<og_schema_object_ptr>* _schm_obj_list);
-  void get_object_by_name(list<string>& _name_list,
+  OG_COREAPI void get_object_by_name(list<string>& _name_list,
                           list<og_schema_object_ptr>* _schm_obj_list);
-  void get_object_type(list<string>* _type_list);
+  OG_COREAPI void get_object_type(list<string>* _type_list);
 
-  void get_relation_by_type(list<string>& _otype_list,
+  OG_COREAPI void get_relation_by_type(list<string>& _otype_list,
                             list<og_schema_relation_ptr>* _schm_rel_list);
-  void get_relation(list<string>& _relid_list,
+  OG_COREAPI void get_relation(list<string>& _relid_list,
                     list<og_schema_relation_ptr>* _schm_rel_list);
-  void get_relation(list<og_schema_relation_ptr>* _schm_rel_list);
-  optional<og_schema_relation_ptr> get_relation(string _relid);
-  void get_relation_type(list<string>* _rel_type_list);
+  OG_COREAPI void get_relation(list<og_schema_relation_ptr>* _schm_rel_list);
+  OG_COREAPI optional<og_schema_relation_ptr> get_relation(string _relid);
+  OG_COREAPI void get_relation_type(list<string>* _rel_type_list);
 
-  void get_connected_object_to(string _from_o_id, list<string>& _rel_type_list,
+  OG_COREAPI void get_connected_object_to(string _from_o_id, list<string>& _rel_type_list,
                                list<og_schema_object_ptr>* _schm_object_list);
-  void get_connected_object_from(string _to_o_id, list<string>& _rel_type_list,
+  OG_COREAPI void get_connected_object_from(string _to_o_id, list<string>& _rel_type_list,
                                  list<og_schema_object_ptr>* _schm_object_list);
 
-  void get_connected_relation_to(string _from_o_id, list<string>& _rel_type_list,
+  OG_COREAPI void get_connected_relation_to(string _from_o_id, list<string>& _rel_type_list,
                                  list<og_schema_relation_ptr>* _schm_rel_list);
-  void get_connected_relation_from(string _to_o_id, list<string>& _rel_type_list,
+  OG_COREAPI void get_connected_relation_from(string _to_o_id, list<string>& _rel_type_list,
                                    list<og_schema_relation_ptr>* _schm_rel_list);
 
-  bool validate_connect_by_type(string _otype_from, string _otype_to);
-  bool validate_connect_by_type_id(string _otype, string _oid_from,
+  OG_COREAPI bool validate_connect_by_type(string _otype_from, string _otype_to);
+  OG_COREAPI bool validate_connect_by_type_id(string _otype, string _oid_from,
                                    string _oid_to);
   //object and its relation ends.
 
@@ -116,9 +116,9 @@ public:
   ///////////////////////////////
   // file io and management
   ///////////////////////////////
-  void export_to_file(string _path);
-  bool import_from_file(string _path);
-  void purge();
+  OG_COREAPI void export_to_file(string _path);
+  OG_COREAPI bool import_from_file(string _path);
+  OG_COREAPI void purge();
 
   // file io and management end.
 

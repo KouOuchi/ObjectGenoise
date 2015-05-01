@@ -84,7 +84,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -97,7 +97,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -125,11 +125,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>$(ProjectName)</TargetName>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SOCI)/include/soci;$(BOOST);$(SQLITE3);include</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SOCI)\release\lib64;$(SQLITE3);$(BOOST)/lib64-msvc-12.0</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SOCI)/include/soci;$(BOOST);$(SQLITE3);include</IncludePath>
     <TargetName>$(ProjectName)</TargetName>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SOCI)\lib64;$(SQLITE3);$(BOOST)/lib64-msvc-12.0</LibraryPath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SOCI)\debug\lib64;$(SQLITE3);$(BOOST)/lib64-msvc-12.0</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -148,11 +149,11 @@
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <PreprocessorDefinitions>_DEBUG;BOOST_ALL_DYN_LINK;_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>OG_LOG_STDERR;OG_CORE_LIBRARY_EXPORT;_DEBUG;BOOST_ALL_NO_LIB;_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);libsoci_core_3_2.lib;libsoci_empty_3_2.lib;libsoci_sqlite3_3_2.lib;sqlite3.lib;boost_chrono-vc120-mt-1_57.lib;boost_system-vc120-mt-1_57.lib;boost_filesystem-vc120-mt-1_57.lib;boost_thread-vc120-mt-1_57.lib;;boost_log-vc120-mt-1_57.lib;boost_log_setup-vc120-mt-1_57.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);soci_core_3_2.lib;soci_empty_3_2.lib;libsoci_sqlite3_3_2.lib;sqlite3.lib;boost_atomic-vc120-mt-gd-1_57.lib;boost_chrono-vc120-mt-gd-1_57.lib;boost_date_time-vc120-mt-gd-1_57.lib;boost_system-vc120-mt-gd-1_57.lib;boost_filesystem-vc120-mt-gd-1_57.lib;boost_log-vc120-mt-gd-1_57.lib;boost_log_setup-vc120-mt-gd-1_57.lib;boost_timer-vc120-mt-gd-1_57.lib;boost_regex-vc120-mt-gd-1_57.lib;boost_thread-vc120-mt-gd-1_57.lib;libboost_iostreams-vc120-mt-gd-1_57.lib;boost_zlib-vc120-mt-gd-1_57.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -178,12 +179,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;WIN32;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>OG_LOG_STDERR;OG_CORE_LIBRARY_EXPORT;BOOST_ALL_NO_LIB;_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;WIN32;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+      <AdditionalDependencies>soci_core_3_2.lib;soci_empty_3_2.lib;libsoci_sqlite3_3_2.lib;sqlite3.lib;boost_atomic-vc120-mt-1_57.lib;boost_chrono-vc120-mt-1_57.lib;boost_date_time-vc120-mt-1_57.lib;boost_system-vc120-mt-1_57.lib;boost_filesystem-vc120-mt-1_57.lib;boost_log-vc120-mt-1_57.lib;boost_log_setup-vc120-mt-1_57.lib;boost_timer-vc120-mt-1_57.lib;boost_regex-vc120-mt-1_57.lib;boost_thread-vc120-mt-1_57.lib;libboost_iostreams-vc120-mt-1_57.lib;boost_zlib-vc120-mt-1_57.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

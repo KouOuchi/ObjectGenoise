@@ -21,70 +21,70 @@ using namespace std;
 class og_session
 {
 public:
-  og_session();
-  virtual ~og_session();
+  OG_COREAPI og_session();
+  OG_COREAPI virtual ~og_session();
 
   ///////////////////////////////
   // schema
   ///////////////////////////////
-  og_schema* schema();
+  OG_COREAPI og_schema* schema();
 
   ///////////////////////////////
   // file io and management
   ///////////////////////////////
-  bool import_from_file(string _path);
-  void export_to_file(string _path);
+  OG_COREAPI bool import_from_file(string _path);
+  OG_COREAPI void export_to_file(string _path);
 
-  void connect(string _connection_string);
-  void purge();
-  void build();
+  OG_COREAPI void connect(string _connection_string);
+  OG_COREAPI void purge();
+  OG_COREAPI void build();
   // file io and management ends.
 
   ///////////////////////////////
   // object
   ///////////////////////////////
-  og_session_object_ptr create_object(og_schema_object_ptr _schm_obj);
-  void delete_object(string _id);
+  OG_COREAPI og_session_object_ptr create_object(og_schema_object_ptr _schm_obj);
+  OG_COREAPI void delete_object(string _id);
 
-  optional<og_session_object_ptr> get_object(string _id);
-  void get_object(list<og_session_object_ptr>* _sesn_obj_list);
-  void get_object(list<string>& _oid_list,
+  OG_COREAPI optional<og_session_object_ptr> get_object(string _id);
+  OG_COREAPI void get_object(list<og_session_object_ptr>* _sesn_obj_list);
+  OG_COREAPI void get_object(list<string>& _oid_list,
                   list<og_session_object_ptr>* _sesn_obj_list);
 
-  void get_object_by_type(list<string>& _otype_list,
+  OG_COREAPI void get_object_by_type(list<string>& _otype_list,
                           list<og_session_object_ptr>* _sesn_obj_list);
 
-  void get_object_by_name(list<string>& _oname_list,
+  OG_COREAPI void get_object_by_name(list<string>& _oname_list,
                           list<og_session_object_ptr>* _sesn_obj_list);
 
-  void get_object_by_schema_object_name(list<string>& _schm_obj_oname_list,
+  OG_COREAPI void get_object_by_schema_object_name(list<string>& _schm_obj_oname_list,
                                         list<og_session_object_ptr>* _sesn_obj_list);
 
-  void get_object_by_schema_object(list<og_schema_object_ptr>& _schm_obj_list,
+  OG_COREAPI void get_object_by_schema_object(list<og_schema_object_ptr>& _schm_obj_list,
                                    list<og_session_object_ptr>* _sesn_obj_list);
 
   ///////////////////////////////
   // relation
   ///////////////////////////////
-  void get_connected_object_from(string _to_id, list<string> _rel_type_list,
+  OG_COREAPI void get_connected_object_from(string _to_id, list<string> _rel_type_list,
                                  list<og_session_object_ptr>* _sesn_obj_list);
-  void get_connected_object_to(string _from_id, list<string> _rel_type_list,
+  OG_COREAPI void get_connected_object_to(string _from_id, list<string> _rel_type_list,
                                list<og_session_object_ptr>* _sesn_obj_list);
-  bool validate_connect(string _from_id, string _to_id,
+  OG_COREAPI bool validate_connect(string _from_id, string _to_id,
                         list<string> _rel_type_list);
 
-  boost::optional<og_session_relation_ptr> get_relation(string _rel_id);
-  void get_relation(list<og_session_relation_ptr>* _sesn_rel_list);
-  void get_relation(list<string> _rel_id_list,
+  OG_COREAPI boost::optional<og_session_relation_ptr> get_relation(string _rel_id);
+  OG_COREAPI void get_relation(list<og_session_relation_ptr>* _sesn_rel_list);
+  OG_COREAPI void get_relation(list<string> _rel_id_list,
                     list<og_session_relation_ptr>* _sesn_rel_list);
-  void get_relation(string _from_id, string _to_id,
+  OG_COREAPI void get_relation(string _from_id, string _to_id,
                     list<og_session_relation_ptr>* _sesn_rel_list);
-  void get_relation_by_type(list<string> _rel_type_list,
+  OG_COREAPI void get_relation_by_type(list<string> _rel_type_list,
                             list<og_session_relation_ptr>* _sesn_rel_list);
-  void get_relation_by_name(list<string> _rel_name_list,
+  OG_COREAPI void get_relation_by_name(list<string> _rel_name_list,
                             list<og_session_relation_ptr>* _sesn_rel_list);
 
-  void disconnect(string _rel_id);
+  OG_COREAPI void disconnect(string _rel_id);
   // relation ends.
 
   scoped_ptr<og::core::session> session_;

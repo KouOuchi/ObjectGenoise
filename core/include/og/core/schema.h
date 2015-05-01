@@ -44,8 +44,8 @@ class schema
 {
 
 public:
-  schema();
-  virtual ~schema();
+  OG_COREAPI schema();
+  OG_COREAPI virtual ~schema();
 
   schema_object_ptr create_object(string _otype, string _oname);
   //schema_object_ptr copy_object(schema_object _object);
@@ -201,7 +201,7 @@ private:
   ///////////////////////////////
   // parameters
   ///////////////////////////////
-  void insert_schema_param(schema_parameter_ptr _schm_par, bool );
+  OG_COREAPI void insert_schema_param(schema_parameter_ptr _schm_par, bool );
 
   template <typename T>
   void insert_schema_basetype(schema_parameter_ptr _schm_param,

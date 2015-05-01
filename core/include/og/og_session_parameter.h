@@ -16,11 +16,11 @@ using namespace std;
 class og_session_parameter
 {
 public:
-  og_session_parameter(
+  OG_COREAPI og_session_parameter(
     list<og::core::parameter_value_variant > _values,
     og_schema_parameter_ptr _schm_par);
 
-  virtual ~og_session_parameter();
+  OG_COREAPI virtual ~og_session_parameter();
 
   // member variables
   og::core::session_parameter_ptr session_parameter_ptr_;
