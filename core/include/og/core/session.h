@@ -31,19 +31,19 @@ public:
   ///////////////////////////////
   // file io and management
   ///////////////////////////////
-  bool import_from_file(string _path);
-  void export_to_file(string _path);
+  OG_COREAPI bool import_from_file(string _path);
+  OG_COREAPI void export_to_file(string _path);
 
-  void build();
-  void connect(string _connection_string);
-  void purge();
+  OG_COREAPI void build();
+  OG_COREAPI void connect(string _connection_string);
+  OG_COREAPI void purge();
   // file io and management end
 
   ///////////////////////////////
   // object
   ///////////////////////////////
   session_object_ptr create_object(schema_object_ptr _schm_obj);
-  void delete_object(string _id);
+  OG_COREAPI void delete_object(string _id);
 
   optional<session_object_ptr> get_object(string _id);
   void get_object(list<session_object_ptr>* _sesn_obj_list);
@@ -77,7 +77,7 @@ public:
                                  list<session_object_ptr>* _sesn_obj_list);
   void get_connected_object_to(string _from_id, list<string> _rel_type_list,
                                list<session_object_ptr>* _sesn_obj_list);
-  bool validate_connect(string _from_id, string _to_id,
+  OG_COREAPI bool validate_connect(string _from_id, string _to_id,
                         list<string> _rel_type_list);
 
   optional<session_relation_ptr> get_relation(string _rel_id);

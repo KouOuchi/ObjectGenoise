@@ -124,7 +124,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libsoci_core_3_2.lib;libsoci_empty_3_2.lib;libsoci_sqlite3_3_2.lib;sqlite3.lib</AdditionalDependencies>
+      <AdditionalDependencies>libsoci_core_3_2.lib;libsoci_empty_3_2.lib;libsoci_sqlite3_3_2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <SubSystem>Windows</SubSystem>
       <AddModuleNamesToAssembly>
@@ -153,7 +153,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;BOOST_ALL_DYN_LINK;_DLL;WIN64;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;BOOST_ALL_DYN_LINK;_DLL;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeaderFile>og/net/stdafx.h</PrecompiledHeaderFile>
@@ -218,12 +218,12 @@ XCOPY.EXE /Y "$(SolutionDir)lib\release\*.dll" "$(TargetDir)"
     <None Include="keyfile.snk" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\core\core.vcxproj">
       <Project>{9d5186de-9ef7-48f3-8f72-5a51f3aba19b}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Core" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

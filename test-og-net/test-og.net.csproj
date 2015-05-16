@@ -91,6 +91,7 @@
     <ProjectReference Include="..\og-net\og-net.vcxproj">
       <Project>{da3ec6c7-b216-4f4b-a3be-24013ae86fda}</Project>
       <Name>og.net</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
   </ItemGroup>
   <Choose>
@@ -116,6 +117,7 @@
   <PropertyGroup>
     <PostBuildEvent>XCOPY.EXE /Y "$(SolutionDir)lib\*.dll" "$(TargetDir)"
 XCOPY.EXE /Y "$(SolutionDir)lib\$(ConfigurationName)\*.dll" "$(TargetDir)"
+XCOPY.EXE /Y "$(SolutionDir)x64\$(ConfigurationName)\core*.dll" "$(TargetDir)"
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
