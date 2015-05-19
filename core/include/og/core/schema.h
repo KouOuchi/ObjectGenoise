@@ -21,7 +21,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/tuple/tuple.hpp>
 
-#include <soci.h>
+//#include <soci.h>
 //#include <sqlite3/soci-sqlite3.h>
 
 namespace og
