@@ -1,5 +1,5 @@
 ﻿#define MyAppSetupName 'ObjectGenoise'
-#define MyAppVersion '0.1' 
+#define MyAppVersion '0.2' 
 
 [Setup]
 AppName={#MyAppSetupName}
@@ -12,11 +12,11 @@ AppPublisher=Division Engineering
 ;AppSupportURL=http://...
 ;AppUpdatesURL=http://...
 OutputBaseFilename={#MyAppSetupName}-{#MyAppVersion}
-;DefaultGroupName="Lib"
+DefaultGroupName=Lib
 DefaultDirName={pf}\ObjectGenoise
 ;UninstallDisplayIcon={app}\MyProgram.exe
-;OutputDir="lib"
-SourceDir=.
+;OutputDir=
+;SourceDir=
 AllowNoIcons=yes
 ;SetupIconFile=MyProgramIcon
 SolidCompression=yes

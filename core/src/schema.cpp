@@ -1037,5 +1037,17 @@ string schema::revision_up_revision(const string& _revision)
   int rev = boost::lexical_cast<int>(_revision);
   return boost::lexical_cast<string>(++rev);
 }
+
+int schema::get_parameter_id_seed()
+{
+  int id_seed;
+  *session_->soci_session_ <<
+                           "INSERT INTO schema_parameter_seq(id_seed) VALUES(NULL)";
+  *session_->soci_session_ << "SELECT MAX(id_seed) FROM schema_parameter_seq",
+                           soci::into(id_seed);
+
+  return id_seed;
+}
+
 } // namespace core;
 } // namespace og;

@@ -113,15 +113,11 @@ public:
   }
   template <typename P>
   schema_parameter_ptr create_parameter(string _param_type,
-	  string _comment, P* _basetype, int _default_array_size, int _min_array_size,
-	  int _max_array_size)
+                                        string _comment, P* _basetype, int _default_array_size, int _min_array_size,
+                                        int _max_array_size)
   {
     //create sequence
-    int id_seed;
-    *session_->soci_session_ <<
-                             "INSERT INTO schema_parameter_seq(id_seed) VALUES(NULL)";
-    *session_->soci_session_ << "SELECT MAX(id_seed) FROM schema_parameter_seq",
-                             soci::into(id_seed);
+    int id_seed = get_parameter_id_seed();
     string pid( SCHEMA_PARAMETER_ID_PREFIX + boost::lexical_cast<string>(id_seed) );
 
     //create pointer. basetype_variant is filled
@@ -129,20 +125,20 @@ public:
                                     pid,
                                     _param_type, _comment, _default_array_size, _min_array_size, _max_array_size));
 
-	//// manually setup
- //   switch (_basetype->basetype_id())
- //   {
- //   case parameter_basetype_enum::integer:
- //     schm_param->basetype_variant_ = _basetype;
- //     break;
- //   case parameter_basetype_enum::real:
- //     schm_param->basetype_variant_ = _basetype;
- //     break;
- //   case parameter_basetype_enum::text:
- //     schm_param->basetype_variant_ = _basetype;
- //     break;
- //   }
-	schm_param->basetype_variant_ = *_basetype;
+    //// manually setup
+//   switch (_basetype->basetype_id())
+//   {
+//   case parameter_basetype_enum::integer:
+//     schm_param->basetype_variant_ = _basetype;
+//     break;
+//   case parameter_basetype_enum::real:
+//     schm_param->basetype_variant_ = _basetype;
+//     break;
+//   case parameter_basetype_enum::text:
+//     schm_param->basetype_variant_ = _basetype;
+//     break;
+//   }
+    schm_param->basetype_variant_ = *_basetype;
 
     // insert record
     insert_schema_param(schm_param, true);
@@ -266,6 +262,9 @@ private:
                         const ptree::value_type& _pt);
 
   string revision_up_revision(const string& _rev);
+
+  OG_COREAPI int get_parameter_id_seed();
+
 };
 } //namespace core;
 } //namespace og;

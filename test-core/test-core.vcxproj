@@ -154,7 +154,7 @@
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>soci_core_3_2.lib;soci_empty_3_2.lib;boost_atomic-vc120-mt-gd-1_57.lib;boost_chrono-vc120-mt-gd-1_57.lib;boost_date_time-vc120-mt-gd-1_57.lib;boost_system-vc120-mt-gd-1_57.lib;boost_filesystem-vc120-mt-gd-1_57.lib;boost_log-vc120-mt-gd-1_57.lib;boost_log_setup-vc120-mt-gd-1_57.lib;boost_timer-vc120-mt-gd-1_57.lib;boost_regex-vc120-mt-gd-1_57.lib;boost_thread-vc120-mt-gd-1_57.lib;boost_zlib-vc120-mt-gd-1_57.lib;libboost_unit_test_framework-vc120-mt-gd-1_57.lib</AdditionalDependencies>
+      <AdditionalDependencies>boost_atomic-vc120-mt-gd-1_57.lib;boost_chrono-vc120-mt-gd-1_57.lib;boost_date_time-vc120-mt-gd-1_57.lib;boost_system-vc120-mt-gd-1_57.lib;boost_filesystem-vc120-mt-gd-1_57.lib;libboost_log-vc120-mt-gd-1_57.lib;libboost_log_setup-vc120-mt-gd-1_57.lib;boost_timer-vc120-mt-gd-1_57.lib;boost_regex-vc120-mt-gd-1_57.lib;boost_thread-vc120-mt-gd-1_57.lib;boost_zlib-vc120-mt-gd-1_57.lib;libboost_unit_test_framework-vc120-mt-gd-1_57.lib</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>
@@ -170,11 +170,11 @@ XCOPY.EXE /Y "$(SolutionDir)lib\debug\*.dll" "$(TargetDir)"</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>sqlite3.lib;libsoci_core_3_2.lib;libsoci_sqlite3_3_2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);boost_atomic-vc120-mt-1_57.lib;boost_chrono-vc120-mt-1_57.lib;boost_date_time-vc120-mt-1_57.lib;boost_system-vc120-mt-1_57.lib;boost_filesystem-vc120-mt-1_57.lib;libboost_log-vc120-mt-1_57.lib;libboost_log_setup-vc120-mt-1_57.lib;boost_timer-vc120-mt-1_57.lib;boost_regex-vc120-mt-1_57.lib;boost_thread-vc120-mt-1_57.lib;boost_zlib-vc120-mt-1_57.lib;libboost_unit_test_framework-vc120-mt-1_57.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
     <ClCompile>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;BOOST_ALL_DYN_LINK;_UNICODE;UNICODE;WIN32;WINDOWS;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;BOOST_ALL_NO_LIB;_UNICODE;UNICODE;WIN32;WINDOWS;</PreprocessorDefinitions>
     </ClCompile>
     <PostBuildEvent>
       <Command>XCOPY.EXE /Y "$(SolutionDir)\lib\*.dll" "$(OutDir)"
