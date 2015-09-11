@@ -207,7 +207,9 @@ private:
   ///////////////////////////////
   // parameters
   ///////////////////////////////
-  OG_COREAPI void insert_schema_param(schema_parameter_ptr _schm_par, bool );
+  OG_COREAPI void insert_schema_param(schema_parameter_ptr _schm_par, bool);
+
+  void import_schema_param(schema_parameter_ptr _schm_par);
 
   template <typename T>
   void insert_schema_basetype(schema_parameter_ptr _schm_param,

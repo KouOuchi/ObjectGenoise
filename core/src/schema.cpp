@@ -537,47 +537,40 @@ bool schema::import_from_file(string _path)
   xml_stream().read_from_file(_path, &pt);
 
   // schema parameter
+  BOOST_FOREACH(const ptree::value_type & child,
+                pt.get_child("og.schema.parameters"))
   {
-    BOOST_FOREACH(const ptree::value_type & child,
-                  pt.get_child("og.schema.parameters"))
+    // deserialize
+    schema_parameter_ptr schm_par(new schema_parameter(this));
+    if(serializer<schema_parameter_ptr>::deserialize(child, schm_par))
     {
-      // deserialize
-      schema_parameter_ptr schm_par(new schema_parameter(this));
-      if(serializer<schema_parameter_ptr>::deserialize(child, schm_par))
-      {
-        insert_schema_param(schm_par, false);
-        //import_parameter(schm_par, child);
-      }
+      insert_schema_param(schm_par, false);
     }
   }
 
   // schema object
+  BOOST_FOREACH(const ptree::value_type & child,
+                pt.get_child("og.schema.objects"))
   {
-    BOOST_FOREACH(const ptree::value_type & child,
-                  pt.get_child("og.schema.objects"))
-    {
-      // deserialize
-      schema_object_ptr schm_obj(new schema_object(this));
+    // deserialize
+    schema_object_ptr schm_obj(new schema_object(this));
 
-      if(serializer<schema_object_ptr>::deserialize(child, schm_obj))
-      {
-        import_object(schm_obj);
-      }
+    if(serializer<schema_object_ptr>::deserialize(child, schm_obj))
+    {
+      import_object(schm_obj);
     }
   }
 
   // schema relation
+  BOOST_FOREACH(const ptree::value_type & child,
+                pt.get_child("og.schema.relations"))
   {
-    BOOST_FOREACH(const ptree::value_type & child,
-                  pt.get_child("og.schema.relations"))
-    {
-      // deserialize
-      schema_relation_ptr schm_rel(new schema_relation(this));
+    // deserialize
+    schema_relation_ptr schm_rel(new schema_relation(this));
 
-      if(serializer<schema_relation_ptr>::deserialize(child, schm_rel))
-      {
-        import_relation(schm_rel);
-      }
+    if(serializer<schema_relation_ptr>::deserialize(child, schm_rel))
+    {
+      import_relation(schm_rel);
     }
   }
 
@@ -750,6 +743,12 @@ void schema::delete_parameter(string _param_id)
       <<
       "DELETE FROM schema_parameter WHERE id_ = :id_",
       soci::use(_param_id);
+}
+
+void schema::import_schema_param(schema_parameter_ptr _schm_par)
+{
+  insert_schema_param(_schm_par, false);
+  // CRUD operation
 }
 
 void schema::insert_schema_param(schema_parameter_ptr _schm_par, bool _initial)

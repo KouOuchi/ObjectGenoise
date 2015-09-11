@@ -9,7 +9,7 @@ namespace test_og_net
     public class UnitTest_Transaction
     {
         og.net.OGSession cleaned_session_ = null;
-        const string DBPATH = "../../../../sql/og.db";
+        const string DBPATH = "../../sql/og.db";
 
         [TestInitialize]
         public void TestInitialize()
