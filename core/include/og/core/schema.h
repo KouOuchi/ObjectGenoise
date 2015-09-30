@@ -174,10 +174,14 @@ public:
 
   void add_object_parameter_definition(string _o_id, string _param_name,
                                        schema_parameter_ptr _schm_par);
+  void add_object_parameter_definition(string _o_id, string _param_name,
+                                       string _schm_par_id);
   void delete_object_parameter_definition(string _o_id, string _param_name,
                                           schema_parameter_ptr _schm_par);
   void add_relation_parameter_definition(string _rel_id, string _param_name,
                                          schema_parameter_ptr _schm_par);
+  void add_relation_parameter_definition(string _rel_id, string _param_name,
+                                         string _schm_par_id);
   void delete_relation_parameter_definition(string _rel_id, string _param_name,
       schema_parameter_ptr _schm_par);
 
@@ -207,9 +211,7 @@ private:
   ///////////////////////////////
   // parameters
   ///////////////////////////////
-  OG_COREAPI void insert_schema_param(schema_parameter_ptr _schm_par, bool);
-
-  void import_schema_param(schema_parameter_ptr _schm_par);
+  OG_COREAPI void insert_schema_param(schema_parameter_ptr _schm_par, bool );
 
   template <typename T>
   void insert_schema_basetype(schema_parameter_ptr _schm_param,
@@ -268,8 +270,6 @@ private:
   ///////////////////////////////
   // file io and management
   ///////////////////////////////
-  void import_object(schema_object_ptr _schm_obj);
-  void import_relation(schema_relation_ptr _schm_rel);
   void import_parameter(schema_parameter_ptr _schm_par,
                         const ptree::value_type& _pt);
 

@@ -1,8 +1,9 @@
 #pragma once
 
 #undef TEST_ALL
-#define TEST_OG_SCHEMA 1
-#define TEST_OG_ETC 1
+#define TEST_ALL
+//#define TEST_OG_SCHEMA 1
+//#define TEST_OG_ETC 1
 
 #ifdef TEST_ALL
 #define TEST_OG_BASIC 1
@@ -31,8 +32,10 @@
 
 #include <string>
 #include <exception>
+#include <boost/filesystem.hpp>
 
 #define DBPATH "../sql/og.db"
+#define SRC_DBPATH "../sql/og_src.db"
 
 namespace pt = boost::posix_time;
 using namespace std;
@@ -49,13 +52,27 @@ struct fixture_clean_session
 
 };
 
+namespace fs = boost::filesystem;
+
 struct fixture_once
 {
   fixture_once()
   {
     BOOST_TEST_MESSAGE("test-core global setup");
     og::og_session cleaned_session_;
-    cleaned_session_.open(DBPATH);
+
+    const fs::path path(SRC_DBPATH); // コピー元
+    const fs::path dest(DBPATH); // コピー先
+
+    try {
+        fs::copy_file(path, dest, fs::copy_option::overwrite_if_exists);
+    }
+    catch (fs::filesystem_error& ex) {
+        std::cout << ex.what() << std::endl;
+        throw;
+    }
+
+	cleaned_session_.open(DBPATH);
     cleaned_session_.build();
   }
 

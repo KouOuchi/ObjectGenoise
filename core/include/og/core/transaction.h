@@ -17,11 +17,11 @@ class transaction
 {
 
 public:
-  transaction();
-  transaction(session& _session);
+  OG_COREAPI transaction();
+  OG_COREAPI transaction(session& _session);
   virtual ~transaction();
-  void rollback();
-  void commit();
+  OG_COREAPI void rollback();
+  OG_COREAPI void commit();
 
 private:
   scoped_ptr<soci::transaction> soci_tran_;

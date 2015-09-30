@@ -1,5 +1,6 @@
-#include "og/core/schema_base.h"
+#include "og/stdafx.h"
 
+#include "og/core/schema_base.h"
 
 namespace og
 {

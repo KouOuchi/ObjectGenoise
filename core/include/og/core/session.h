@@ -33,7 +33,7 @@ public:
   ///////////////////////////////
   OG_COREAPI bool import_from_file(string _path);
   OG_COREAPI void export_to_file(string _path);
-  OG_COREAPI void catchup_schema(string _path);
+  OG_COREAPI bool catchup_schema(string _path);
 
   OG_COREAPI void build();
   OG_COREAPI void open(string _connection_string);
@@ -211,7 +211,7 @@ private:
     session_parameter_ptr _sesn_parameter, parameter_basetype_enum _basetype);
 
   // worker method
-  void import_parameter_from_file(const ptree& _param_elm,
+  void import_parameter(const ptree& _param_elm,
                                   map<string, list<parameter_value_variant>>* _params);
 
 };

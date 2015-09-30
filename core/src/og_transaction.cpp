@@ -1,3 +1,5 @@
+#include "og/stdafx.h"
+
 #include "og/og_transaction.h"
 #include "og/og_session.h"
 #include "og/core/transaction.h"

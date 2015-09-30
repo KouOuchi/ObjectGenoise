@@ -7,7 +7,6 @@ using namespace std;
 #ifdef TEST_OG_ETC
 
 BOOST_FIXTURE_TEST_SUITE(etc, fixture_clean_session);
-#ifdef zero
 
 // xml export
 BOOST_AUTO_TEST_CASE(etc_1000_basic_import)
@@ -127,37 +126,33 @@ BOOST_AUTO_TEST_CASE(etc_1000_basic_import)
   og::og_session_object_ptr o1 = cleaned_session_.create_object(p1);
   og::og_session_object_ptr o2 = cleaned_session_.create_object(p2);
   og::og_session_relation_ptr o1o2 = o1->connect_to(o2, RELTYPE);
-  //o1o2->sync();
+
+  list<boost::tuple<string, og::og_schema_parameter_ptr>> __params_p1;
+  p1->get_parameters(&__params_p1);
+  list<boost::tuple<string, og::og_schema_parameter_ptr>> __params_rel;
+  rel_ptr->get_parameters(&__params_rel);
+  string p1id(p1->get_id());
+  string relid(rel_ptr->get_id());
 
   //cleaned_session_.schema_->export_to_file("schema.xml");
   cleaned_session_.schema()->export_to_file("schema.xml.gz");
-  //cleaned_session_.export_to_file("session.xml");
-  cleaned_session_.export_to_file("session.xml.gz");
-  cleaned_session_.purge();
-  cleaned_session_.import_from_file("session.xml.gz");
+  cleaned_session_.schema()->purge();
+  cleaned_session_.schema()->import_from_file("schema.xml.gz");
 
-  list<og::og_session_object_ptr> sesn_objs;
-  cleaned_session_.get_object_by_type(otype_list, &sesn_objs);
+  boost::optional<og::og_schema_object_ptr> p1test = cleaned_session_.schema()->get_object(p1id);
+  boost::optional<og::og_schema_relation_ptr> reltest = cleaned_session_.schema()->get_relation(relid);
 
-  BOOST_REQUIRE_EQUAL(sesn_objs.size(), 2);
+  list<boost::tuple<string, og::og_schema_parameter_ptr>> __params_p1_after;
+  p1test.get()->get_parameters(&__params_p1_after);
+  list<boost::tuple<string, og::og_schema_parameter_ptr>> __params_rel_after;
+  reltest.get()->get_parameters(&__params_rel_after);
 
-  for (list<og::og_session_object_ptr>::iterator it = sesn_objs.begin();
-       it != sesn_objs.end(); it++)
-  {
-    if ((*it)->get_schema_object_type() == OTYPE1)
-    {
-      list<og::og_session_object_ptr> sesn_cons;
-      (*it)->get_connected_object(&sesn_cons);
-      BOOST_REQUIRE_EQUAL(sesn_cons.size(), 1);
-    }
-  }
+  BOOST_REQUIRE_EQUAL(__params_p1.size(), __params_p1_after.size());
+  BOOST_REQUIRE_EQUAL(__params_rel.size(), __params_rel_after.size());
 }
-#endif
-
-
 
 // xml export
-BOOST_AUTO_TEST_CASE(etc_1002_normal_import)
+BOOST_AUTO_TEST_CASE(etc_1002_schema_verup)
 {
 #ifdef WINDOWS
   // TODO: CrtCheckMemory detects memory leak in this test.
@@ -307,7 +302,8 @@ BOOST_AUTO_TEST_CASE(etc_1002_normal_import)
   o3->set_parameter_value<double>("V4", 101.0);
   o3->set_parameter_value<string>("V6", "101");
 
-  cleaned_session_.export_to_file("session.xml.gz");
+  cleaned_session_.schema()->export_to_file("schema_xml_catchup0.xml.gz");
+  cleaned_session_.export_to_file("session_xml_catchup0.xml.gz");
 
   // catchup schema
   list<string> prop_type;
@@ -335,8 +331,10 @@ BOOST_AUTO_TEST_CASE(etc_1002_normal_import)
   p3->delete_parameter_definition(string("V6"), ptest6);
   rel_ptr13->delete_parameter_definition(string("I6"), ptest6);
 
+  cleaned_session_.schema()->export_to_file("schema_xml_catchup1.xml.gz");
+
   cleaned_session_.purge();
-  cleaned_session_.import_from_file("session.xml.gz");
+  BOOST_REQUIRE_EQUAL(true, cleaned_session_.import_from_file("session_xml_catchup0.xml.gz"));
 
   list<og::og_session_object_ptr> sesn_objs;
   cleaned_session_.get_object_by_type(otype_list, &sesn_objs);
@@ -398,7 +396,101 @@ BOOST_AUTO_TEST_CASE(etc_1002_normal_import)
   }
 }
 
+// xml export
+BOOST_AUTO_TEST_CASE(etc_1003_schema_catchup)
+{
+#ifdef WINDOWS
+  // TODO: CrtCheckMemory detects memory leak in this test.
+  //og::core::CrtCheckMemory __check__;
+#endif
+  string OTYPE1 = "Document2002from";
+  string OTYPE2 = "Document2002a to";
+  string OTYPE3 = "Document2002b to";
+  string RELTYPE1 = "Document2002rel";
+  string RELTYPE2 = "Document2002rel";
+  string ONAME = "Dcument-Name2002";
+  list<string> otype_list;
+  otype_list.push_back(OTYPE1);
+  otype_list.push_back(OTYPE2);
+  otype_list.push_back(OTYPE3);
+
+  // initialize db
+  og::og_session cleaned_session_;
+  cleaned_session_.open(DBPATH);
+  cleaned_session_.purge();
+  cleaned_session_.schema()->purge();
+  cleaned_session_.close();
+
+  cleaned_session_.open(DBPATH);
+
+  // pre condition
+  cleaned_session_.schema()->import_from_file("schema_xml_catchup0.xml.gz");
+  cleaned_session_.import_from_file("session_xml_catchup0.xml.gz");
+
+  bool res = cleaned_session_.catchup_schema("schema_xml_catchup1.xml.gz");
+
+  BOOST_REQUIRE_EQUAL(true, res);
+
+  list<og::og_session_object_ptr> sesn_objs;
+  cleaned_session_.get_object_by_type(otype_list, &sesn_objs);
+
+  BOOST_REQUIRE_EQUAL(sesn_objs.size(), 3);
+
+  for (list<og::og_session_object_ptr>::iterator it = sesn_objs.begin();
+       it != sesn_objs.end(); it++)
+  {
+    if ((*it)->get_schema_object_type() == OTYPE1)
+    {
+      list<og::og_session_object_ptr> sesn_cons;
+      (*it)->get_connected_object(&sesn_cons);
+      BOOST_REQUIRE_EQUAL(sesn_cons.size(), 2);
+
+      {
+        const string & sid = (*it)->get_schema_object_id();
+        boost::optional<og::og_schema_object_ptr> ssidob =
+          cleaned_session_.schema()->get_object(sid);
+
+        list<boost::tuple<string, og::og_schema_parameter_ptr>> __params;
+        ssidob.get()->get_parameters(&__params);
+
+        BOOST_REQUIRE_EQUAL(6, __params.size());
+      }
+
+      for (list<og::og_session_object_ptr>::iterator it2 = sesn_cons.begin();
+           it2 != sesn_cons.end(); it2++)
+      {
+        if (it2->get()->get_schema_object_type() == OTYPE2)
+        {
+          list<boost::tuple<string, og::og_schema_parameter_ptr>> __params2;
+          cleaned_session_.schema()->get_object(
+            it2->get()->get_schema_object_id())->get()->get_parameters(&__params2);
+
+          BOOST_REQUIRE_EQUAL(6, __params2.size());
+          it2->get()->set_parameter_value<int>("add int", 10);
+          it2->get()->set_parameter_value<double>("add real", 1.4142);
+          it2->get()->set_parameter_value<string>("add text", "hoge");
+
+          int i;
+          double ii;
+          string iii;
+		  it2->get()->get_parameter_value<int>("add int", &i);
+          it2->get()->get_parameter_value<double>("add real", &ii);
+          it2->get()->get_parameter_value<string>("add text", &iii);
+
+        }
+        if (it2->get()->get_schema_object_type() == OTYPE3)
+        {
+          list<boost::tuple<string, og::og_schema_parameter_ptr>> __params3;
+          cleaned_session_.schema()->get_object(
+            it2->get()->get_schema_object_id())->get()->get_parameters(&__params3);
+
+          BOOST_REQUIRE_EQUAL(2, __params3.size());
+        }
+      }
+    }
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 #endif //TEST_OG_ETC
-

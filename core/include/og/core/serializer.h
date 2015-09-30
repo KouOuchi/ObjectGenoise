@@ -27,7 +27,9 @@ struct serializer
   static void serialize(ptree& _src, T _tgt)
   {}
   static bool deserialize(const ptree::value_type& _tgt, T _src)
-  {}
+  {
+    return false;
+  }
 };
 
 template<>
@@ -71,8 +73,12 @@ struct serializer <session_object_ptr>
     if (oid.is_initialized() && soid.is_initialized() && type.is_initialized()
         && name.is_initialized() && revision.is_initialized())
     {
+      if(!_base->set_schema_object_by_id(soid.get()))
+      {
+        return false;
+      }
+
       _base->set_id(oid.get());
-	  _base->set_schema_object_by_id(soid.get());
       _base->set_type(type.get());
       _base->set_name(name.get());
       _base->set_revision(revision.get());
@@ -99,7 +105,7 @@ struct serializer <session_relation_ptr>
     ptree& child = _pt.add("relations.relation", "");
 
     child.put("<xmlattr>.id", _s->get_id());
-	child.put("<xmlattr>.schema_relation_id", _s->get_schema_relation_id());
+    child.put("<xmlattr>.schema_relation_id", _s->get_schema_relation_id());
     child.put("<xmlattr>.name", _s->get_name());
     child.put("<xmlattr>.from_id", _s->get_from_id());
     child.put("<xmlattr>.to_id", _s->get_to_id());
@@ -115,7 +121,6 @@ struct serializer <session_relation_ptr>
   static bool deserialize(const ptree::value_type& _pt,
                           session_relation_ptr _base)
   {
-
     optional<string> relid = _pt.second.get_optional<string>("<xmlattr>.id");
     optional<string> srelid =
       _pt.second.get_optional<string>("<xmlattr>.schema_relation_id");
@@ -132,18 +137,18 @@ struct serializer <session_relation_ptr>
     optional<string> create_date =
       _pt.second.get_optional<string>("<xmlattr>.create_date");
 
-    if (relid.is_initialized() && srelid.is_initialized() 
+    if (relid.is_initialized() && srelid.is_initialized()
         && name.is_initialized() && from_id.is_initialized() && to_id.is_initialized()
         && revision.is_initialized() && update_date.is_initialized()
         && create_date.is_initialized())
     {
       _base->set_id(relid.get());
-	  _base->set_schema_relation_by_id(srelid.get());
+      _base->set_schema_relation_by_id(srelid.get());
 
       _base->set_from_id(from_id.get());
       _base->set_to_id(to_id.get());
 
-	  _base->set_name(name.get());
+      _base->set_name(name.get());
       _base->set_revision(revision.get());
       _base->set_comment(comment.is_initialized() ? comment.get() : string(""));
       _base->set_update_date(update_date.get());
@@ -166,29 +171,21 @@ struct serializer < schema_object_parameter* >
                         schema_object_parameter* _base)
   {
     ptree& child = _pt.add("schema_object_parameter", "");
-    child.put("<xmlattr>.schema_object_id", _base->schema_object_id_);
+
     child.put("<xmlattr>.pid", _base->pid_);
     child.put("<xmlattr>.param_name", _base->param_name_);
   }
+
   static bool deserialize(const ptree::value_type& _pt,
                           schema_object_parameter* _base)
   {
-    if (!_pt.second.get_optional<string>("schema_object_parameter").is_initialized())
-    {
-      return false;
-    }
-
-    optional<string> sid =
-      _pt.second.get_optional<string>("<xmlattr>.schema_object_id");
     optional<string> pid = _pt.second.get_optional<string>("<xmlattr>.pid");
     optional<string> pname =
       _pt.second.get_optional<string>("<xmlattr>.param_name");
 
-
-    if (sid.is_initialized() && pid.is_initialized()
+    if (pid.is_initialized()
         && pname.is_initialized())
     {
-      _base->schema_object_id_ = sid.get();
       _base->pid_ = pid.get();
       _base->param_name_ = pname.get();
 
@@ -208,7 +205,6 @@ struct serializer < schema_relation_parameter* >
                         schema_relation_parameter* _base)
   {
     ptree& child = _pt.add("schema_relation_parameter", "");
-    child.put("<xmlattr>.schema_relation_id", _base->schema_relation_id_);
     child.put("<xmlattr>.pid", _base->pid_);
     child.put("<xmlattr>.param_name", _base->param_name_);
   }
@@ -216,21 +212,13 @@ struct serializer < schema_relation_parameter* >
   static bool deserialize(const ptree::value_type& _pt,
                           schema_relation_parameter* _base)
   {
-    if (!_pt.second.get_optional<string>("schema_relation_parameter").is_initialized())
-    {
-      return false;
-    }
-
-    optional<string> sid =
-      _pt.second.get_optional<string>("<xmlattr>.schema_relation_id");
     optional<string> pid = _pt.second.get_optional<string>("<xmlattr>.pid");
     optional<string> pname =
       _pt.second.get_optional<string>("<xmlattr>.param_name");
 
-    if (sid.is_initialized() && pid.is_initialized()
+    if (pid.is_initialized()
         && pname.is_initialized())
     {
-      _base->schema_relation_id_ = sid.get();
       _base->pid_ = pid.get();
       _base->param_name_ = pname.get();
 
@@ -257,30 +245,34 @@ struct serializer<parameter_basetype_integer*>
     child.put("<xmlattr>.warn_min", _base->warn_min_);
     child.put("<xmlattr>.warn_max", _base->warn_max_);
   }
+
   static bool deserialize(const ptree::value_type& _pt,
                           parameter_basetype_integer* _base)
   {
-    if (!_pt.second.get_optional<string>("parameter_basetype_integer").is_initialized())
-    {
-      return false;
-    }
+    ptree child = _pt.second.get_child("parameter_basetype_integer");
 
-    optional<string> def =
-      _pt.second.get_optional<string>("<xmlattr>.default_value");
-    optional<long> sys_min = _pt.second.get_optional<long>("<xmlattr>.system_min");
-    optional<long> sys_max = _pt.second.get_optional<long>("<xmlattr>.system_max");
-    optional<long> war_min = _pt.second.get_optional<long>("<xmlattr>.warn_min");
-    optional<long> war_max = _pt.second.get_optional<long>("<xmlattr>.warn_max");
+    optional<long> def =
+      child.get_optional<long>("<xmlattr>.default_value");
+    optional<long> sys_min = child.get_optional<long>("<xmlattr>.system_min");
+    optional<long> sys_max = child.get_optional<long>("<xmlattr>.system_max");
+    optional<long> war_min = child.get_optional<long>("<xmlattr>.warn_min");
+    optional<long> war_max = child.get_optional<long>("<xmlattr>.warn_max");
 
-    if (def.is_initialized() && sys_min.is_initialized()
-        && sys_max.is_initialized() && war_min.is_initialized()
-        && war_max.is_initialized())
+    if (def.is_initialized())
     {
-      _base->id_ = def.get();
-      _base->system_min_ = sys_min.get();
-      _base->system_max_ = sys_max.get();
-      _base->warn_min_ = war_min.get();
-      _base->warn_max_ = war_max.get();
+      _base->default_value_ = def.get();
+
+      if(sys_min.is_initialized())
+      { _base->system_min_ = sys_min.get(); }
+
+      if(sys_max.is_initialized())
+      { _base->system_max_ = sys_max.get(); }
+
+      if(war_min.is_initialized())
+      { _base->warn_min_ = war_min.get(); }
+
+      if(war_max.is_initialized())
+      { _base->warn_max_ = war_max.get(); }
 
       return true;
     }
@@ -308,31 +300,34 @@ struct serializer<parameter_basetype_real*>
   static bool deserialize(const ptree::value_type& _pt,
                           parameter_basetype_real* _base)
   {
-    if (!_pt.second.get_optional<string>("parameter_basetype_real").is_initialized())
-    {
-      return false;
-    }
+    ptree child = _pt.second.get_child("parameter_basetype_real");
 
-    optional<string> def =
-      _pt.second.get_optional<string>("<xmlattr>.default_value");
+    optional<double> def =
+      child.get_optional<double>("<xmlattr>.default_value");
     optional<double> sys_min =
-      _pt.second.get_optional<double>("<xmlattr>.system_min");
+      child.get_optional<double>("<xmlattr>.system_min");
     optional<double> sys_max =
-      _pt.second.get_optional<double>("<xmlattr>.system_max");
+      child.get_optional<double>("<xmlattr>.system_max");
     optional<double> war_min =
-      _pt.second.get_optional<double>("<xmlattr>.warn_min");
+      child.get_optional<double>("<xmlattr>.warn_min");
     optional<double> war_max =
-      _pt.second.get_optional<double>("<xmlattr>.warn_max");
+      child.get_optional<double>("<xmlattr>.warn_max");
 
-    if (def.is_initialized() && sys_min.is_initialized()
-        && sys_max.is_initialized() && war_min.is_initialized()
-        && war_max.is_initialized())
+    if (def.is_initialized())
     {
-      _base->id_ = def.get();
-      _base->system_min_ = sys_min.get();
-      _base->system_max_ = sys_max.get();
-      _base->warn_min_ = war_min.get();
-      _base->warn_max_ = war_max.get();
+      _base->default_value_ = def.get();
+
+      if(sys_min.is_initialized())
+      { _base->system_min_ = sys_min.get(); }
+
+      if(sys_max.is_initialized())
+      { _base->system_max_ = sys_max.get(); }
+
+      if(war_min.is_initialized())
+      { _base->warn_min_ = war_min.get(); }
+
+      if(war_max.is_initialized())
+      { _base->warn_max_ = war_max.get(); }
 
       return true;
     }
@@ -360,27 +355,30 @@ struct serializer<parameter_basetype_text*>
   static bool deserialize(const ptree::value_type& _pt,
                           parameter_basetype_text* _base)
   {
-    if (!_pt.second.get_optional<string>("parameter_basetype_real").is_initialized())
-    {
-      return false;
-    }
+    ptree child = _pt.second.get_child("parameter_basetype_text");
 
     optional<string> def =
-      _pt.second.get_optional<string>("<xmlattr>.default_value");
-    optional<long> sys_min = _pt.second.get_optional<long>("<xmlattr>.system_min");
-    optional<long> sys_max = _pt.second.get_optional<long>("<xmlattr>.system_max");
-    optional<long> war_min = _pt.second.get_optional<long>("<xmlattr>.warn_min");
-    optional<long> war_max = _pt.second.get_optional<long>("<xmlattr>.warn_max");
+      child.get_optional<string>("<xmlattr>.default_value");
+    optional<long> sys_min = child.get_optional<long>("<xmlattr>.system_min");
+    optional<long> sys_max = child.get_optional<long>("<xmlattr>.system_max");
+    optional<long> war_min = child.get_optional<long>("<xmlattr>.warn_min");
+    optional<long> war_max = child.get_optional<long>("<xmlattr>.warn_max");
 
-    if (def.is_initialized() && sys_min.is_initialized()
-        && sys_max.is_initialized() && war_min.is_initialized()
-        && war_max.is_initialized())
+    if (def.is_initialized())
     {
-      _base->id_ = def.get();
-      _base->system_min_ = sys_min.get();
-      _base->system_max_ = sys_max.get();
-      _base->warn_min_ = war_min.get();
-      _base->warn_max_ = war_max.get();
+      _base->default_value_ = def.get();
+
+      if(sys_min.is_initialized())
+      { _base->system_min_ = sys_min.get(); }
+
+      if(sys_max.is_initialized())
+      { _base->system_max_ = sys_max.get(); }
+
+      if(war_min.is_initialized())
+      { _base->warn_min_ = war_min.get(); }
+
+      if(war_max.is_initialized())
+      { _base->warn_max_ = war_max.get(); }
 
       return true;
     }
@@ -502,12 +500,8 @@ struct serializer<schema_parameter_ptr>
     _schm_par->set_update_date(update_date.get());
     _schm_par->set_create_date(create_date.get());
 
-    if(!import_parameter(_schm_par, _pt))
-    {
-      return false;
-    }
-
-    return true;
+    // have only 1 child
+    return import_parameter(_schm_par, _pt);
   }
 
   static bool import_parameter(schema_parameter_ptr _schm_par,
@@ -547,8 +541,8 @@ struct serializer<schema_parameter_ptr>
     {
       parameter_basetype_text* p =
         boost::get<parameter_basetype_text>(&_schm_par->basetype_variant_);
-      // deserialize
-      parameter_basetype_text base_t;
+
+	  // deserialize
       if (serializer<parameter_basetype_text*>::deserialize(_pt, p))
       {
         return true;
@@ -559,7 +553,6 @@ struct serializer<schema_parameter_ptr>
 
     return false;
   }
-
 };
 
 template<>
@@ -572,13 +565,15 @@ struct serializer<schema_object_ptr>
 
     child.put("<xmlattr>.id", _schm_obj->get_id());
     child.put("<xmlattr>.type", _schm_obj->get_type());
-    child.put("<xmlattr>.name", _schm_obj->get_type());
+    child.put("<xmlattr>.name", _schm_obj->get_name());
     child.put("<xmlattr>.revision", _schm_obj->get_revision());
     child.put("<xmlattr>.comment", _schm_obj->get_comment());
     child.put("<xmlattr>.update_date", _schm_obj->get_update_date());
     child.put("<xmlattr>.create_date", _schm_obj->get_create_date());
 
-    list < boost::tuple<string, schema_parameter_ptr> >
+	ptree& params = child.add("parameters", "");
+
+	list < boost::tuple<string, schema_parameter_ptr> >
     param_name_types;
     _schm_obj->get_parameters(&param_name_types);
 
@@ -589,11 +584,13 @@ struct serializer<schema_object_ptr>
                                 pit->get<1>()->get_id(),
                                 pit->get<0>());
 
-      serializer<schema_object_parameter*>::serialize(child, &p);
+      serializer<schema_object_parameter*>::serialize(params, &p);
     }
   }
+
   static bool deserialize(const ptree::value_type& _pt,
-                          schema_object_ptr _schm_obj)
+                          schema_object_ptr _schm_obj,
+                          list<schema_object_parameter>& _obj_params)
   {
     optional<string> oid = _pt.second.get_optional<string>("<xmlattr>.id");
     optional<string> type = _pt.second.get_optional<string>("<xmlattr>.type");
@@ -617,6 +614,14 @@ struct serializer<schema_object_ptr>
       _schm_obj->set_comment(comment.is_initialized() ? comment.get() : string(""));
       _schm_obj->set_update_date(update_date.get());
       _schm_obj->set_create_date(create_date.get());
+
+      BOOST_FOREACH(const ptree::value_type & child,
+                    _pt.second.get_child("parameters"))
+      {
+        schema_object_parameter op;
+        serializer<schema_object_parameter*>::deserialize(child, &op);
+        _obj_params.push_back(op);
+      }
 
       return true;
     }
@@ -654,6 +659,8 @@ struct serializer<schema_relation_ptr>
     child.put("<xmlattr>.to_min_multiplicity",
               _schm_rel->get_to_multiplicity().get_min());
 
+	ptree& params = child.add("parameters", "");
+
     list < boost::tuple<string, schema_parameter_ptr> >
     param_name_types;
     _schm_rel->get_parameters(&param_name_types);
@@ -665,12 +672,13 @@ struct serializer<schema_relation_ptr>
                                   pit->get<1>()->get_id(),
                                   pit->get<0>());
 
-      serializer<schema_relation_parameter*>::serialize(child, &p);
+      serializer<schema_relation_parameter*>::serialize(params, &p);
     }
 
   }
   static bool deserialize(const ptree::value_type& _pt,
-                          schema_relation_ptr _schm_rel)
+                          schema_relation_ptr _schm_rel,
+                          list<schema_relation_parameter>& _rel_params)
   {
     optional<string> relid = _pt.second.get_optional<string>("<xmlattr>.id");
     optional<string> type = _pt.second.get_optional<string>("<xmlattr>.type");
@@ -722,7 +730,15 @@ struct serializer<schema_relation_ptr>
                                from_max_multiplicity.get());
       to_m.set_multiplicity_(to_min_multiplicity.get(), to_max_multiplicity.get());
 
-      return true;
+      BOOST_FOREACH(const ptree::value_type & child,
+                    _pt.second.get_child("parameters"))
+      {
+        schema_relation_parameter rp;
+        serializer<schema_relation_parameter*>::deserialize(child, &rp);
+        _rel_params.push_back(rp);
+      }
+
+	  return true;
     }
     else
     {

@@ -1,3 +1,5 @@
+#include "og/stdafx.h"
+
 #include "og/core/schema_object.h"
 #include "og/core/schema.h"
 

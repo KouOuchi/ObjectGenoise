@@ -34,6 +34,7 @@ public:
   ///////////////////////////////
   OG_COREAPI bool import_from_file(string _path);
   OG_COREAPI void export_to_file(string _path);
+  OG_COREAPI bool catchup_schema(string _path);
 
   OG_COREAPI void open(string _connection_string);
   OG_COREAPI void close();

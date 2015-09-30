@@ -104,7 +104,7 @@ public:
   // schema ===>
   string get_schema_object_id();
   schema_object_ptr get_schema_object();
-  void set_schema_object_by_id(string _id);
+  bool set_schema_object_by_id(string _id);
   // forward to schema object
   virtual string get_type();
   void set_schema_object(schema_object_ptr _schm_obj);

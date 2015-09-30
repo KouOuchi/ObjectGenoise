@@ -1,3 +1,5 @@
+#include "og/stdafx.h"
+
 #include "og/core/session.h"
 #include "og/core/schema.h"
 #include "og/core/where_condition.h"
@@ -29,6 +31,7 @@ namespace core
 using namespace boost::property_tree;
 using namespace boost::property_tree::xml_parser;
 namespace pt = boost::posix_time;
+namespace fs = boost::filesystem;
 
 session::session(void) :
   soci_session_(new soci::session()),
@@ -129,9 +132,9 @@ void session::purge(bool _delete_schema_property_object)
        ++it)
   {
     if (it->get()->get_type().compare(schema::schema_property_object_type_) == 0 &&
-        _delete_schema_property_object)
+        !_delete_schema_property_object)
     {
-      break;
+      continue;
     }
     else
     {
@@ -200,24 +203,24 @@ bool session::import_object(session_object_ptr _sesn_obj,
   map<string, list<parameter_value_variant>> params_file;
 
   // get xml values
-  import_parameter_from_file(_param_elm, &params_file);
+  import_parameter(_param_elm, &params_file);
 
   //insert record
   insert_object(_sesn_obj);
 
   // check revision up or not
-  int schema_rev = boost::lexical_cast<int>
-                   (_sesn_obj->get_schema_object()->get_revision());
-  int session_rev = boost::lexical_cast<int>
-                    (_sesn_obj->get_revision());
+  //int schema_rev = boost::lexical_cast<int>
+  //                 (_sesn_obj->get_schema_object()->get_revision());
+  //int session_rev = boost::lexical_cast<int>
+  //                  (_sesn_obj->get_revision());
 
-  if (schema_rev > session_rev)
-  {
-  }
-  else
-  {
+  //if (schema_rev > session_rev)
+  //{
+  //}
+  //else
+  //{
 
-  }
+  //}
 
   // declare and get current parameters
   list<boost::tuple<string, schema_parameter_ptr>> param_name_types;
@@ -252,7 +255,7 @@ bool session::import_relation(session_relation_ptr _sesn_rel,
   map<string, list<parameter_value_variant>> params;
 
   // get xml values
-  import_parameter_from_file(_param_elm, &params);
+  import_parameter(_param_elm, &params);
 
   // check revision up or not
   int schema_rev = boost::lexical_cast<int>
@@ -295,7 +298,7 @@ bool session::import_relation(session_relation_ptr _sesn_rel,
   return true;
 }
 
-void session::import_parameter_from_file(const ptree& _param_elm,
+void session::import_parameter(const ptree& _param_elm,
     map<string, list<parameter_value_variant>>* _params)
 {
   BOOST_FOREACH(const ptree::value_type& pt, _param_elm.get_child("parameters"))
@@ -950,6 +953,16 @@ void session::get_relation_by_query(const T& _query,
 
 bool session::import_from_file(string _path)
 {
+  fs::path imp(_path);
+
+  boost::system::error_code error;
+  const bool result = fs::exists(imp, error);
+  if (!result || error)
+  {
+    OG_LOG << "import file is not found:" << _path;
+    return false;
+  }
+
   boost::property_tree::ptree pt;
   xml_stream().read_from_file(_path, &pt);
 
@@ -962,6 +975,23 @@ bool session::import_from_file(string _path)
     // deserialize
     if (serializer<session_object_ptr>::deserialize(child, sesn_obj))
     {
+      boost::optional<schema_object_ptr> schm_obj =
+        schema_->get_object(sesn_obj->get_schema_object_id());
+
+      if (schm_obj.is_initialized())
+      {
+        if (schm_obj.get()->get_type().compare(schema::schema_property_object_type_) ==
+            0)
+        {
+          list<string> prep;
+          list<schema_object_ptr> schm_objs;
+          prep.push_back(schema::schema_property_object_type_);
+
+          schema_->get_object_by_type(prep, &schm_objs);
+          sesn_obj->set_schema_object(schm_objs.front());
+        }
+      }
+
       if (!import_object(sesn_obj, child.second)) { continue; }
     }
   }
@@ -1175,9 +1205,7 @@ void session::sync_relation_parameter(
   }
 }
 
-namespace fs = boost::filesystem;
-
-void session::catchup_schema(string _path)
+bool session::catchup_schema(string _path)
 {
   OG_LOG << "catchup_schema start.";
 
@@ -1191,8 +1219,11 @@ void session::catchup_schema(string _path)
     throw og::core::exception() << exception_message("schema file is not found.");
   }
 
-  fs::path session_temp = fs::unique_path();
-  fs::path schema_temp = fs::unique_path(); // backup
+  fs::path session_temp = fs::unique_path("SESSION-%%%%-%%%%-%%%%-%%%%.xml.gz");
+  fs::path schema_temp = fs::unique_path("SCHEMA-%%%%-%%%%-%%%%-%%%%.xml.gz");
+
+  // start transaction
+  //transaction tran(*this);
 
   OG_LOG << "session backup:" << session_temp;
   export_to_file(session_temp.string());
@@ -1204,12 +1235,23 @@ void session::catchup_schema(string _path)
   schema_->purge();
 
   OG_LOG << "import schema from file";
-  schema_->import_from_file(_path);
+  if (!schema_->import_from_file(_path))
+  {
+    //tran.rollback();
+    return false;
+  }
 
   OG_LOG << "import session from backup";
-  import_from_file(session_temp.string());
+  if(!import_from_file(session_temp.string()))
+  {
+    //tran.rollback();
+    return false;
+  }
 
   OG_LOG << "catchup done.";
+
+  //tran.commit();
+  return true;
 }
 
 void session::delete_object_parameter_definition(string _param_name,

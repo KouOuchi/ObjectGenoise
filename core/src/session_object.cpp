@@ -1,3 +1,5 @@
+#include "og/stdafx.h"
+
 #include "og/core/session_object.h"
 
 #include "og/core/schema.h"
@@ -137,7 +139,8 @@ void session_object::get_connected_object(list<string>& _rel_type_list,
   std::unique(_sesn_obj_list->begin(), _sesn_obj_list->end(), &equals);
 }
 
-bool session_object::equals(const session_object_ptr& _x, const session_object_ptr& _y)
+bool session_object::equals(const session_object_ptr& _x,
+                            const session_object_ptr& _y)
 {
   return _x->get_id().compare(_y->get_id()) == 0;
 }
@@ -316,12 +319,17 @@ schema_object_ptr session_object::get_schema_object()
 {
   return schema_object_ptr_;
 }
-void session_object::set_schema_object_by_id(string _id)
+bool session_object::set_schema_object_by_id(string _id)
 {
   optional<schema_object_ptr> o(session_->schema_->get_object(_id));
   if(o.is_initialized())
   {
     schema_object_ptr_.swap(o.get());
+    return true;
+  }
+  else
+  {
+    return false;
   }
 }
 void session_object::set_schema_object(schema_object_ptr _schm_obj)

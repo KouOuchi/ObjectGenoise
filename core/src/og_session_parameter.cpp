@@ -1,3 +1,5 @@
+#include "og/stdafx.h"
+
 #include "og/og_session_parameter.h"
 #include "og/og_schema.h"
 #include "og/core/schema_parameter.h"

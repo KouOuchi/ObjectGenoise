@@ -1,3 +1,5 @@
+#include "og/stdafx.h"
+
 #include "og/og_schema_object.h"
 #include "og/og_schema_parameter.h"
 #include "og/og_converter.h"

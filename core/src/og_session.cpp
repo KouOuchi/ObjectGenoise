@@ -1,3 +1,5 @@
+#include "og/stdafx.h"
+
 #include "og/og_session.h"
 #include "og/og_schema_object.h"
 #include "og/og_session_object.h"
@@ -34,7 +36,7 @@ void og_session::close()
 
 void og_session::purge()
 {
-  session_->purge(false);
+  session_->purge(true);
 }
 
 og_schema* og_session::schema()
@@ -65,6 +67,10 @@ bool og_session::import_from_file(string _path)
 void og_session::export_to_file(string _path)
 {
   session_->export_to_file(_path);
+}
+bool og_session::catchup_schema(string _path)
+{
+  return session_->catchup_schema(_path);
 }
 
 optional<og_session_object_ptr> og_session::get_object(string _id)

@@ -1,23 +1,27 @@
+#include "og/stdafx.h"
+
 #include "og/core/schema.h"
 #include "og/core/mapping.h"
 #include "og/core/serializer.h"
 #include "og/core/xml_stream.h"
 #include "og/core/where_condition.h"
 #include "og/core/fetcher.h"
-
-using namespace boost::property_tree;
-using namespace boost::property_tree::xml_parser;
-namespace pt = boost::posix_time;
+#include <boost/filesystem.hpp>
 
 namespace og
 {
 namespace core
 {
 
+using namespace boost::property_tree;
+using namespace boost::property_tree::xml_parser;
+namespace pt = boost::posix_time;
+namespace fs = boost::filesystem;
+
 const char schema::schema_property_object_type_[] =
   "__SCHEMA_PROPERTY_TYPE__";
 const char schema::schema_property_object_name_[] =
-  "__SCHEMA_PROPERTY_NAME_";
+  "__SCHEMA_PROPERTY_NAME__";
 const char schema::schema_property_core_revision_[] = "__core_revision__";
 
 schema::schema()
@@ -126,8 +130,8 @@ void schema::add_relation(schema_relation_ptr _schm_rel)
 //}
 
 void schema::delete_object(string _oid,
-	list<boost::tuple<string, schema_parameter_ptr>>* _param_name_types)
-{	
+                           list<boost::tuple<string, schema_parameter_ptr>>* _param_name_types)
+{
   for (list<boost::tuple<string, schema_parameter_ptr>>::iterator it =
          _param_name_types->begin(); it != _param_name_types->end(); it++)
   {
@@ -532,6 +536,16 @@ void schema::get_relation_by_query(const T& _query,
 
 bool schema::import_from_file(string _path)
 {
+  fs::path imp(_path);
+
+  boost::system::error_code error;
+  const bool result = fs::exists(imp, error);
+  if (!result || error)
+  {
+    OG_LOG << "import file is not found:" << _path;
+    return false;
+  }
+
   // Create XML document
   boost::property_tree::ptree pt;
   xml_stream().read_from_file(_path, &pt);
@@ -555,9 +569,20 @@ bool schema::import_from_file(string _path)
     // deserialize
     schema_object_ptr schm_obj(new schema_object(this));
 
-    if(serializer<schema_object_ptr>::deserialize(child, schm_obj))
+    list<schema_object_parameter> obj_params;
+    if(serializer<schema_object_ptr>::deserialize(child, schm_obj, obj_params))
     {
-      import_object(schm_obj);
+      add_object(schm_obj);
+
+      for (list<schema_object_parameter>::iterator it = obj_params.begin();
+           it != obj_params.end(); it++)
+      {
+        add_object_parameter_definition(schm_obj->get_id(), it->param_name_, it->pid_);
+      }
+    }
+    else
+    {
+      return false;
     }
   }
 
@@ -567,25 +592,28 @@ bool schema::import_from_file(string _path)
   {
     // deserialize
     schema_relation_ptr schm_rel(new schema_relation(this));
+    list<schema_relation_parameter> rel_params;
 
-    if(serializer<schema_relation_ptr>::deserialize(child, schm_rel))
+    if (serializer<schema_relation_ptr>::deserialize(child, schm_rel, rel_params))
     {
-      import_relation(schm_rel);
+      add_relation(schm_rel);
+
+      for (list<schema_relation_parameter>::iterator it = rel_params.begin();
+           it != rel_params.end(); it++)
+      {
+        add_relation_parameter_definition(schm_rel->get_id(), it->param_name_,
+                                          it->pid_);
+      }
+    }
+    else
+    {
+      return false;
     }
   }
 
   return true;
 }
 
-void schema::import_object(schema_object_ptr _schm_obj)
-{
-  add_object(_schm_obj);
-}
-void schema::import_relation(schema_relation_ptr _schm_rel)
-{
-  add_relation(_schm_rel);
-}
-/*
 void schema::import_parameter(schema_parameter_ptr _schm_par,
                               const ptree::value_type& _pt)
 {
@@ -601,7 +629,7 @@ void schema::import_parameter(schema_parameter_ptr _schm_par,
     {
       //insert record
       insert_schema_basetype(_schm_par, base_i);
-      insert_schema_param(_schm_par, false);
+//      insert_schema_param(_schm_par, false);
     }
   }
   break;
@@ -614,7 +642,7 @@ void schema::import_parameter(schema_parameter_ptr _schm_par,
     {
       //insert record
       insert_schema_basetype(_schm_par, base_r);
-      insert_schema_param(_schm_par, false);
+//      insert_schema_param(_schm_par, false);
     }
   }
   break;
@@ -627,14 +655,14 @@ void schema::import_parameter(schema_parameter_ptr _schm_par,
     {
       //insert record
       insert_schema_basetype(_schm_par, base_t);
-      insert_schema_param(_schm_par, false);
+//      insert_schema_param(_schm_par, false);
     }
   }
   break;
   }
 
 }
-*/
+
 void schema::export_to_file(string _path)
 {
   // Create XML document
@@ -675,16 +703,21 @@ void schema::purge()
 {
   session_->purge(true);
 
-  *session_->soci_session_ << "DELETE FROM schema_relation_parameter;";
-  *session_->soci_session_ << "DELETE FROM schema_relation;";
-  *session_->soci_session_ << "DELETE FROM schema_object_parameter;";
-  *session_->soci_session_ << "DELETE FROM schema_object;";
   *session_->soci_session_ << "DELETE FROM schema_parameter_basetype_integer;";
   *session_->soci_session_ << "DELETE FROM schema_parameter_basetype_real;";
   *session_->soci_session_ << "DELETE FROM schema_parameter_basetype_text;";
   *session_->soci_session_ <<
                            "DELETE FROM schema_parameter_basetype_select_item;";
   *session_->soci_session_ << "DELETE FROM schema_parameter_basetype_select;";
+
+  *session_->soci_session_ << "DELETE FROM schema_relation_parameter;";
+  *session_->soci_session_ << "DELETE FROM schema_object_parameter;";
+
+  *session_->soci_session_ << "DELETE FROM schema_parameter;";
+
+  *session_->soci_session_ << "DELETE FROM schema_relation;";
+  *session_->soci_session_ << "DELETE FROM schema_object;";
+
 }
 
 template <>
@@ -743,12 +776,6 @@ void schema::delete_parameter(string _param_id)
       <<
       "DELETE FROM schema_parameter WHERE id_ = :id_",
       soci::use(_param_id);
-}
-
-void schema::import_schema_param(schema_parameter_ptr _schm_par)
-{
-  insert_schema_param(_schm_par, false);
-  // CRUD operation
 }
 
 void schema::insert_schema_param(schema_parameter_ptr _schm_par, bool _initial)
@@ -920,8 +947,14 @@ schema::get_relation_parameter_basetype_enum_by_param_name(
 void schema::add_object_parameter_definition(string _o_id, string _param_name,
     schema_parameter_ptr _schm_par)
 {
+  add_object_parameter_definition(_o_id, _param_name, _schm_par->get_id());
+}
+
+void schema::add_object_parameter_definition(string _o_id, string _param_name,
+    string _schm_par_id)
+{
   schema_object_parameter schm_o_par(
-    _o_id, _schm_par->get_id(), _param_name);
+    _o_id, _schm_par_id, _param_name);
 
   *session_->soci_session_
       <<
@@ -946,8 +979,14 @@ void schema::add_relation_parameter_definition(string _rel_id,
     string _param_name,
     schema_parameter_ptr _schm_par)
 {
+  add_relation_parameter_definition(_rel_id, _param_name, _schm_par->get_id());
+}
+void schema::add_relation_parameter_definition(string _rel_id,
+    string _param_name,
+    string _schm_par_id)
+{
   schema_relation_parameter schm_r_par(
-    _rel_id, _schm_par->get_id(), _param_name);
+    _rel_id, _schm_par_id, _param_name);
 
   *session_->soci_session_
       <<
