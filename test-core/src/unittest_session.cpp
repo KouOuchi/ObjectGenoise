@@ -13,7 +13,7 @@ BOOST_AUTO_TEST_CASE( session_1000 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE( session_1001 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE( session_1001 )
   {
     // re open session
     og::og_session ses2;
-    ses2.connect(DBPATH);
+    ses2.open(DBPATH);
 
     list<og::og_session_object_ptr> sesn_obj_list;
     ses2.get_object_by_type(otype_list, &sesn_obj_list);
@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE( session_1002 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -262,7 +262,7 @@ BOOST_AUTO_TEST_CASE( session_1004 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -365,7 +365,7 @@ BOOST_AUTO_TEST_CASE( session_1005 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -411,7 +411,7 @@ BOOST_AUTO_TEST_CASE(session_1006)
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -602,7 +602,7 @@ BOOST_AUTO_TEST_CASE(session_1007)
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -794,7 +794,7 @@ BOOST_AUTO_TEST_CASE(session_1008)
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -986,7 +986,7 @@ BOOST_AUTO_TEST_CASE( session_1100 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 

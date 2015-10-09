@@ -45,8 +45,8 @@ public:
   ///////////////////////////////
   OGSchemaRelation^ connect_from(OGSchemaObject^ _from, String^ _rel_type);
   OGSchemaRelation^ connect_to(OGSchemaObject^ _to, String^ _rel_type);
-  //void disconnect();
-  //void disconnect(OGSchemaObject^ _object);
+  void disconnect();
+  void disconnect(OGSchemaObject^ _object);
 
   ///////////////////////////////
   // object

@@ -47,15 +47,21 @@ public:
   OG_COREAPI schema();
   OG_COREAPI virtual ~schema();
 
+  OG_COREAPI static const char schema_property_object_type_[];
+  OG_COREAPI static const char schema_property_object_name_[];
+  OG_COREAPI static const char schema_property_core_revision_[];
+
   schema_object_ptr create_object(string _otype, string _oname);
   //schema_object_ptr copy_object(schema_object _object);
-  void delete_object(string _oid);
+  void delete_object(string _oid,
+	  list<boost::tuple<string, schema_parameter_ptr>>* _param_name_types);
 
   schema_relation_ptr create_relation(string _rel_type, string _rel_name,
                                       string _from_oid,
                                       string _to_oid);
-//  void disconnect(string _to_oid, string _from_oid);
-  void disconnect(string _rel_id);
+
+  void disconnect(string _rel_id,
+                  list<boost::tuple<string, schema_parameter_ptr>>* _param_name_types);
 
   // ===> transaction and synchronizing
   void sync_object(schema_object* _schm_obj);
@@ -168,8 +174,12 @@ public:
 
   void add_object_parameter_definition(string _o_id, string _param_name,
                                        schema_parameter_ptr _schm_par);
+  void delete_object_parameter_definition(string _o_id, string _param_name,
+                                          schema_parameter_ptr _schm_par);
   void add_relation_parameter_definition(string _rel_id, string _param_name,
                                          schema_parameter_ptr _schm_par);
+  void delete_relation_parameter_definition(string _rel_id, string _param_name,
+      schema_parameter_ptr _schm_par);
 
   template <typename P>
   void get_object_parameter_definition(string _o_id, string _param_name,

@@ -163,8 +163,8 @@
       </IgnoreAllDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY.EXE /Y "$(SolutionDir)lib\*.dll" "$(TargetDir)"
-XCOPY.EXE /Y "$(SolutionDir)lib\debug\*.dll" "$(TargetDir)"</Command>
+      <Command>REM XCOPY.EXE /Y "$(SolutionDir)lib\*.dll" "$(TargetDir)"
+REM XCOPY.EXE /Y "$(SolutionDir)lib\debug\*.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

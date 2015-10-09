@@ -71,9 +71,9 @@ void session_relation::sync()
 
 void session_relation::delete_relation()
 {
-  session_->disconnect(id_);
+  map<string, session_parameter_ptr>* param_map(get_parameters());
+  session_->disconnect(id_, param_map);
 }
-
 
 // <=== schema
 

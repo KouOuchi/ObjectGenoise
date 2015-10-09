@@ -2,6 +2,7 @@
 #include "og/core/schema.h"
 
 #include <soci.h>
+#include <algorithm>
 
 namespace og
 {
@@ -30,7 +31,6 @@ schema_object::~schema_object()
 schema_relation_ptr schema_object::connect_from(schema_object_ptr _from,
     string _otype)
 {
-
   return  schema_relation_ptr();
 }
 
@@ -40,13 +40,67 @@ schema_relation_ptr schema_object::connect_to(schema_object_ptr _to,
   return schema_->create_relation(_rel_type,  "", id_, _to->get_id());
 }
 
-//void schema_object::disconnect()
-//{
-//}
+void schema_object::disconnect()
+{
+  list<schema_relation_ptr> connected_rel_to;
+  list<schema_relation_ptr> connected_rel_from;
 
-//void schema_object::disconnect(schema_object_ptr _obj)
-//{
-//}
+  schema_->get_connected_relation_from(
+    get_id(),
+    list<string>(),
+    &connected_rel_from);
+
+  schema_->get_connected_relation_to(
+    get_id(),
+    list<string>(),
+    &connected_rel_to);
+
+  for (list<schema_relation_ptr>::iterator it = connected_rel_from.begin();
+       it != connected_rel_from.end(); it++)
+  {
+    (*it)->delete_relation();
+  }
+
+  for (list<schema_relation_ptr>::iterator it = connected_rel_to.begin();
+       it != connected_rel_to.end(); it++)
+  {
+    (*it)->delete_relation();
+  }
+}
+
+void schema_object::disconnect(schema_object_ptr _schm_obj)
+{
+  list<schema_relation_ptr> connected_rel_to;
+  list<schema_relation_ptr> connected_rel_from;
+
+  schema_->get_connected_relation_from(
+    get_id(),
+    list<string>(),
+    &connected_rel_from);
+
+  schema_->get_connected_relation_to(
+    get_id(),
+    list<string>(),
+    &connected_rel_to);
+
+  for (list<schema_relation_ptr>::iterator it = connected_rel_from.begin();
+       it != connected_rel_from.end(); it++)
+  {
+    if (it->get()->get_id().compare(_schm_obj->get_id()) == 0)
+    {
+      (*it)->delete_relation();
+    }
+  }
+
+  for (list<schema_relation_ptr>::iterator it = connected_rel_to.begin();
+       it != connected_rel_to.end(); it++)
+  {
+    if (it->get()->get_id().compare(_schm_obj->get_id()) == 0)
+    {
+      (*it)->delete_relation();
+    }
+  }
+}
 
 //schema_object_ptr schema_object::copy_object()
 //{
@@ -61,7 +115,11 @@ void schema_object::delete_object()
                           exception_message("unexpected. invalid schema"));
   }
 
-  schema_->delete_object(id_);
+  disconnect();
+
+  list<boost::tuple<string, schema_parameter_ptr>> param_name_types;
+  get_parameters(&param_name_types);
+  schema_->delete_object(id_, &param_name_types);
 }
 
 
@@ -90,17 +148,28 @@ void schema_object::get_connected_object(list<schema_object_ptr>*
   list<string> _rel_type_list;
   get_connected_object(_rel_type_list, _schm_object_list);
 }
+
+bool schema_object::equals(const schema_object_ptr& _x,
+                           const schema_object_ptr& _y)
+{
+  return _x->get_id().compare(_y->get_id()) == 0;
+}
+
 void schema_object::get_connected_object(list<string>& _rel_type_list,
     list<schema_object_ptr>* _schm_object_list)
 {
   _schm_object_list->clear();
 
-  list<schema_object_ptr> append;
-  schema_->get_connected_object_to(id_, _rel_type_list, _schm_object_list);
-  schema_->get_connected_object_from(id_, _rel_type_list, &append);
+  list<schema_object_ptr> list1;
+  list<schema_object_ptr> list2;
+  schema_->get_connected_object_to(id_, _rel_type_list, &list1);
+  schema_->get_connected_object_from(id_, _rel_type_list, &list2);
 
-  _schm_object_list->merge(append);
-  //_schm_object_list->unique();
+  _schm_object_list->clear();
+
+  _schm_object_list->splice(_schm_object_list->end(), list1);
+  _schm_object_list->splice(_schm_object_list->end(), list2);
+  std::unique(_schm_object_list->begin(), _schm_object_list->end(), &equals);
 }
 
 void schema_object::get_connected_object_to(list<schema_object_ptr>*
@@ -156,6 +225,16 @@ void schema_object::add_parameter_definition(string _param_name,
     schema_parameter_ptr _schm_par)
 {
   schema_->add_object_parameter_definition(id_, _param_name, _schm_par);
+
+  // set update date and revision
+  set_updated();
+  if(auto_revision_up_) { revision_up(); }
+}
+
+void schema_object::delete_parameter_definition(string _param_name,
+    schema_parameter_ptr _schm_par)
+{
+  schema_->delete_object_parameter_definition(id_, _param_name, _schm_par);
 
   // set update date and revision
   set_updated();

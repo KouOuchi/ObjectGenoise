@@ -86,6 +86,9 @@ public:
                                    string _oid_to);
   //object and its relation ends.
 
+  OG_COREAPI static const char* schema_property_object_type();
+  OG_COREAPI static const char* schema_property_object_name();
+  OG_COREAPI static const char* schema_property_core_revision();
 
   ///////////////////////////////
   // parameters
@@ -124,7 +127,6 @@ public:
 
 private:
   og::core::schema* schema_;
-
 
 };
 

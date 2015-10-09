@@ -13,7 +13,7 @@ BOOST_AUTO_TEST_CASE( transaction_1000 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE( transaction_1001 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 

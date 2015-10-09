@@ -34,7 +34,9 @@ schema_relation::~schema_relation()
 
 void schema_relation::delete_relation()
 {
-  schema_->disconnect(id_);
+  list<boost::tuple<string, schema_parameter_ptr>> param_name_types;
+  get_parameters(&param_name_types);
+  schema_->disconnect(id_, &param_name_types);
 }
 
 void schema_relation::sync()
@@ -66,6 +68,16 @@ void schema_relation::add_parameter_definition(string _param_name,
     schema_parameter_ptr _schm_par)
 {
   schema_->add_relation_parameter_definition(id_, _param_name, _schm_par);
+
+  // set update date and revision
+  set_updated();
+  if(auto_revision_up_) { revision_up(); }
+}
+
+void schema_relation::delete_parameter_definition(string _param_name,
+    schema_parameter_ptr _schm_par)
+{
+  schema_->delete_relation_parameter_definition(id_, _param_name, _schm_par);
 
   // set update date and revision
   set_updated();

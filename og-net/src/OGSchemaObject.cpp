@@ -86,14 +86,14 @@ OGSchemaRelation^ OGSchemaObject::connect_to(OGSchemaObject^ _to,
                  _to->og_schema_object_, str)));
 }
 
-//void OGSchemaObject::disconnect()
-//{
-//  og_schema_object_->disconnect();
-//}
-//void OGSchemaObject::disconnect(OGSchemaObject^ _object)
-//{
-//  og_schema_object_->disconnect(_object->og_schema_object_);
-//}
+void OGSchemaObject::disconnect()
+{
+  og_schema_object_->disconnect();
+}
+void OGSchemaObject::disconnect(OGSchemaObject^ _object)
+{
+  og_schema_object_->disconnect(_object->og_schema_object_);
+}
 
 //OGSchemaObject^ OGSchemaObject::copy_object(void)
 //{

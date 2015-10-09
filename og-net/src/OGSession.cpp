@@ -29,7 +29,7 @@ void OGSession::connect(String^ _connection_string)
   std::string str;
   OGConverter::convert_clr_to_std<String, std::string>(_connection_string, &str);
 
-  og_session_->session_->connect(str);
+  og_session_->session_->open(str);
 }
 
 
@@ -50,7 +50,7 @@ void OGSession::export_to_file(String^ _path)
 
 void OGSession::purge()
 {
-  og_session_->session_->purge();
+  og_session_->session_->purge(false);
 }
 void OGSession::build()
 {
@@ -64,13 +64,13 @@ OGSessionObject^ OGSession::create_object(OGSchemaObject^ _schm_obj)
              og_session_->create_object(_schm_obj->og_schema_object_)));
 }
 
-void OGSession::delete_object(String^ _id)
-{
-  std::string str;
-  OGConverter::convert_clr_to_std<String, std::string>(_id, &str);
-
-  og_session_->session_->delete_object(str);
-}
+//void OGSession::delete_object(String^ _id)
+//{
+//  std::string str;
+//  OGConverter::convert_clr_to_std<String, std::string>(_id, &str);
+//
+//  og_session_->session_->delete_object(str);
+//}
 
 /*Nullable*/OGSessionObject^ OGSession::get_object(String^ _id)
 {

@@ -5,7 +5,6 @@
 #include "og/core/where_condition.h"
 #include "og/core/fetcher.h"
 
-
 using namespace boost::property_tree;
 using namespace boost::property_tree::xml_parser;
 namespace pt = boost::posix_time;
@@ -14,6 +13,12 @@ namespace og
 {
 namespace core
 {
+
+const char schema::schema_property_object_type_[] =
+  "__SCHEMA_PROPERTY_TYPE__";
+const char schema::schema_property_object_name_[] =
+  "__SCHEMA_PROPERTY_NAME_";
+const char schema::schema_property_core_revision_[] = "__core_revision__";
 
 schema::schema()
   : session_(NULL)
@@ -120,8 +125,53 @@ void schema::add_relation(schema_relation_ptr _schm_rel)
 //  return schema_object_ptr();
 //}
 
-void schema::delete_object(string _oid)
-{
+void schema::delete_object(string _oid,
+	list<boost::tuple<string, schema_parameter_ptr>>* _param_name_types)
+{	
+  for (list<boost::tuple<string, schema_parameter_ptr>>::iterator it =
+         _param_name_types->begin(); it != _param_name_types->end(); it++)
+  {
+    parameter_basetype_enum t =
+      schema_parameter::convert_to_parameter_basetype_enum(
+        it->get<1>()->get_basetype());
+
+    switch (t)
+    {
+    case parameter_basetype_enum::integer:
+      *session_->soci_session_
+          << "DELETE schema_parameter_basetype_integer.* INNER JOIN "
+          "schema_parameter ON schema_object_parameter.pid = schema_parameter.id_ INNER JOIN"
+          "schema_parameter_basetype_integer ON schema_parameter.id_ = schema_parameter_basetype_integer.param_id "
+          "WHERE schema_object_parameter.schema_object_id = :_o_id"
+          "schema_object_parameter.param_name = :_param_name"
+          , soci::use(_oid)
+          , soci::use(it->get<0>());
+      break;
+
+    case parameter_basetype_enum::real:
+      *session_->soci_session_
+          << "DELETE schema_parameter_basetype_real.* INNER JOIN "
+          "schema_parameter ON schema_object_parameter.pid = schema_parameter.id_ INNER JOIN"
+          "schema_parameter_basetype_real ON schema_parameter.id_ = schema_parameter_basetype_real.param_id "
+          "WHERE schema_object_parameter.schema_object_id = :_o_id"
+          "schema_object_parameter.param_name = :_param_name"
+          , soci::use(_oid)
+          , soci::use(it->get<0>());
+      break;
+
+    case parameter_basetype_enum::text:
+      *session_->soci_session_
+          << "DELETE schema_parameter_basetype_text.* INNER JOIN "
+          "schema_parameter ON schema_object_parameter.pid = schema_parameter.id_ INNER JOIN"
+          "schema_parameter_basetype_text ON schema_parameter.id_ = schema_parameter_basetype_text.param_id "
+          "WHERE schema_object_parameter.schema_object_id = :_o_id"
+          "schema_object_parameter.param_name = :_param_name"
+          , soci::use(_oid)
+          , soci::use(it->get<0>());
+      break;
+    }
+  }
+
   // delete from db
   *session_->soci_session_
       <<
@@ -129,9 +179,54 @@ void schema::delete_object(string _oid)
       soci::use(_oid);
 }
 
-
-void schema::disconnect(string _rel_id)
+void schema::disconnect(string _rel_id,
+                        list<boost::tuple<string, schema_parameter_ptr>>* _param_name_types)
 {
+  for (list<boost::tuple<string, schema_parameter_ptr>>::iterator it =
+         _param_name_types->begin(); it != _param_name_types->end(); it++)
+  {
+    parameter_basetype_enum t =
+      schema_parameter::convert_to_parameter_basetype_enum(
+        it->get<1>()->get_basetype());
+
+    switch (t)
+    {
+    case parameter_basetype_enum::integer:
+      *session_->soci_session_
+          << "DELETE schema_parameter_basetype_integer.* INNER JOIN "
+          "schema_parameter ON schema_relation_parameter.pid = schema_parameter.id_ INNER JOIN"
+          "schema_parameter_basetype_integer ON schema_parameter.id_ = schema_parameter_basetype_integer.param_id "
+          "WHERE schema_relation_parameter.schema_relation_id = :_o_id"
+          "schema_relation_parameter.param_name = :_param_name"
+          , soci::use(_rel_id)
+          , soci::use(it->get<0>());
+      break;
+
+    case parameter_basetype_enum::real:
+      *session_->soci_session_
+          << "SELECT schema_parameter_basetype_real.* INNER JOIN "
+          "schema_parameter ON schema_relation_parameter.pid = schema_parameter.id_ INNER JOIN"
+          "schema_parameter_basetype_real ON schema_parameter.id_ = schema_parameter_basetype_real.param_id "
+          "WHERE schema_relation_parameter.schema_relation_id = :_o_id"
+          "schema_relation_parameter.param_name = :_param_name"
+          , soci::use(_rel_id)
+          , soci::use(it->get<0>());
+      break;
+
+    case parameter_basetype_enum::text:
+      *session_->soci_session_
+          << "SELECT schema_parameter_basetype_text.* INNER JOIN "
+          "schema_parameter ON schema_relation_parameter.pid = schema_parameter.id_ INNER JOIN"
+          "schema_parameter_basetype_text ON schema_parameter.id_ = schema_parameter_basetype_text.param_id "
+          "WHERE schema_relation_parameter.schema_relation_id = :_o_id"
+          "schema_relation_parameter.param_name = :_param_name"
+          , soci::use(_rel_id)
+          , soci::use(it->get<0>());
+      break;
+
+    }
+  }
+
   // delete from db
   *session_->soci_session_
       <<
@@ -585,6 +680,8 @@ void schema::export_to_file(string _path)
 
 void schema::purge()
 {
+  session_->purge(true);
+
   *session_->soci_session_ << "DELETE FROM schema_relation_parameter;";
   *session_->soci_session_ << "DELETE FROM schema_relation;";
   *session_->soci_session_ << "DELETE FROM schema_object_parameter;";
@@ -833,6 +930,19 @@ void schema::add_object_parameter_definition(string _o_id, string _param_name,
       "VALUES (:schema_object_id, :pid, :param_name)",
       soci::use(schm_o_par);
 }
+void schema::delete_object_parameter_definition(string _o_id,
+    string _param_name,
+    schema_parameter_ptr _schm_par)
+{
+  // delete all parameters in session
+  session_->delete_object_parameter_definition(_param_name, _schm_par);
+
+  *session_->soci_session_
+      <<
+      "DELETE FROM schema_object_parameter WHERE schema_object_id = :schema_object_id AND param_name = "
+      " :param_name and pid = :pid",
+      soci::use(_o_id), soci::use(_param_name), soci::use(_schm_par->get_id());
+}
 void schema::add_relation_parameter_definition(string _rel_id,
     string _param_name,
     schema_parameter_ptr _schm_par)
@@ -845,6 +955,20 @@ void schema::add_relation_parameter_definition(string _rel_id,
       "INSERT INTO schema_relation_parameter(schema_relation_id, pid, param_name) "
       "VALUES (:schema_relation_id, :pid, :param_name)",
       soci::use(schm_r_par);
+}
+
+void schema::delete_relation_parameter_definition(string _rel_id,
+    string _param_name,
+    schema_parameter_ptr _schm_par)
+{
+  // delete all parameters in session
+  session_->delete_relatoin_parameter_definition(_param_name, _schm_par);
+
+  *session_->soci_session_
+      <<
+      "DELETE FROM schema_relation_parameter WHERE schema_relation_id = :schema_object_id AND param_name = "
+      " :param_name and pid = :pid",
+      soci::use(_rel_id), soci::use(_param_name), soci::use(_schm_par->get_id());
 }
 
 template <>

@@ -17,6 +17,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>
 
 #include <sqlite3/soci-sqlite3.h>
 
@@ -41,6 +42,8 @@ session::~session()
 
 void session::build()
 {
+  set_foreign_key(false);
+
   vector<string> sql_commands;
   boost::algorithm::split(sql_commands, schema_sql,
                           boost::algorithm::is_any_of(";"));
@@ -58,6 +61,9 @@ void session::build()
     }
   }
 
+  // enabled
+  set_foreign_key(true);
+
   // check seq initial value
   initialize_sqlite_sequence("schema_object_seq");
   initialize_sqlite_sequence("schema_relation_seq");
@@ -66,9 +72,16 @@ void session::build()
   initialize_sqlite_sequence("session_relation_seq");
 }
 
-void session::initialize_sqlite_session()
+void session::set_foreign_key(bool _enable)
 {
-  *(soci_session_.get()) << "PRAGMA foreign_keys = true";
+  if (_enable)
+  {
+    *(soci_session_.get()) << "PRAGMA foreign_keys = true";
+  }
+  else
+  {
+    *(soci_session_.get()) << "PRAGMA foreign_keys = false";
+  }
 }
 
 void session::initialize_sqlite_sequence(string _tbl)
@@ -83,28 +96,59 @@ void session::initialize_sqlite_sequence(string _tbl)
   }
 }
 
-void session::connect(string _connection_string)
+void session::open(string _connection_string)
 {
   soci_session_->open(soci::sqlite3, _connection_string);
+
+  // enable foreign key
+  set_foreign_key(true);
+
   // set session
   schema_->initialize(this);
 }
-
-void session::purge()
+void session::close()
 {
+  soci_session_->close();
+}
 
+void session::purge(bool _delete_schema_property_object)
+{
+  list<session_relation_ptr> rels;
+  get_relation_by_query(where_clause<string>("1=1"), &rels);
+
+  for (list<session_relation_ptr>::iterator it = rels.begin(); it != rels.end();
+       ++it)
+  {
+    it->get()->delete_relation();
+  }
+
+  list<session_object_ptr> objs;
+  get_object_by_query(where_clause<string>("1=1"), &objs);
+
+  for (list<session_object_ptr>::iterator it = objs.begin(); it != objs.end();
+       ++it)
+  {
+    if (it->get()->get_type().compare(schema::schema_property_object_type_) == 0 &&
+        _delete_schema_property_object)
+    {
+      break;
+    }
+    else
+    {
+      it->get()->delete_object();
+    }
+  }
+
+  /*
   (*soci_session_) << "DELETE FROM session_relation_parameter_basetype_integer;";
   (*soci_session_) << "DELETE FROM session_relation_parameter_basetype_real;";
   (*soci_session_) << "DELETE FROM session_relation_parameter_basetype_text;";
-//  (*soci_session_) << "DELETE FROM session_relation_parameter_basetype_select_item;";
-//  (*soci_session_) << "DELETE FROM session_relation_parameter_basetype_select;";
   (*soci_session_) << "DELETE FROM session_relation;";
   (*soci_session_) << "DELETE FROM session_object_parameter_basetype_integer;";
   (*soci_session_) << "DELETE FROM session_object_parameter_basetype_real;";
   (*soci_session_) << "DELETE FROM session_object_parameter_basetype_text;";
-//  (*soci_session_) << "DELETE FROM session_object_parameter_basetype_select_item;";
-//  (*soci_session_) << "DELETE FROM session_object_parameter_basetype_select;";
   (*soci_session_) << "DELETE FROM session_object;";
+  */
 }
 
 void session::get_sequence(string* _id)
@@ -135,13 +179,7 @@ session_object_ptr session::create_object(schema_object_ptr _schm_obj)
   sesn_obj->set_revision(REVISION_INIT_VALUE);
 
   //insert record
-  *(soci_session_.get())
-      <<
-      "INSERT INTO session_object(id_, schema_object_id, comment, "
-      "name, revision, create_date, update_date) "
-      "values(:id_, :schema_object_id, :comment, "
-      ":name, :revision, :create_date, :update_date)",
-      soci::use(*(sesn_obj.get()));
+  insert_object(sesn_obj);
 
   list<boost::tuple<string, schema_parameter_ptr>> param_name_types;
   _schm_obj->get_parameters(&param_name_types);
@@ -149,104 +187,7 @@ session_object_ptr session::create_object(schema_object_ptr _schm_obj)
   for (list<boost::tuple<string, schema_parameter_ptr>>::iterator pit
        = param_name_types.begin(); pit != param_name_types.end(); pit++)
   {
-    string schema_par_id = pit->get<1>()->get_id();
-    parameter_basetype_enum t =
-      schema_parameter::convert_to_parameter_basetype_enum(
-        pit->get<1>()->get_basetype());
-
-    //data target
-    list<parameter_value_variant> target_list;
-
-    int i_max = pit->get<1>()->get_default_array_size();
-    for (int i = 0; i < i_max; i++)
-    {
-      switch (t)
-      {
-      case parameter_basetype_enum::integer:
-      {
-        int def(0);
-        *(soci_session_.get())
-            <<
-            "SELECT default_value FROM schema_parameter "
-            "INNER JOIN schema_parameter_basetype_integer "
-            "ON schema_parameter.id_ = schema_parameter_basetype_integer.id_ "
-            "WHERE schema_parameter.id_ = :pid"
-            , soci::use(schema_par_id)
-            , soci::into(def);
-
-        *(soci_session_.get())
-            <<
-            "INSERT INTO session_object_parameter_basetype_integer(oid, param_name, "
-            "array_index, value) VALUES "
-            "(:oid, :param_name, :array_index, :default_value)"
-            , soci::use(sesn_obj->get_id())
-            , soci::use(pit->get<0>())
-            , soci::use(i)
-            , soci::use(def);
-
-        target_list.push_back(def);
-      }
-      break;
-
-      case parameter_basetype_enum::real:
-      {
-        double def(0);
-        *(soci_session_.get())
-            <<
-            "SELECT default_value FROM schema_parameter "
-            "INNER JOIN schema_parameter_basetype_real "
-            "ON schema_parameter.id_ = schema_parameter_basetype_real.id_ "
-            "WHERE schema_parameter.id_ = :pid"
-            , soci::use(schema_par_id)
-            , soci::into(def);
-
-        *(soci_session_.get())
-            <<
-            "INSERT INTO session_object_parameter_basetype_real(oid, param_name, "
-            "array_index, value) VALUES "
-            "(:oid, :param_name, :array_index, :default_value)"
-            , soci::use(sesn_obj->get_id())
-            , soci::use(pit->get<0>())
-            , soci::use(i)
-            , soci::use(def);
-
-        target_list.push_back(def);
-      }
-      break;
-      case parameter_basetype_enum::text:
-      {
-        string def("");
-        *(soci_session_.get())
-            <<
-            "SELECT default_value FROM schema_parameter "
-            "INNER JOIN schema_parameter_basetype_text "
-            "ON schema_parameter.id_ = schema_parameter_basetype_text.id_ "
-            "WHERE schema_parameter.id_ = :pid"
-            , soci::use(schema_par_id)
-            , soci::into(def);
-
-        *(soci_session_.get())
-            <<
-            "INSERT INTO session_object_parameter_basetype_text(oid, param_name, "
-            "array_index, value) VALUES "
-            "(:oid, :param_name, :array_index, :default_value)"
-            , soci::use(sesn_obj->get_id())
-            , soci::use(pit->get<0>())
-            , soci::use(i)
-            , soci::use(def);
-
-        target_list.push_back(def);
-      }
-      break;
-
-      }
-    }
-
-    // register data
-    sesn_obj->get_parameters()->insert(
-      std::make_pair(boost::get<0>(*pit),
-                     session_parameter_ptr(new session_parameter(target_list,
-                                           boost::get<1>(*pit)))));
+    insert_object_parameter_by_default(sesn_obj, *pit);
   }
 
   return sesn_obj;
@@ -255,11 +196,14 @@ session_object_ptr session::create_object(schema_object_ptr _schm_obj)
 bool session::import_object(session_object_ptr _sesn_obj,
                             const ptree& _param_elm)
 {
-  // declare insert target
-  map<string, list<parameter_value_variant>> params;
+  // declare insert target and current schema's target
+  map<string, list<parameter_value_variant>> params_file;
 
   // get xml values
-  import_parameter_from_file(_param_elm, &params);
+  import_parameter_from_file(_param_elm, &params_file);
+
+  //insert record
+  insert_object(_sesn_obj);
 
   // check revision up or not
   int schema_rev = boost::lexical_cast<int>
@@ -275,14 +219,28 @@ bool session::import_object(session_object_ptr _sesn_obj,
 
   }
 
-  //insert record
-  *(soci_session_.get())
-      <<
-      "INSERT INTO session_object(id_, schema_object_id, comment, "
-      "name, revision, create_date, update_date) "
-      "values(:id_, :schema_object_id, :comment, "
-      ":name, :revision, :create_date, :update_date)",
-      soci::use(*(_sesn_obj.get()));
+  // declare and get current parameters
+  list<boost::tuple<string, schema_parameter_ptr>> param_name_types;
+  _sesn_obj->get_schema_object()->get_parameters(&param_name_types);
+
+  for (list<boost::tuple<string, schema_parameter_ptr>>::iterator pit =
+         param_name_types.begin();
+       pit != param_name_types.end(); pit++)
+  {
+    map<string, list<parameter_value_variant>>::iterator fit =
+        params_file.find(pit->get<0>());
+
+    if (fit == params_file.end())
+    {
+      // not found. parameter may be created as new.
+      insert_object_parameter_by_default(_sesn_obj, *pit);
+    }
+    else
+    {
+      // fonud.
+      insert_object_parameter_with_arg(_sesn_obj, *pit, fit->second);
+    }
+  }
 
   return true;
 }
@@ -311,14 +269,7 @@ bool session::import_relation(session_relation_ptr _sesn_rel,
   }
 
   //insert record
-  *(soci_session_.get())
-      <<
-      "INSERT INTO session_relation(id_, schema_relation_id, comment, "
-      "name, revision, create_date, update_date, from_id, to_id) "
-      "values(:id_, :schema_relation_id, :comment, "
-      ":name, :revision, :create_date, :update_date, :from_id, :to_id)"
-      , soci::use(*(_sesn_rel));
-
+  insert_relation(_sesn_rel);
 
   list<boost::tuple<string, schema_parameter_ptr>> param_name_types;
   _sesn_rel->get_schema_relation()->get_parameters(&param_name_types);
@@ -326,70 +277,21 @@ bool session::import_relation(session_relation_ptr _sesn_rel,
   for (list<boost::tuple<string, schema_parameter_ptr>>::iterator pit
        = param_name_types.begin(); pit != param_name_types.end(); pit++)
   {
-
-    map<string, list<parameter_value_variant>>::iterator mait =
+    map<string, list<parameter_value_variant>>::iterator fit =
         params.find(pit->get<0>());
 
-    if (mait == params.end()) { continue; }
-
-    // in this case, key always exists.
-    parameter_basetype_enum t =
-      schema_parameter::convert_to_parameter_basetype_enum(
-        pit->get<1>()->get_basetype());
-
-    list<parameter_value_variant>::iterator mait_it = mait->second.begin();
-    for (int i = 0; mait_it != mait->second.end(); mait_it++, i++)
+    if (fit == params.end())
     {
-      OG_LOG << "PARAM :rid, :param_name, :array_index, :value) ";
-      OG_LOG << _sesn_rel->get_id();
-      OG_LOG << pit->get<0>();
-      OG_LOG << i;
-
-      switch (t)
-      {
-      case parameter_basetype_enum::integer:
-        OG_LOG << boost::get<int>(*mait_it);
-
-        *(soci_session_.get())
-            <<
-            "INSERT INTO session_relation_parameter_basetype_integer(relid, param_name, "
-            "array_index, value) VALUES "
-            "(:rid, :param_name, :array_index, :value) "
-            , soci::use(_sesn_rel->get_id())
-            , soci::use(pit->get<0>())
-            , soci::use(i)
-            , soci::use(boost::get<int>(*mait_it));
-        break;
-      case parameter_basetype_enum::real:
-        OG_LOG << boost::get<double>(*mait_it);
-
-        *(soci_session_.get())
-            <<
-            "INSERT INTO session_relation_parameter_basetype_real(relid, param_name, "
-            "array_index, value) VALUES "
-            "(:rid, :param_name, :array_index, :value) "
-            , soci::use(_sesn_rel->get_id())
-            , soci::use(pit->get<0>())
-            , soci::use(i)
-            , soci::use(boost::get<double>(*mait_it));
-        break;
-      case parameter_basetype_enum::text:
-        OG_LOG << boost::get<string>(*mait_it);
-
-        *(soci_session_.get())
-            <<
-            "INSERT INTO session_relation_parameter_basetype_text(relid, param_name, "
-            "array_index, value) VALUES "
-            "(:rid, :param_name, :array_index, :value) "
-            , soci::use(_sesn_rel->get_id())
-            , soci::use(pit->get<0>())
-            , soci::use(i)
-            , soci::use(boost::get<string>(*mait_it));
-        break;
-      }
+      // not found. parameter may be created as new.
+      insert_relation_parameter_by_default(_sesn_rel, *pit);
     }
-  }
+    else
+    {
+      // fonud.
+      insert_relation_parameter_with_arg(_sesn_rel, *pit, fit->second);
+    }
 
+  }
   return true;
 }
 
@@ -575,8 +477,53 @@ void session::get_object(list<string>& _oid_list,
   }
 }
 
-void session::delete_object(string _id)
+void session::delete_object(string _id,
+                            map<string, session_parameter_ptr>* _param_map)
 {
+  for (map<string, session_parameter_ptr>::iterator it = _param_map->begin();
+       it != _param_map->end(); ++it)
+  {
+    parameter_basetype_enum t =
+      schema_parameter::convert_to_parameter_basetype_enum(
+        it->second->schema_parameter_->get_basetype());
+
+    switch (t)
+    {
+    case parameter_basetype_enum::integer:
+
+      *soci_session_
+          << "DELETE FROM session_object_parameter_basetype_integer "
+          "WHERE oid = :oid AND param_name = :param_name "
+          , soci::use(_id)
+          , soci::use(it->first);
+      break;
+
+    case parameter_basetype_enum::real:
+      *soci_session_
+          << "DELETE FROM session_object_parameter_basetype_real "
+          "WHERE oid = :oid AND param_name = :param_name "
+          , soci::use(_id)
+          , soci::use(it->first);
+      break;
+
+    case parameter_basetype_enum::text:
+      *soci_session_
+          << "DELETE FROM session_object_parameter_basetype_text "
+          "WHERE oid = :oid AND param_name = :param_name "
+          , soci::use(_id)
+          , soci::use(it->first);
+      break;
+
+    case parameter_basetype_enum::select:
+      *soci_session_
+          << "DELETE FROM session_object_parameter_basetype_select "
+          "WHERE oid = :oid AND param_name = :param_name "
+          , soci::use(_id)
+          , soci::use(it->first);
+      break;
+    }
+  }
+
   // delete from db
   *(soci_session_.get())
       <<
@@ -642,13 +589,7 @@ session_relation_ptr session::connect(string _from_id, string _to_id,
   sesn_rel->set_to_id(_to_id);
 
   //insert record
-  *(soci_session_.get())
-      <<
-      "INSERT INTO session_relation(id_, schema_relation_id, comment, "
-      "name, revision, create_date, update_date, from_id, to_id) "
-      "values(:id_, :schema_relation_id, :comment, "
-      ":name, :revision, :create_date, :update_date, :from_id, :to_id)",
-      soci::use(*(sesn_rel.get()));
+  insert_relation(sesn_rel);
 
   list<boost::tuple<string, schema_parameter_ptr>> param_name_types;
   _schm_rel->get_parameters(&param_name_types);
@@ -656,105 +597,7 @@ session_relation_ptr session::connect(string _from_id, string _to_id,
   for (list<boost::tuple<string, schema_parameter_ptr>>::iterator pit
        = param_name_types.begin(); pit != param_name_types.end(); pit++)
   {
-    string schema_par_id = pit->get<1>()->get_id();
-    parameter_basetype_enum t =
-      schema_parameter::convert_to_parameter_basetype_enum(
-        pit->get<1>()->get_basetype());
-
-    //data target
-    list<parameter_value_variant> target_list;
-
-    int i_max = pit->get<1>()->get_default_array_size();
-    for (int i = 0; i < i_max; i++)
-    {
-      switch (t)
-      {
-      case parameter_basetype_enum::integer:
-      {
-        int def(0);
-        *(soci_session_.get())
-            <<
-            "SELECT default_value FROM schema_parameter "
-            "INNER JOIN schema_parameter_basetype_integer "
-            "ON schema_parameter.id_ = schema_parameter_basetype_integer.id_ "
-            "WHERE schema_parameter.id_ = :pid"
-            , soci::use(schema_par_id)
-            , soci::into(def);
-
-        *(soci_session_.get())
-            <<
-            "INSERT INTO session_relation_parameter_basetype_integer(relid, param_name, "
-            "array_index, value) VALUES "
-            "(:relid, :param_name, :array_index, :default_value)"
-            , soci::use(sesn_rel->get_id())
-            , soci::use(pit->get<0>())
-            , soci::use(i)
-            , soci::use(def);
-
-        target_list.push_back(def);
-      }
-      break;
-
-      case parameter_basetype_enum::real:
-      {
-        double def(0);
-
-        *(soci_session_.get())
-            <<
-            "SELECT default_value FROM schema_parameter "
-            "INNER JOIN schema_parameter_basetype_real "
-            "ON schema_parameter.id_ = schema_parameter_basetype_real.id_ "
-            "WHERE schema_parameter.id_ = :pid"
-            , soci::use(schema_par_id)
-            , soci::into(def);
-
-        *(soci_session_.get())
-            <<
-            "INSERT INTO session_relation_parameter_basetype_real(relid, param_name, "
-            "array_index, value) VALUES "
-            "(:relid, :param_name, :array_index, :default_value)"
-            , soci::use(sesn_rel->get_id())
-            , soci::use(pit->get<0>())
-            , soci::use(i)
-            , soci::use(def);
-
-        target_list.push_back(def);
-      }
-      break;
-
-      case parameter_basetype_enum::text:
-      {
-        string def("");
-
-        *(soci_session_.get())
-            <<
-            "SELECT default_value FROM schema_parameter "
-            "INNER JOIN schema_parameter_basetype_text "
-            "ON schema_parameter.id_ = schema_parameter_basetype_text.id_ "
-            "WHERE schema_parameter.id_ = :pid"
-            , soci::use(schema_par_id)
-            , soci::into(def);
-
-        *(soci_session_.get())
-            <<
-            "INSERT INTO session_relation_parameter_basetype_text(relid, param_name, "
-            "array_index, value) VALUES"
-            "(:relid, :param_name, :array_index, :default_value) "
-            , soci::use(sesn_rel->get_id())
-            , soci::use(pit->get<0>())
-            , soci::use(i)
-            , soci::use(def);
-
-        target_list.push_back(def);
-      }
-      break;
-      }
-    }
-    // register data
-    sesn_rel->get_parameters()->insert(
-      std::make_pair(boost::get<0>(*pit),
-                     session_parameter_ptr(new session_parameter(target_list,
-                                           boost::get<1>(*pit)))));
+    insert_relation_parameter_by_default(sesn_rel, *pit);
   }
 
   return sesn_rel;
@@ -975,12 +818,57 @@ void session::get_relation_by_name(list<string> _rel_name_list,
   get_relation(rel_id_list, _sesn_rel_list);
 }
 
-void session::disconnect(string _rel_id)
+void session::disconnect(string _rel_id,
+                         map<string, session_parameter_ptr>* _param_map)
 {
   // delete from db
+  for (map<string, session_parameter_ptr>::iterator it = _param_map->begin();
+       it != _param_map->end(); ++it)
+  {
+    parameter_basetype_enum t =
+      schema_parameter::convert_to_parameter_basetype_enum(
+        it->second->schema_parameter_->get_basetype());
+
+    switch (t)
+    {
+    case parameter_basetype_enum::integer:
+
+      *soci_session_
+          << "DELETE FROM session_relation_parameter_basetype_integer "
+          "WHERE relid = :oid AND param_name = :param_name "
+          , soci::use(_rel_id)
+          , soci::use(it->first);
+      break;
+
+    case parameter_basetype_enum::real:
+      *soci_session_
+          << "DELETE FROM session_relation_parameter_basetype_real "
+          "WHERE relid = :oid AND param_name = :param_name "
+          , soci::use(_rel_id)
+          , soci::use(it->first);
+      break;
+
+    case parameter_basetype_enum::text:
+      *soci_session_
+          << "DELETE FROM session_relation_parameter_basetype_text "
+          "WHERE relid = :oid AND param_name = :param_name "
+          , soci::use(_rel_id)
+          , soci::use(it->first);
+      break;
+
+    case parameter_basetype_enum::select:
+      *soci_session_
+          << "DELETE FROM session_relation_parameter_basetype_select "
+          "WHERE relid = :oid AND param_name = :param_name "
+          , soci::use(_rel_id)
+          , soci::use(it->first);
+      break;
+    }
+  }
+
   *(soci_session_.get())
       <<
-      "DELETE FROM session_relation WHERE id_ = :id_",
+      "DELETE FROM session_relation WHERE id_ = :_rel_id",
       soci::use(_rel_id);
 }
 // <=== relation
@@ -1129,7 +1017,6 @@ void session::sync_object_parameter(
   string _obj_id, string _param_name,
   session_parameter_ptr _sesn_parameter, parameter_basetype_enum _basetype)
 {
-
   int i = 0;
   for (list<parameter_value_variant>::iterator it =
          _sesn_parameter->values_.begin();
@@ -1287,6 +1174,487 @@ void session::sync_relation_parameter(
     }
   }
 }
+
+namespace fs = boost::filesystem;
+
+void session::catchup_schema(string _path)
+{
+  OG_LOG << "catchup_schema start.";
+
+  fs::path schema_new(_path);
+
+  boost::system::error_code error;
+  const bool result = fs::exists(schema_new, error);
+  if (!result || error)
+  {
+    OG_LOG << "schema file is not found:" << _path;
+    throw og::core::exception() << exception_message("schema file is not found.");
+  }
+
+  fs::path session_temp = fs::unique_path();
+  fs::path schema_temp = fs::unique_path(); // backup
+
+  OG_LOG << "session backup:" << session_temp;
+  export_to_file(session_temp.string());
+
+  OG_LOG << "schema backup:" << schema_temp;
+  schema_->export_to_file(schema_temp.string());
+
+  OG_LOG << "purge schema";
+  schema_->purge();
+
+  OG_LOG << "import schema from file";
+  schema_->import_from_file(_path);
+
+  OG_LOG << "import session from backup";
+  import_from_file(session_temp.string());
+
+  OG_LOG << "catchup done.";
+}
+
+void session::delete_object_parameter_definition(string _param_name,
+    schema_parameter_ptr _param)
+{
+  parameter_basetype_enum t =
+    schema_parameter::convert_to_parameter_basetype_enum(
+      _param->get_basetype());
+
+  switch (t)
+  {
+  case parameter_basetype_enum::integer:
+
+    *(soci_session_.get())
+        << "DELETE FROM session_object_parameter_basetype_integer "
+        "WHERE param_name = :param_name "
+        , soci::use(_param_name);
+    break;
+
+  case parameter_basetype_enum::real:
+    *(soci_session_.get())
+        << "DELETE FROM session_object_parameter_basetype_real "
+        "WHERE param_name = :param_name "
+        , soci::use(_param_name);
+    break;
+
+  case parameter_basetype_enum::text:
+    *(soci_session_.get())
+        << "DELETE FROM session_object_parameter_basetype_text "
+        "WHERE param_name = :param_name "
+        , soci::use(_param_name);
+    break;
+
+  case parameter_basetype_enum::select:
+    *(soci_session_.get())
+        << "DELETE FROM session_object_parameter_basetype_select "
+        "WHERE param_name = :param_name "
+        , soci::use(_param_name);
+    break;
+  }
+}
+
+void session::delete_relatoin_parameter_definition(string _param_name,
+    schema_parameter_ptr _param)
+{
+  parameter_basetype_enum t =
+    schema_parameter::convert_to_parameter_basetype_enum(
+      _param->get_basetype());
+
+  switch (t)
+  {
+  case parameter_basetype_enum::integer:
+    *(soci_session_.get())
+        << "DELETE FROM session_relation_parameter_basetype_integer "
+        "WHERE param_name = :param_name "
+        , soci::use(_param_name);
+    break;
+
+  case parameter_basetype_enum::real:
+    *(soci_session_.get())
+        << "DELETE FROM session_relation_parameter_basetype_real "
+        "WHERE param_name = :param_name "
+        , soci::use(_param_name);
+    break;
+
+  case parameter_basetype_enum::text:
+    *(soci_session_.get())
+        << "DELETE FROM session_relation_parameter_basetype_text "
+        "WHERE param_name = :param_name "
+        , soci::use(_param_name);
+    break;
+
+  case parameter_basetype_enum::select:
+    *(soci_session_.get())
+        << "DELETE FROM session_relation_parameter_basetype_select "
+        "WHERE param_name = :param_name "
+        , soci::use(_param_name);
+    break;
+  }
+}
+
+void session::insert_object(session_object_ptr _sesn_obj)
+{
+  *(soci_session_.get())
+      <<
+      "INSERT INTO session_object(id_, schema_object_id, comment, "
+      "name, revision, create_date, update_date) "
+      "values(:id_, :schema_object_id, :comment, "
+      ":name, :revision, :create_date, :update_date)",
+      soci::use(*(_sesn_obj.get()));
+}
+
+void session::insert_relation(session_relation_ptr _sesn_rel)
+{
+  *(soci_session_.get())
+      <<
+      "INSERT INTO session_relation(id_, schema_relation_id, comment, "
+      "name, revision, create_date, update_date, from_id, to_id) "
+      "values(:id_, :schema_relation_id, :comment, "
+      ":name, :revision, :create_date, :update_date, :from_id, :to_id)"
+      , soci::use(*(_sesn_rel));
+}
+
+void session::insert_object_parameter_by_default(session_object_ptr _sesn_obj,
+    boost::tuple<string, schema_parameter_ptr>& _sesn_obj_param)
+{
+  string schema_par_id = _sesn_obj_param.get<1>()->get_id();
+  parameter_basetype_enum t =
+    schema_parameter::convert_to_parameter_basetype_enum(
+      _sesn_obj_param.get<1>()->get_basetype());
+
+  //data target
+  list<parameter_value_variant> target_list;
+
+  int i_max = _sesn_obj_param.get<1>()->get_default_array_size();
+  for (int i = 0; i < i_max; i++)
+  {
+    switch (t)
+    {
+    case parameter_basetype_enum::integer:
+    {
+      int def(0);
+      *(soci_session_.get())
+          <<
+          "SELECT default_value FROM schema_parameter "
+          "INNER JOIN schema_parameter_basetype_integer "
+          "ON schema_parameter.id_ = schema_parameter_basetype_integer.id_ "
+          "WHERE schema_parameter.id_ = :pid"
+          , soci::use(schema_par_id)
+          , soci::into(def);
+
+      *(soci_session_.get())
+          <<
+          "INSERT INTO session_object_parameter_basetype_integer(oid, param_name, "
+          "array_index, value) VALUES "
+          "(:oid, :param_name, :array_index, :default_value)"
+          , soci::use(_sesn_obj->get_id())
+          , soci::use(_sesn_obj_param.get<0>())
+          , soci::use(i)
+          , soci::use(def);
+
+      target_list.push_back(def);
+    }
+    break;
+
+    case parameter_basetype_enum::real:
+    {
+      double def(0);
+      *(soci_session_.get())
+          <<
+          "SELECT default_value FROM schema_parameter "
+          "INNER JOIN schema_parameter_basetype_real "
+          "ON schema_parameter.id_ = schema_parameter_basetype_real.id_ "
+          "WHERE schema_parameter.id_ = :pid"
+          , soci::use(schema_par_id)
+          , soci::into(def);
+
+      *(soci_session_.get())
+          <<
+          "INSERT INTO session_object_parameter_basetype_real(oid, param_name, "
+          "array_index, value) VALUES "
+          "(:oid, :param_name, :array_index, :default_value)"
+          , soci::use(_sesn_obj->get_id())
+          , soci::use(_sesn_obj_param.get<0>())
+          , soci::use(i)
+          , soci::use(def);
+
+      target_list.push_back(def);
+    }
+    break;
+    case parameter_basetype_enum::text:
+    {
+      string def("");
+      *(soci_session_.get())
+          <<
+          "SELECT default_value FROM schema_parameter "
+          "INNER JOIN schema_parameter_basetype_text "
+          "ON schema_parameter.id_ = schema_parameter_basetype_text.id_ "
+          "WHERE schema_parameter.id_ = :pid"
+          , soci::use(schema_par_id)
+          , soci::into(def);
+
+      *(soci_session_.get())
+          <<
+          "INSERT INTO session_object_parameter_basetype_text(oid, param_name, "
+          "array_index, value) VALUES "
+          "(:oid, :param_name, :array_index, :default_value)"
+          , soci::use(_sesn_obj->get_id())
+          , soci::use(_sesn_obj_param.get<0>())
+          , soci::use(i)
+          , soci::use(def);
+
+      target_list.push_back(def);
+    }
+    break;
+
+    }
+  }
+
+  // register data
+  _sesn_obj->get_parameters()->insert(
+    std::make_pair(boost::get<0>(_sesn_obj_param),
+                   session_parameter_ptr(new session_parameter(target_list,
+                                         boost::get<1>(_sesn_obj_param)))));
+}
+
+void session::insert_object_parameter_with_arg(session_object_ptr _sesn_obj,
+    boost::tuple<string, schema_parameter_ptr>& _sesn_obj_param,
+    list<parameter_value_variant>& _arg)
+{
+  string schema_par_id = _sesn_obj_param.get<1>()->get_id();
+  parameter_basetype_enum t =
+    schema_parameter::convert_to_parameter_basetype_enum(
+      _sesn_obj_param.get<1>()->get_basetype());
+
+  int i = 0;
+  for (list<parameter_value_variant>::iterator it = _arg.begin();
+       it != _arg.end(); it++, i++)
+  {
+    switch (t)
+    {
+    case parameter_basetype_enum::integer:
+    {
+      *(soci_session_.get())
+          <<
+          "INSERT INTO session_object_parameter_basetype_integer(oid, param_name, "
+          "array_index, value) VALUES "
+          "(:oid, :param_name, :array_index, :default_value)"
+          , soci::use(_sesn_obj->get_id())
+          , soci::use(_sesn_obj_param.get<0>())
+          , soci::use(i)
+          , soci::use(boost::get<int>(*it));
+    }
+    break;
+
+    case parameter_basetype_enum::real:
+    {
+      *(soci_session_.get())
+          <<
+          "INSERT INTO session_object_parameter_basetype_real(oid, param_name, "
+          "array_index, value) VALUES "
+          "(:oid, :param_name, :array_index, :default_value)"
+          , soci::use(_sesn_obj->get_id())
+          , soci::use(_sesn_obj_param.get<0>())
+          , soci::use(i)
+          , soci::use(boost::get<double>(*it));
+    }
+    break;
+
+    case parameter_basetype_enum::text:
+    {
+      *(soci_session_.get())
+          <<
+          "INSERT INTO session_object_parameter_basetype_text(oid, param_name, "
+          "array_index, value) VALUES "
+          "(:oid, :param_name, :array_index, :default_value)"
+          , soci::use(_sesn_obj->get_id())
+          , soci::use(_sesn_obj_param.get<0>())
+          , soci::use(i)
+          , soci::use(boost::get<string>(*it));
+    }
+    break;
+
+    }
+  }
+
+  // register data
+  _sesn_obj->get_parameters()->insert(
+    std::make_pair(boost::get<0>(_sesn_obj_param),
+                   session_parameter_ptr(new session_parameter(_arg,
+                                         boost::get<1>(_sesn_obj_param)))));
+}
+
+void session::insert_relation_parameter_by_default(session_relation_ptr
+    _sesn_rel,
+    boost::tuple<string, schema_parameter_ptr>& _sesn_rel_param)
+{
+  string schema_par_id = _sesn_rel_param.get<1>()->get_id();
+  parameter_basetype_enum t =
+    schema_parameter::convert_to_parameter_basetype_enum(
+      _sesn_rel_param.get<1>()->get_basetype());
+
+  //data target
+  list<parameter_value_variant> target_list;
+
+  int i_max = _sesn_rel_param.get<1>()->get_default_array_size();
+  for (int i = 0; i < i_max; i++)
+  {
+    switch (t)
+    {
+    case parameter_basetype_enum::integer:
+    {
+      int def(0);
+      *(soci_session_.get())
+          <<
+          "SELECT default_value FROM schema_parameter "
+          "INNER JOIN schema_parameter_basetype_integer "
+          "ON schema_parameter.id_ = schema_parameter_basetype_integer.id_ "
+          "WHERE schema_parameter.id_ = :pid"
+          , soci::use(schema_par_id)
+          , soci::into(def);
+
+      *(soci_session_.get())
+          <<
+          "INSERT INTO session_relation_parameter_basetype_integer(relid, param_name, "
+          "array_index, value) VALUES "
+          "(:relid, :param_name, :array_index, :default_value)"
+          , soci::use(_sesn_rel->get_id())
+          , soci::use(_sesn_rel_param.get<0>())
+          , soci::use(i)
+          , soci::use(def);
+
+      target_list.push_back(def);
+    }
+    break;
+
+    case parameter_basetype_enum::real:
+    {
+      double def(0);
+
+      *(soci_session_.get())
+          <<
+          "SELECT default_value FROM schema_parameter "
+          "INNER JOIN schema_parameter_basetype_real "
+          "ON schema_parameter.id_ = schema_parameter_basetype_real.id_ "
+          "WHERE schema_parameter.id_ = :pid"
+          , soci::use(schema_par_id)
+          , soci::into(def);
+
+      *(soci_session_.get())
+          <<
+          "INSERT INTO session_relation_parameter_basetype_real(relid, param_name, "
+          "array_index, value) VALUES "
+          "(:relid, :param_name, :array_index, :default_value)"
+          , soci::use(_sesn_rel->get_id())
+          , soci::use(_sesn_rel_param.get<0>())
+          , soci::use(i)
+          , soci::use(def);
+
+      target_list.push_back(def);
+    }
+    break;
+
+    case parameter_basetype_enum::text:
+    {
+      string def("");
+
+      *(soci_session_.get())
+          <<
+          "SELECT default_value FROM schema_parameter "
+          "INNER JOIN schema_parameter_basetype_text "
+          "ON schema_parameter.id_ = schema_parameter_basetype_text.id_ "
+          "WHERE schema_parameter.id_ = :pid"
+          , soci::use(schema_par_id)
+          , soci::into(def);
+
+      *(soci_session_.get())
+          <<
+          "INSERT INTO session_relation_parameter_basetype_text(relid, param_name, "
+          "array_index, value) VALUES"
+          "(:relid, :param_name, :array_index, :default_value) "
+          , soci::use(_sesn_rel->get_id())
+          , soci::use(_sesn_rel_param.get<0>())
+          , soci::use(i)
+          , soci::use(def);
+
+      target_list.push_back(def);
+    }
+    break;
+    }
+  }
+  // register data
+  _sesn_rel->get_parameters()->insert(
+    std::make_pair(boost::get<0>(_sesn_rel_param),
+                   session_parameter_ptr(new session_parameter(target_list,
+                                         boost::get<1>(_sesn_rel_param)))));
+}
+
+void session::insert_relation_parameter_with_arg(session_relation_ptr
+    _sesn_rel,
+    boost::tuple<string, schema_parameter_ptr>& _sesn_rel_param,
+    list<parameter_value_variant>& _arg)
+{
+  string schema_par_id = _sesn_rel_param.get<1>()->get_id();
+  parameter_basetype_enum t =
+    schema_parameter::convert_to_parameter_basetype_enum(
+      _sesn_rel_param.get<1>()->get_basetype());
+
+  int i = 0;
+  for (list<parameter_value_variant>::iterator it = _arg.begin();
+       it != _arg.end(); it++, i++)
+  {
+    switch (t)
+    {
+    case parameter_basetype_enum::integer:
+    {
+      *(soci_session_.get())
+          <<
+          "INSERT INTO session_relation_parameter_basetype_integer(relid, param_name, "
+          "array_index, value) VALUES "
+          "(:relid, :param_name, :array_index, :default_value)"
+          , soci::use(_sesn_rel->get_id())
+          , soci::use(_sesn_rel_param.get<0>())
+          , soci::use(i)
+          , soci::use(boost::get<int>(*it));
+    }
+    break;
+
+    case parameter_basetype_enum::real:
+    {
+      *(soci_session_.get())
+          <<
+          "INSERT INTO session_relation_parameter_basetype_real(relid, param_name, "
+          "array_index, value) VALUES "
+          "(:relid, :param_name, :array_index, :default_value)"
+          , soci::use(_sesn_rel->get_id())
+          , soci::use(_sesn_rel_param.get<0>())
+          , soci::use(i)
+          , soci::use(boost::get<double>(*it));
+    }
+    break;
+
+    case parameter_basetype_enum::text:
+    {
+      *(soci_session_.get())
+          <<
+          "INSERT INTO session_relation_parameter_basetype_text(relid, param_name, "
+          "array_index, value) VALUES"
+          "(:relid, :param_name, :array_index, :default_value) "
+          , soci::use(_sesn_rel->get_id())
+          , soci::use(_sesn_rel_param.get<0>())
+          , soci::use(i)
+          , soci::use(boost::get<string>(*it));
+    }
+    break;
+    }
+  }
+
+  // register data
+  _sesn_rel->get_parameters()->insert(
+    std::make_pair(boost::get<0>(_sesn_rel_param),
+                   session_parameter_ptr(new session_parameter(_arg,
+                                         boost::get<1>(_sesn_rel_param)))));
+}
+
 
 } // namespace core;
 } // namespace og;

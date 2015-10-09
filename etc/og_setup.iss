@@ -1,5 +1,5 @@
 ﻿#define MyAppSetupName 'ObjectGenoise'
-#define MyAppVersion '0.2' 
+#define MyAppVersion '0.4' 
 
 [Setup]
 AppName={#MyAppSetupName}
@@ -16,7 +16,7 @@ DefaultGroupName=Lib
 DefaultDirName={pf}\ObjectGenoise
 ;UninstallDisplayIcon={app}\MyProgram.exe
 ;OutputDir=
-;SourceDir=
+SourceDir=.
 AllowNoIcons=yes
 ;SetupIconFile=MyProgramIcon
 SolidCompression=yes
@@ -50,13 +50,13 @@ Source: "C:\mnt\git2\ObjectGenoise\x64\Debug\*.dll"; DestDir: "{app}\debug\bin";
 Source: "C:\mnt\git2\ObjectGenoise\x64\Debug\*.pdb"; DestDir: "{app}\debug\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
 Source: "C:\Program Files\SOCI\debug\bin\*.dll"; DestDir: "{app}\debug\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
 Source: "C:\mnt\git2\ObjectGenoise\x64\Debug\*.lib"; DestDir: "{app}\debug\lib64"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
-Source: "C:\Program Files\SOCI\debug\lib64\*"; DestDir: "{app}\debug\lib64"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
+;Source: "C:\Program Files\SOCI\debug\lib64\*"; DestDir: "{app}\debug\lib64"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
 
 Source: "C:\mnt\git2\ObjectGenoise\x64\Release\*.dll"; DestDir: "{app}\release\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
 Source: "C:\mnt\git2\ObjectGenoise\x64\Release\*.pdb"; DestDir: "{app}\release\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
 Source: "C:\Program Files\SOCI\release\bin\*.dll"; DestDir: "{app}\release\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
 Source: "C:\mnt\git2\ObjectGenoise\x64\Release\*.lib"; DestDir: "{app}\release\lib64"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
-Source: "C:\Program Files\SOCI\release\lib64\*"; DestDir: "{app}\release\lib64"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
+;Source: "C:\Program Files\SOCI\release\lib64\*"; DestDir: "{app}\release\lib64"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
 
 
 

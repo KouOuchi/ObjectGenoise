@@ -128,6 +128,7 @@ private:
   map<string, session_parameter_ptr> session_parameter_;
   session* session_;
 
+  static bool equals(const session_object_ptr& _x, const session_object_ptr& y);
 };
 
 } //namespace core;

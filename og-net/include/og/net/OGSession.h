@@ -40,7 +40,7 @@ public:
   // object
   ///////////////////////////////
   OGSessionObject^ create_object(OGSchemaObject^ _schm_obj);
-  void delete_object(String^ _id);
+  //void delete_object(String^ _id);
 
   /*Nullable*/OGSessionObject^ get_object(String^ _id);
   void get_object(List<OGSessionObject^>^ _sesn_obj_list);

@@ -64,6 +64,9 @@ public:
   OG_COREAPI void add_parameter_definition(string _param_name,
                                 const og_schema_parameter_ptr _schm_par);
 
+  OG_COREAPI void delete_parameter_definition(string _param_name,
+                                const og_schema_parameter_ptr _schm_par);
+
   template <typename P>
   void get_parameter_definition(string _param_name, P* _param_basetype) {}
 

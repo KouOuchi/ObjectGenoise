@@ -9,6 +9,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <soci.h>
+#include <algorithm>
 
 namespace og
 {
@@ -46,9 +47,9 @@ void session_object::delete_object()
                           exception_message("unexpected. invalid_session."));
   }
 
-  session_->delete_object(id_);
+  map<string, session_parameter_ptr>* param_map(get_parameters());
+  session_->delete_object(id_, param_map);
 }
-
 
 // relation ===>
 session_relation_ptr session_object::connect_to(session_object_ptr _sesn_obj,
@@ -130,9 +131,15 @@ void session_object::get_connected_object(list<string>& _rel_type_list,
   list<session_object_ptr> sesn_obj_list2;
   session_->get_connected_object_to(id_, _rel_type_list, &sesn_obj_list2);
 
-  _sesn_obj_list->merge(sesn_obj_list1);
-  _sesn_obj_list->merge(sesn_obj_list2);
-  _sesn_obj_list->unique();
+  _sesn_obj_list->clear();
+  _sesn_obj_list->splice(_sesn_obj_list->end(), sesn_obj_list1);
+  _sesn_obj_list->splice(_sesn_obj_list->end(), sesn_obj_list2);
+  std::unique(_sesn_obj_list->begin(), _sesn_obj_list->end(), &equals);
+}
+
+bool session_object::equals(const session_object_ptr& _x, const session_object_ptr& _y)
+{
+  return _x->get_id().compare(_y->get_id()) == 0;
 }
 
 void session_object::get_connected_object_from(
@@ -354,7 +361,7 @@ optional<session_parameter_ptr> session_object::get_parameter(
   }
 }
 void session_object::set_parameter(string _param_name,
-                                     list<parameter_value_variant>& _values)
+                                   list<parameter_value_variant>& _values)
 {
   optional<session_parameter_ptr> p( get_parameter(_param_name) );
 

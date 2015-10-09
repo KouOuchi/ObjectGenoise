@@ -41,6 +41,8 @@ public:
 
   void add_parameter_definition(string _param_name,
                                 const schema_parameter_ptr _schm_par);
+  void delete_parameter_definition(string _param_name,
+                                const schema_parameter_ptr _schm_par);
 
   template <typename P>
   void get_parameter_definition(string _param_name, P* _param_basetype) {}

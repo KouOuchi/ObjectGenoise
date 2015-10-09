@@ -1,6 +1,8 @@
 #pragma once
 
-#define TEST_ALL 1
+#undef TEST_ALL
+#define TEST_OG_SCHEMA 1
+#define TEST_OG_ETC 1
 
 #ifdef TEST_ALL
 #define TEST_OG_BASIC 1
@@ -53,7 +55,7 @@ struct fixture_once
   {
     BOOST_TEST_MESSAGE("test-core global setup");
     og::og_session cleaned_session_;
-    cleaned_session_.connect(DBPATH);
+    cleaned_session_.open(DBPATH);
     cleaned_session_.build();
   }
 

@@ -57,6 +57,13 @@ void og_schema_relation::add_parameter_definition(string _param_name,
       _schm_par->schema_parameter_ptr_);
 }
 
+void og_schema_relation::delete_parameter_definition(string _param_name,
+    const og_schema_parameter_ptr _schm_par)
+{
+  schema_relation_ptr_->delete_parameter_definition(_param_name,
+      _schm_par->schema_parameter_ptr_);
+}
+
 string og_schema_relation::get_id()
 {
   return schema_relation_ptr_->get_id();

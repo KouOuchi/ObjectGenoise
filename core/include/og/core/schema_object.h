@@ -20,8 +20,8 @@ public:
   ///////////////////////////////
   schema_relation_ptr connect_from(schema_object_ptr _from, string _oname);
   schema_relation_ptr connect_to(schema_object_ptr _to, string _otype);
-//  void disconnect();
-//  void disconnect(schema_object_ptr _object);
+  void disconnect();
+  void disconnect(schema_object_ptr _schm_obj);
 
   schema_object_ptr copy_object();
   void delete_object();
@@ -51,6 +51,10 @@ public:
   void add_parameter_definition(string _param_name,
                                 const schema_parameter_ptr _schm_par);
 
+  // note : delete all parameters with session_object's
+  void delete_parameter_definition(string _param_name,
+                                   const schema_parameter_ptr _schm_par);
+
   template <typename P>
   void get_parameter_definition(string _param_name, P* _param_basetype) {}
   // parameters end.
@@ -70,6 +74,8 @@ public:
 
   // by default, revision up is automatically.
   virtual void revision_up();
+
+  static bool equals(const schema_object_ptr& _x, const schema_object_ptr& _y);
 
 protected:
 

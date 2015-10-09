@@ -53,6 +53,8 @@ public:
   ///////////////////////////////
   OG_COREAPI og_schema_object_ptr copy_object();
   OG_COREAPI void delete_object();
+  OG_COREAPI void disconnect();
+  OG_COREAPI void disconnect(og_schema_object_ptr _schm_object_ptr);
 
   OG_COREAPI void get_connected_object(list<og_schema_object_ptr>* _schm_object_list);
   OG_COREAPI void get_connected_object(list<string>& _rel_type_list,
@@ -77,6 +79,9 @@ public:
     string _param_name);
 
   OG_COREAPI void add_parameter_definition(string _param_name,
+                                const og_schema_parameter_ptr _schm_par);
+
+  OG_COREAPI void delete_parameter_definition(string _param_name,
                                 const og_schema_parameter_ptr _schm_par);
 
   template <typename P>

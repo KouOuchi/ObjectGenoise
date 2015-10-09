@@ -2,6 +2,7 @@
 #include "og/og_schema_object.h"
 #include "og/og_session_object.h"
 #include "og/og_converter.h"
+#include "og/og_internal_schema_property.h"
 
 #include "og/core/schema.h"
 #include "og/core/session.h"
@@ -9,7 +10,6 @@
 
 namespace og
 {
-
 og_session::og_session() :
   session_(new og::core::session()),
   og_schema_(new og_schema(session_->schema_.get()))
@@ -19,13 +19,22 @@ og_session::og_session() :
 og_session::~og_session()
 {}
 
-void og_session::connect(string _connection_string)
+void og_session::open(string _connection_string)
 {
-  session_->connect(_connection_string);
+  session_->open(_connection_string);
+
+  internal_schema_property initializer;
+  initializer.internal_initialize(this);
 }
+
+void og_session::close()
+{
+  session_->close();
+}
+
 void og_session::purge()
 {
-  session_->purge();
+  session_->purge(false);
 }
 
 og_schema* og_session::schema()
@@ -46,7 +55,7 @@ og_session_object_ptr og_session::create_object(og_schema_object_ptr _schm_obj)
 
 void og_session::delete_object(string _id)
 {
-  session_->delete_object(_id);
+  get_object(_id)->get()->delete_object();
 }
 
 bool og_session::import_from_file(string _path)
@@ -224,7 +233,7 @@ void og_session::get_relation_by_name(list<string> _rel_name_list,
 }
 void og_session::disconnect(string _rel_id)
 {
-  session_->disconnect(_rel_id);
+  session_->get_relation(_rel_id).get()->delete_relation();
 }
 
 void og_session::get_object(list<og_session_object_ptr>* _sesn_obj_list)

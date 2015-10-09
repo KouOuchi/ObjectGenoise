@@ -35,14 +35,16 @@ og_schema_relation_ptr og_schema_object::connect_to(og_schema_object_ptr _to,
   return og_schema_relation_ptr(new og_schema_relation(
                                   schema_object_ptr_->connect_to(_to->schema_object_ptr_, _otype), true));
 }
-//void og_schema_object::disconnect()
-//{
-//  schema_object_ptr_->disconnect();
-//}
-//void og_schema_object::disconnect(og_schema_object_ptr _object)
-//{
-//  schema_object_ptr_->disconnect(_object->schema_object_ptr_);
-//}
+
+void og_schema_object::disconnect()
+{
+  schema_object_ptr_->disconnect();
+}
+
+void og_schema_object::disconnect(og_schema_object_ptr _object)
+{
+  schema_object_ptr_->disconnect(_object->schema_object_ptr_);
+}
 
 void og_schema_object::get_parameters(
   list<boost::tuple<string, og_schema_parameter_ptr>>*
@@ -68,6 +70,13 @@ void og_schema_object::add_parameter_definition(string _param_name,
     const og_schema_parameter_ptr _schm_par)
 {
   schema_object_ptr_->add_parameter_definition(_param_name,
+      _schm_par->schema_parameter_ptr_);
+}
+
+void og_schema_object::delete_parameter_definition(string _param_name,
+    const og_schema_parameter_ptr _schm_par)
+{
+  schema_object_ptr_->delete_parameter_definition(_param_name,
       _schm_par->schema_parameter_ptr_);
 }
 

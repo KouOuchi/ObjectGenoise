@@ -2,6 +2,8 @@
 #include "og/og_schema_object.h"
 #include "og/core/schema.h"
 #include "og/og_converter.h"
+#include "og/core/schema_parameter.h"
+
 
 namespace og
 {
@@ -17,6 +19,19 @@ og_schema::~og_schema()
 void og_schema::purge()
 {
   schema_->purge();
+}
+
+const char* og_schema::schema_property_object_type()
+{
+  return core::schema::schema_property_object_type_;
+}
+const char* og_schema::schema_property_object_name()
+{
+  return core::schema::schema_property_object_name_;
+}
+const char* og_schema::schema_property_core_revision()
+{
+  return core::schema::schema_property_core_revision_;
 }
 
 og_schema_object_ptr og_schema::create_object(string _otype, string _oname)
@@ -208,8 +223,7 @@ bool og_schema::validate_connect_by_type_id(string _otype, string _oid_from,
 
 void og_schema::delete_object(string _oid)
 {
-  schema_->delete_object(_oid);
+  schema_->get_object(_oid).get()->delete_object();
 }
 
 } // namespace og;
-

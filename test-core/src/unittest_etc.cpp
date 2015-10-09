@@ -7,6 +7,7 @@ using namespace std;
 #ifdef TEST_OG_ETC
 
 BOOST_FIXTURE_TEST_SUITE(etc, fixture_clean_session);
+#ifdef zero
 
 // xml export
 BOOST_AUTO_TEST_CASE(etc_1000_basic_import)
@@ -18,7 +19,7 @@ BOOST_AUTO_TEST_CASE(etc_1000_basic_import)
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -151,56 +152,12 @@ BOOST_AUTO_TEST_CASE(etc_1000_basic_import)
     }
   }
 }
-
-// xml import
-BOOST_AUTO_TEST_CASE(etc_1001)
-{
-#ifdef WINDOWS
-  og::core::CrtCheckMemory __check__;
 #endif
 
-  // initialize db
-  og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
-  cleaned_session_.purge();
-  cleaned_session_.schema()->purge();
-
-  string OTYPE1 = "Document2002from";
-  string OTYPE2 = "Document2002to";
-  string RELTYPE = "Document2002rel";
-  string ONAME = "Dcument-Name2002";
-  list<string> otype_list;
-  otype_list.push_back(OTYPE1);
-  otype_list.push_back(OTYPE2);
-
-  list<string> rel_type_list;
-  rel_type_list.push_back(RELTYPE);
-
-  cleaned_session_.schema()->import_from_file("schema.xml.gz");
-  cleaned_session_.import_from_file("session.xml.gz");
 
 
-  list<og::og_session_object_ptr> sesn_objs;
-  cleaned_session_.get_object_by_type(otype_list, &sesn_objs);
-
-  BOOST_REQUIRE_EQUAL(sesn_objs.size(), 2);
-
-  for (list<og::og_session_object_ptr>::iterator it = sesn_objs.begin();
-       it != sesn_objs.end(); it++)
-  {
-    if ((*it)->get_schema_object_type() == OTYPE1)
-    {
-      list<og::og_session_object_ptr> sesn_cons;
-      (*it)->get_connected_object(&sesn_cons);
-      BOOST_REQUIRE_EQUAL(sesn_cons.size(), 1);
-    }
-  }
-
-}
-
-#ifdef zero
 // xml export
-BOOST_AUTO_TEST_CASE(etc_1002_upgrade_import)
+BOOST_AUTO_TEST_CASE(etc_1002_normal_import)
 {
 #ifdef WINDOWS
   // TODO: CrtCheckMemory detects memory leak in this test.
@@ -209,24 +166,29 @@ BOOST_AUTO_TEST_CASE(etc_1002_upgrade_import)
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
+  cleaned_session_.close();
+
+  cleaned_session_.open(DBPATH);
 
   string OTYPE1 = "Document2002from";
-  string OTYPE2 = "Document2002to";
+  string OTYPE2 = "Document2002a to";
+  string OTYPE3 = "Document2002b to";
   string RELTYPE1 = "Document2002rel";
   string RELTYPE2 = "Document2002rel";
   string ONAME = "Dcument-Name2002";
   list<string> otype_list;
   otype_list.push_back(OTYPE1);
   otype_list.push_back(OTYPE2);
+  otype_list.push_back(OTYPE3);
 
   og::og_schema_object_ptr p1 = cleaned_session_.schema()->create_object(OTYPE1,
                                 ONAME);
   og::og_schema_object_ptr p2 = cleaned_session_.schema()->create_object(OTYPE2,
                                 ONAME);
-  og::og_schema_object_ptr p3 = cleaned_session_.schema()->create_object(OTYPE2,
+  og::og_schema_object_ptr p3 = cleaned_session_.schema()->create_object(OTYPE3,
                                 ONAME);
 
   og::og_schema_relation_ptr rel_ptr12 = p1->connect_to(p2, RELTYPE1);
@@ -248,8 +210,8 @@ BOOST_AUTO_TEST_CASE(etc_1002_upgrade_import)
 
   og::og_real type3;
   type3.default_value_ = 1.141;
-  type3.warn_max_ = 3.0;
-  type3.system_max_ = 3.0;
+  type3.warn_max_ = 200.0;
+  type3.system_max_ = 200.0;
   type3.warn_min_ = 1.0;
   type3.system_min_ = 1.0;
 
@@ -306,6 +268,14 @@ BOOST_AUTO_TEST_CASE(etc_1002_upgrade_import)
   p1->add_parameter_definition("H4", ptest4);
   p1->add_parameter_definition("H6", ptest6);
 
+  p2->add_parameter_definition("V1", ptest1);
+  p2->add_parameter_definition("V3", ptest3);
+  p2->add_parameter_definition("V5", ptest5);
+
+  p3->add_parameter_definition("V2", ptest2);
+  p3->add_parameter_definition("V4", ptest4);
+  p3->add_parameter_definition("V6", ptest6);
+
   // apply parameter to schema_relation
   rel_ptr12->add_parameter_definition("I1", ptest1);
   rel_ptr12->add_parameter_definition("I3", ptest3);
@@ -325,22 +295,53 @@ BOOST_AUTO_TEST_CASE(etc_1002_upgrade_import)
 
   og::og_session_object_ptr o1 = cleaned_session_.create_object(p1);
   og::og_session_object_ptr o2 = cleaned_session_.create_object(p2);
-  og::og_session_object_ptr o3 = cleaned_session_.create_object(p2);
+  og::og_session_object_ptr o3 = cleaned_session_.create_object(p3);
   og::og_session_relation_ptr o1o2 = o1->connect_to(o2, RELTYPE1);
   og::og_session_relation_ptr o1o3 = o1->connect_to(o3, RELTYPE2);
 
+  o2->set_parameter_value<int>("V1", 100);
+  o2->set_parameter_value<double>("V3", 100.0);
+  o2->set_parameter_value<string>("V5", "100");
 
-  cleaned_session_.schema()->export_to_file("schema.xml.gz");
+  o3->set_parameter_value<int>("V2", 101);
+  o3->set_parameter_value<double>("V4", 101.0);
+  o3->set_parameter_value<string>("V6", "101");
 
-  //cleaned_session_.export_to_file("session.xml");
   cleaned_session_.export_to_file("session.xml.gz");
+
+  // catchup schema
+  list<string> prop_type;
+  prop_type.push_back(og::og_schema::schema_property_object_type());
+
+  list<og::og_session_object_ptr> prop_objs;
+  cleaned_session_.get_object_by_type(prop_type, &prop_objs);
+
+  BOOST_REQUIRE_EQUAL(prop_objs.size(), 1);
+
+  int ver;
+  prop_objs.front()->get_parameter_value<int>
+  (og::og_schema::schema_property_core_revision(), &ver);
+
+  ++ver;
+  prop_objs.front()->set_parameter_value<int>
+  (og::og_schema::schema_property_core_revision(), ver);
+
+  //"delete param definition" deletes all session's parameters
+  p2->add_parameter_definition(string("add int"), ptest1);
+  p2->add_parameter_definition(string("add real"), ptest3);
+  p2->add_parameter_definition(string("add text"), ptest5);
+
+  //"delete param definition" deletes all session's parameters
+  p3->delete_parameter_definition(string("V6"), ptest6);
+  rel_ptr13->delete_parameter_definition(string("I6"), ptest6);
+
   cleaned_session_.purge();
   cleaned_session_.import_from_file("session.xml.gz");
 
   list<og::og_session_object_ptr> sesn_objs;
   cleaned_session_.get_object_by_type(otype_list, &sesn_objs);
 
-  BOOST_REQUIRE_EQUAL(sesn_objs.size(), 2);
+  BOOST_REQUIRE_EQUAL(sesn_objs.size(), 3);
 
   for (list<og::og_session_object_ptr>::iterator it = sesn_objs.begin();
        it != sesn_objs.end(); it++)
@@ -349,11 +350,53 @@ BOOST_AUTO_TEST_CASE(etc_1002_upgrade_import)
     {
       list<og::og_session_object_ptr> sesn_cons;
       (*it)->get_connected_object(&sesn_cons);
-      BOOST_REQUIRE_EQUAL(sesn_cons.size(), 1);
+      BOOST_REQUIRE_EQUAL(sesn_cons.size(), 2);
+
+      {
+        const string & sid = (*it)->get_schema_object_id();
+        boost::optional<og::og_schema_object_ptr> ssidob =
+          cleaned_session_.schema()->get_object(sid);
+
+        list<boost::tuple<string, og::og_schema_parameter_ptr>> __params;
+        ssidob.get()->get_parameters(&__params);
+
+        BOOST_REQUIRE_EQUAL(__params.size(), 6);
+      }
+
+      for (list<og::og_session_object_ptr>::iterator it2 = sesn_cons.begin();
+           it2 != sesn_cons.end(); it2++)
+      {
+        if (it2->get()->get_schema_object_type() == OTYPE2)
+        {
+          list<boost::tuple<string, og::og_schema_parameter_ptr>> __params2;
+          cleaned_session_.schema()->get_object(
+            it2->get()->get_schema_object_id())->get()->get_parameters(&__params2);
+
+          BOOST_REQUIRE_EQUAL(6, __params2.size());
+          it2->get()->set_parameter_value<int>("add int", 10);
+          it2->get()->set_parameter_value<double>("add real", 1.4142);
+          it2->get()->set_parameter_value<string>("add text", "hoge");
+
+          int i;
+          double ii;
+          string iii;
+		  it2->get()->get_parameter_value<int>("add int", &i);
+          it2->get()->get_parameter_value<double>("add real", &ii);
+          it2->get()->get_parameter_value<string>("add text", &iii);
+
+        }
+        if (it2->get()->get_schema_object_type() == OTYPE3)
+        {
+          list<boost::tuple<string, og::og_schema_parameter_ptr>> __params3;
+          cleaned_session_.schema()->get_object(
+            it2->get()->get_schema_object_id())->get()->get_parameters(&__params3);
+
+          BOOST_REQUIRE_EQUAL(2, __params3.size());
+        }
+      }
     }
   }
 }
-#endif
 
 BOOST_AUTO_TEST_SUITE_END()
 

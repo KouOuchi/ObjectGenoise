@@ -15,6 +15,32 @@ void _check_schema_object(og::og_schema_object_ptr _soptr, string _oid,
   BOOST_REQUIRE_EQUAL(_soptr->get_type(), _otype);
 }
 
+// schema basics
+BOOST_AUTO_TEST_CASE(schema_0001)
+{
+#ifdef WINDOWS
+	og::core::CrtCheckMemory __check__;
+#endif
+
+	// initialize db
+  og::og_session cleaned_session_;
+  cleaned_session_.open(DBPATH);
+
+  list<string> ts;
+  list < og::og_session_object_ptr> objs;
+  ts.push_back(og::og_schema::schema_property_object_type());
+
+  cleaned_session_.get_object_by_type(ts, &objs);
+
+  BOOST_REQUIRE_EQUAL(objs.size(), 1);
+
+  int val;
+  objs.front()->get_parameter_value<int>(string(og::og_schema::schema_property_core_revision()), &val);
+  BOOST_REQUIRE_EQUAL(val, 0);
+
+}
+
+
 BOOST_AUTO_TEST_CASE(schema_999)
 {
 #ifdef WINDOWS
@@ -23,7 +49,7 @@ BOOST_AUTO_TEST_CASE(schema_999)
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -41,7 +67,7 @@ BOOST_AUTO_TEST_CASE( schema_1000 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -91,7 +117,7 @@ BOOST_AUTO_TEST_CASE( schema_1001 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -110,7 +136,7 @@ BOOST_AUTO_TEST_CASE( schema_1001 )
 
   {
     og::og_session ses2;
-    ses2.connect(DBPATH);
+    ses2.open(DBPATH);
 
     // get_object_id
     optional<og::og_schema_object_ptr> soptr2(ses2.schema()->get_object(oid));
@@ -129,7 +155,7 @@ BOOST_AUTO_TEST_CASE( schema_1002 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -162,7 +188,7 @@ BOOST_AUTO_TEST_CASE( schema_1002 )
 
   {
     og::og_session ses2;
-    ses2.connect(DBPATH);
+    ses2.open(DBPATH);
     list<og::og_schema_object_ptr> obj_list1;
     ses2.schema()->get_object_by_type(otype_list, &obj_list1);
 
@@ -185,7 +211,7 @@ BOOST_AUTO_TEST_CASE( schema_1003 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -210,7 +236,7 @@ BOOST_AUTO_TEST_CASE( schema_1003 )
 
   {
     og::og_session ses2;
-    ses2.connect(DBPATH);
+    ses2.open(DBPATH);
     list<og::og_schema_object_ptr> obj_list2;
     ses2.schema()->get_object_by_name(oname_list, &obj_list2);
 
@@ -233,7 +259,7 @@ BOOST_AUTO_TEST_CASE( schema_1005 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -271,7 +297,7 @@ BOOST_AUTO_TEST_CASE( schema_2000 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -426,7 +452,7 @@ BOOST_AUTO_TEST_CASE( schema_2001 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -468,7 +494,7 @@ BOOST_AUTO_TEST_CASE( schema_2002 )
 
   // initialize db
   og::og_session cleaned_session_;
-  cleaned_session_.connect(DBPATH);
+  cleaned_session_.open(DBPATH);
   cleaned_session_.purge();
   cleaned_session_.schema()->purge();
 
@@ -532,6 +558,83 @@ BOOST_AUTO_TEST_CASE( schema_2002 )
 
   BOOST_REQUIRE(rel_list.size() == 0);
 }
+
+/*
+BOOST_AUTO_TEST_CASE( schema_3001 )
+{
+#ifdef WINDOWS
+  og::core::CrtCheckMemory __check__;
+#endif
+  // initialize db
+  og::og_session cleaned_session_;
+  cleaned_session_.open(DBPATH);
+  cleaned_session_.purge();
+  cleaned_session_.schema()->purge();
+
+  string OTYPE1 = "Document2002from";
+  string OTYPE2 = "Document2002to";
+  string RELTYPE = "Document2002rel";
+  string RELTYPE2 = "Document2002rel2";
+  string ONAME = "Dcument-Name2002";
+  string RELNAME = "Rel-Name2002";
+  list<string> otype_list;
+  otype_list.push_back(OTYPE1);
+  otype_list.push_back(OTYPE2);
+
+  list<string> rel_type_list;
+  rel_type_list.push_back(RELTYPE);
+
+  og::og_schema_object_ptr p1 = cleaned_session_.schema()->create_object(OTYPE1,
+                                ONAME);
+  og::og_schema_object_ptr p2 = cleaned_session_.schema()->create_object(OTYPE2,
+                                ONAME);
+  og::og_schema_object_ptr p3 = cleaned_session_.schema()->create_object(OTYPE1,
+                                ONAME);
+  og::og_schema_object_ptr p4 = cleaned_session_.schema()->create_object(OTYPE2,
+                                ONAME);
+
+  og::og_schema_relation_ptr rel_ptr = p1->connect_to(p2, RELTYPE);
+  og::og_schema_relation_ptr rel_ptr2 = p3->connect_to(p4, RELTYPE2);
+
+  list<og::og_schema_relation_ptr> rel_list;
+  cleaned_session_.schema()->get_connected_relation_to(
+    p1->get_id(),
+    rel_type_list,
+    &rel_list);
+
+  BOOST_REQUIRE(rel_list.size() == 1);
+  BOOST_REQUIRE( (*(rel_list.begin()))->get_id() == rel_ptr->get_id() );
+
+  rel_list.clear();
+  cleaned_session_.schema()->get_connected_relation_from(
+    p2->get_id(),
+    rel_type_list,
+    &rel_list);
+
+  BOOST_REQUIRE(rel_list.size() == 1);
+  BOOST_REQUIRE( (*(rel_list.begin()))->get_id() == rel_ptr->get_id() );
+
+  rel_list.clear();
+  cleaned_session_.schema()->get_connected_relation_to(
+    p2->get_id(),
+    rel_type_list,
+    &rel_list);
+
+  BOOST_REQUIRE(rel_list.size() == 0);
+
+
+  rel_list.clear();
+  cleaned_session_.schema()->get_connected_relation_from(
+    p1->get_id(),
+    rel_type_list,
+    &rel_list);
+
+  BOOST_REQUIRE(rel_list.size() == 0);
+}
+*/
+
+
+
 
 BOOST_AUTO_TEST_SUITE_END()
 
