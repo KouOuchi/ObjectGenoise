@@ -125,11 +125,9 @@ use VisualStudio2013. Set platform to x64.
  - Function : Add embedded type. Now i have 3 basic types: integer, real and text.
  - Function : User or Domain control
  - Function : Multiprexity validation.
- - Function : "Auto Revision Up" and "Catch Up schema revision"
- - Function : (under investigtoin) Attach something UML like editor.
+ - <<FIXED>>Function : "Auto Revision Up" and "Catch Up schema revision"
  - Function : (under investigtoin) Multiple Revision management both schema and session. 
- - Tool : Session instances viewer.
- - Site : Upload and share your schema. 
+ - Tool : Session instances viewer. 
 
 ## Licenses and Authors
   * Licensed under the [Boost Software License 1.0]
