@@ -94,7 +94,7 @@ namespace test_og_net
             }
         }
 
-        // session relatoin basic test
+        // session relation basic test
         [TestMethod]
         public void session_1002()
         {
@@ -1094,5 +1094,70 @@ namespace test_og_net
 
             Assert.AreEqual(rr1, null);
         }
+
+        // copy test
+        [TestMethod]
+        public void session_1112()
+        {
+            string OTYPE1 = "type_session_1002_1";
+            string ONAME1 = "name_session_1002_1";
+            string OTYPE2 = "type_session_1002_2";
+            string ONAME2 = "name_session_1002_2";
+            string RELTYPE = "reltype_session_1002";
+            string RELNAME = "relnamee_session_1002";
+            List<string> otype_list1 = new List<string>(); otype_list1.Add(OTYPE1);
+            List<string> oname_list1 = new List<string>(); oname_list1.Add(ONAME1);
+            List<string> otype_list2 = new List<string>(); otype_list2.Add(OTYPE2);
+            List<string> oname_list2 = new List<string>(); oname_list2.Add(ONAME2);
+            List<string> reltype_list = new List<string>(); reltype_list.Add(RELTYPE);
+            List<string> relname_list = new List<string>(); relname_list.Add(RELNAME);
+            {
+                // create schema obj
+                OGSchemaObject schm_obj1 = cleaned_session_.schema().create_object(
+                                                       OTYPE1,
+                                                       ONAME1);
+                OGSchemaObject schm_obj2 = cleaned_session_.schema().create_object(
+                                                       OTYPE2,
+                                                       ONAME2);
+                schm_obj1.connect_to(schm_obj2, RELTYPE);
+
+                OGSessionObject o1 = cleaned_session_.create_object(schm_obj1);
+                OGSessionObject o2 = cleaned_session_.create_object(schm_obj2);
+
+                o1.connect_to(o2, RELTYPE);
+                o1.connect_to(o2, RELTYPE);
+
+                OGSessionObject o1copy = o1.copy_object();
+                Assert.AreNotEqual(o1copy.get_id(), o1.get_id());
+                Assert.AreEqual(o1copy.get_schema_object_id(),
+                    o1.get_schema_object_id());
+
+                // copy recursively
+                {
+                    OGSessionObject o1copy2 = o1.copy_object(OGConnectionDirection.Direction_To);
+                    List<OGSessionObject> child = new List<OGSessionObject>();
+                    o1copy2.get_connected_object_to(child);
+
+                    Assert.AreEqual(2, child.Count);
+                }
+                // copy recursively
+                {
+                    OGSessionObject o1copy2 = o1.copy_object(OGConnectionDirection.Direction_From);
+                    List<OGSessionObject> child = new List<OGSessionObject>();
+                    o1copy2.get_connected_object_to(child);
+
+                    Assert.AreEqual(0, child.Count);
+                }
+                // copy recursively
+                {
+                    OGSessionObject o1copy2 = o2.copy_object(OGConnectionDirection.Direction_From);
+                    List<OGSessionObject> child = new List<OGSessionObject>();
+                    o1copy2.get_connected_object_from(child);
+
+                    Assert.AreEqual(2, child.Count);
+                }
+            } 
+        }
     }
 }
+

@@ -18,6 +18,7 @@ public:
   OG_COREAPI virtual ~session_object();
 
   void delete_object();
+  session_object_ptr copy_object(og::core::connection_direction _direction);
 
   ///////////////////////////////
   // relation
@@ -36,6 +37,17 @@ public:
   void get_connected_object_to(list<session_object_ptr>* _sesn_obj_list);
   void get_connected_object_to(list<string>& _rel_type_list,
                                list<session_object_ptr>* _sesn_obj_list);
+
+  void get_connected(list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
+  void get_connected(list<string>& _rel_type_list,
+                            list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
+  void get_connected_from(list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
+  void get_connected_from(list<string>& _rel_type_list,
+                                 list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
+  void get_connected_to(list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
+  void get_connected_to(list<string>& _rel_type_list,
+                               list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
+
   bool validate_connect_to(session_object_ptr _sesn_obj_ptr);
   bool validate_connect_to(session_object_ptr _sesn_obj_ptr, string _rel_type);
   bool validate_connect_from(session_object_ptr _sesn_obj_ptr);

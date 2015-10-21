@@ -2,14 +2,14 @@
 
 ObjectGenoise is a ORM, database middle ware and C++/.Net library.
   - Pseudo dynamic class definition. Its serialize and deserialize.
-  - Composite and Relation Class Association are supported. 
+  - Composite and Relation Class Association are supported.
 
 ## Technical Overview
 
-### ObjectGenoise is divided into 2 features:
-- schema : `schema' means a definition like a class. 
+### ObjectGenoise has 2 features:
+- schema : `schema' means a definition like a class.
 - session : `session' means an instance.
- 
+
 ```features
        | Schema                | Session
        +---                    +---
@@ -18,7 +18,7 @@ ObjectGenoise is a ORM, database middle ware and C++/.Net library.
        | SchemaParamaeter ===> SessionParameter
 ```
 
- 
+
 ```notation_of_session
        +-------------------+
        |<SessionObject>    | 0..*
@@ -35,6 +35,184 @@ ObjectGenoise is a ORM, database middle ware and C++/.Net library.
                              +-------------------+
 ```
 
+### Relation Operatoins : connect and disconnect, copy.
+- SessionObject can has the other classes. This relationship of compositoin is called SessionRelation.
+- SessionRelation can also hold parameters.
+- SessionRelation has an direction. The direction is used while retrieving SessionObjects.
+
+
+```usage of connect and copy
+
+      Precondition :
+
+       +-------------------+
+       |<SchemaObject> SO_A|
+       +-------------------+----+
+                                _\/
+                  |          +----------------------+
+                             |<SchemaRelation> SR_X |
+                  |          +----------------------+----+
+                                                         _\/
+                  |                                   +-------------------+
+                                                      |<SchemaObject> SO_B|
+                  |                                   +-------------------+
+       +---------------------+
+       |<SessionObject> EO_A1| 	       	       	       	       	  |
+       +---------------------+
+                                 	      			  |
+
+                                                             	  |
+                                                      +---------------------+
+                                                      |<SessoinObject> EO_B1|
+                                                      +---------------------+
+
+      After creating 2 sessoin objects:
+      > EO_A1->connect_to(EO_B1, "<type of SR_X>");
+
+      If you test the connection :
+      > EO_A1->validate_connect_to(EO_B1, "<type of ER_X>");
+
+      Otherwise, you can connect in the other way:
+      > EO_B1->connect_from(EO_A1, "<type of ER_X>");
+
+       +-------------------+
+       |<SchemaObject> SO-A|
+       +-------------------+----+
+                                _\/
+                  |          +----------------------+
+                             |<SchemaRelation> SR-X |
+                  |          +----------------------+----+
+                                         |               _\/
+                  |                                   +-------------------+
+                                         |            |<SchemaObject> SO-B|
+                  |                                   +-------------------+
+       +---------------------+		 |
+       |<SessionObject> EO-A1|                                    |
+       +---------------------+----+	 |
+                                  _\/                             |
+                             +-----------------------+
+                             |<SessionRelation> ER-X1|            |
+                             +-----------------------+----+
+                                                          _\/     |
+                                                      +---------------------+
+                                                      |<SessoinObject> EO-B1|
+                                                      +---------------------+
+
+      And more, You can also connect again:
+      ===> EO_A1->connect_to(EO_B1, "<type of SR_X>");
+
+       +-------------------+
+       |<SchemaObject> SO-A|
+       +-------------------+----+
+                                _\/
+                  |          +----------------------+
+                             |<SchemaRelation> SR-X |
+                  |          +----------------------+----+
+                                         |               _\/
+                  |                                   +-------------------+
+                                         |            |<SchemaObject> SO-B|
+                  |                                   +-------------------+
+       +---------------------+           |
+       |<SessionObject> EO-A1|                                    |
+       +---------+-----------+----+      | 
+                  \               _\/                             |
+                   \         +-----------------------+
+                    \        |<SessionRelation> ER-X1|            |
+                     \       +-----------------------+----+
+                      \                                    \      |
+                       \   \ +-----------------------+      \
+                        +--- |<SessionRelation> ER-X1|       \    |
+                             +-----------------------+----+   \
+                                                          _\/ _\/ |
+                                                      +---------------------+
+                                                      |<SessoinObject> EO-B1|
+                                                      +---------------------+
+      And then, if you copy object:
+      ===> EO_A1->copy_object();
+
+       +-------------------+
+       |<SchemaObject> SO-A|
+       +-------------------+----+
+                                _\/
+                  |          +----------------------+
+                             |<SchemaRelation> SR-X |
+                  |          +----------------------+----+
+                                         |               _\/
+                  |                                   +-------------------+
+                                         |            |<SchemaObject> SO-B|
+                  |                                   +-------------------+
+                                         |                        |
+       +---------------------+
+       |<SessionObject> EO-A1|           |                        |
+       +---------+-----------+----+
+                  \               _\/    |                        |
+                   \         +-----------------------+
+                    \        |<SessionRelation> ER-X1|            |
+                     \       +-----------------------+----+
+                      \                                    \      |
+                       \   \ +-----------------------+      \
+                        +--- |<SessionRelation> ER-X1|       \    |
+                             +-----------------------+----+   \
+                                                          _\/ _\/ |
+                                                      +---------------------+
+                                                      |<SessoinObject> EO-B1|
+                                                      +---------------------+
+
+       +---------------------+
+       |<SessionObject> EO-A2|
+       +---------+-----------+
+
+      If you like recursive copy, do :
+      ===> EO_A1->copy_object(og::core::connection_direction::to);
+
+       +-------------------+
+       |<SchemaObject> SO-A|
+       +-------------------+----+
+                                _\/
+                  |          +----------------------+
+                             |<SchemaRelation> SR-X |
+                  |          +----------------------+----+
+                                         |               _\/
+                  |                                   +-------------------+
+                                         |            |<SchemaObject> SO-B|
+                  |                                   +-------------------+
+                                         |                        |
+       +---------------------+
+       |<SessionObject> EO-A1|           |                        |
+       +---------+-----------+----+
+                  \               _\/    |                        |
+                   \         +-----------------------+
+                    \        |<SessionRelation> ER-X1|            |
+                     \       +-----------------------+----+
+                      \                                    \      |
+                       \   \ +-----------------------+      \
+                        +--- |<SessionRelation> ER-X2|       \    |
+                             +-----------------------+----+   \
+                                                          _\/ _\/ |
+                                                      +---------------------+
+                                                      |<SessoinObject> EO-B1|
+                                                      +---------------------+
+       +---------------------+
+       |<SessionObject> EO-A2|
+       +---------+-----------+
+
+       +---------------------+
+       |<SessionObject> EO-A3|
+       +---------+-----------+----+
+                  \               _\/
+                   \         +-----------------------+
+                    \        |<SessionRelation> ER-X3|
+                     \       +-----------------------+----+
+                      \                                    \
+                       \   \ +-----------------------+      \
+                        +--- |<SessionRelation> ER-X4|       \
+                             +-----------------------+----+   \
+                                                          _\/ _\/
+                                                      +---------------------+
+                                                      |<SessoinObject> EO-B2|
+                                                      +---------------------+
+
+```
 ### ObjectGenoise Example : CAM system schema
 ![internal schema pdf](https://github.com/KouOuchi/ObjectGenoise/blob/master/sql/example.png)
 
@@ -57,14 +235,14 @@ And support files :
 ## Prerequisite
 ObjectGenoise depends on the following package
 * [boost] 1.57
-	Note: while using boost_log from c++/cli, I'm faced with crash.
-	So, i use this [buildscript]. 
+        Note: while using boost_log from c++/cli, I'm faced with crash.
+        So, i use this [buildscript].
 
-* [soci] 3.2 
+* [soci] 3.2
 * [SQLite3] 3.8.7
 
 ## Building
-You need 3 environment variable as follows : 
+You need 3 environment variable as follows :
 - BOOST
 - SOCI
 - SQLITE3
@@ -79,62 +257,30 @@ SOCI=c:\path\to\soci
 SQLITE3=c:\path\to\sqlite3
 ```
 
-And then, create lib directory and copy libraries as follows:
-```
-> $ find lib -type f
-> 
-> lib/debug/boost_chrono-vc120-mt-gd-1_57.dll
-> lib/debug/boost_date_time-vc120-mt-gd-1_57.dll
-> lib/debug/boost_filesystem-vc120-mt-gd-1_57.dll
-> lib/debug/boost_iostreams-vc120-mt-gd-1_57.dll
-> lib/debug/boost_locale-vc120-mt-gd-1_57.dll
-> lib/debug/boost_log-vc120-mt-gd-1_57.dll
-> lib/debug/boost_log_setup-vc120-mt-gd-1_57.dll
-> lib/debug/boost_regex-vc120-mt-gd-1_57.dll
-> lib/debug/boost_system-vc120-mt-gd-1_57.dll
-> lib/debug/boost_thread-vc120-mt-gd-1_57.dll
-> lib/debug/boost_timer-vc120-mt-gd-1_57.dll
-> lib/debug/boost_unit_test_framework-vc120-mt-gd-1_57.dll
-> lib/debug/boost_zlib-vc120-mt-gd-1_57.dll
-> lib/release/boost_chrono-vc120-mt-1_57.dll
-> lib/release/boost_date_time-vc120-mt-1_57.dll
-> lib/release/boost_filesystem-vc120-mt-1_57.dll
-> lib/release/boost_iostreams-vc120-mt-1_57.dll
-> lib/release/boost_locale-vc120-mt-1_57.dll
-> lib/release/boost_log-vc120-mt-1_57.dll
-> lib/release/boost_log_setup-vc120-mt-1_57.dll
-> lib/release/boost_regex-vc120-mt-1_57.dll
-> lib/release/boost_system-vc120-mt-1_57.dll
-> lib/release/boost_thread-vc120-mt-1_57.dll
-> lib/release/boost_timer-vc120-mt-1_57.dll
-> lib/release/boost_unit_test_framework-vc120-mt-1_57.dll
-> lib/release/boost_zlib-vc120-mt-1_57.dll
-```
-
 *** Windows
 use VisualStudio2013. Set platform to x64.
 
 ## Version and History
-0.0.1 initial revision 
-## Todo's
+0.0.1 initial revision
+## TODO
  - Code : Write CMake build script.
  - Code : Add Code Comments.
- - Code : Add Postgresql and Mysql test.
+ - Code : Add Oracle, Postgresql and Mysql test.
  - Code : Add tests on *nix.
  - Function : Search Criteria
  - Function : Add embedded type. Now i have 3 basic types: integer, real and text.
  - Function : User or Domain control
  - Function : Multiprexity validation.
  - <<FIXED>>Function : "Auto Revision Up" and "Catch Up schema revision"
- - Function : (under investigtoin) Multiple Revision management both schema and session. 
- - Tool : Session instances viewer. 
+ - Function : (under investigtoin) Multiple Revision management both schema and session.
+ - Tool : Session instances viewer.
 
 ## Licenses and Authors
   * Licensed under the [Boost Software License 1.0]
   * Copyright &copy; 2015 Kou Ouchi <kou.ouchi@division-engineering.com>
-  
+
 ## Related Information
-- [Enterprise Architect] : Data Modeling editor. "CodeEngineering" function can generates DDL of various DataBase Systems. 
+- [Enterprise Architect] : Data Modeling editor. "CodeEngineering" function can generates DDL of various DataBase Systems.
 - [PupSQLite] : Cool and lightweight SQLite3 viewer.
 - [Astyle] : A Free, Fast, and Small Automatic Formatter
 for C, C++, C++/CLI, Objective?C, C#, and Java Source Code

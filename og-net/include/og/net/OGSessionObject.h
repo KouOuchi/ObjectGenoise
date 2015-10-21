@@ -13,6 +13,14 @@ class og_session_object;
 namespace net
 {
 
+public enum class OGConnectionDirection
+{
+  Direction_None = 0,
+  Direction_To = 1,
+  Direction_From = 2,
+  Direction_Both = 4
+};
+
 using namespace System;
 using namespace System::Text;
 using namespace System::Collections::Generic;
@@ -52,6 +60,8 @@ public:
                                   String^ _rel_type);
   void disconnect(OGSessionObject^ _sesn_obj);
   void delete_object();
+  OGSessionObject^ copy_object();
+  OGSessionObject^ copy_object(OGConnectionDirection _dir);
 
   void get_connected_object(List<OGSessionObject^>^ _sesn_obj_List);
   void get_connected_object(List<String^>^ _rel_type_List,

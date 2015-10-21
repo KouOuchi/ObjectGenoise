@@ -40,6 +40,25 @@ struct fetcher
 
     fetch_body(st, result_vec, _list);
   }
+
+  static void fetch_use1(soci::session& _session, string _query,
+                         soci::details::use_type_ptr& _use,
+                         list<T>* _list, list<T>* _list2)
+  {
+    vector<T> result_vec(BATCH_SIZE);
+    vector<T> result_vec2(BATCH_SIZE);
+    soci::statement st =
+      (
+        _session.prepare <<
+        _query
+        , _use
+        , soci::into(result_vec)
+		, soci::into(result_vec2)
+      );
+
+    fetch_body(st, result_vec, _list, result_vec2, _list2);
+  }
+
   static void fetch_use2(soci::session& _session, string _query,
                          soci::details::use_type_ptr& _use,
                          soci::details::use_type_ptr& _use2, list<T>* _list)
@@ -70,6 +89,26 @@ struct fetcher
       }
 
       _result_vec.resize(BATCH_SIZE);
+    }
+  }
+
+  static void fetch_body(soci::statement& _stmt, vector<T>& _result_vec,
+                         list<T>* _list, vector<T>& _result_vec2,
+                         list<T>* _list2)
+  {
+    _stmt.execute();
+    while (_stmt.fetch())
+    {
+      vector<T>::iterator pos = _result_vec.begin();
+      vector<T>::iterator pos2 = _result_vec2.begin();
+      for(; pos != _result_vec.end(); ++pos, ++pos2)
+      {
+        _list->push_back(*pos);
+        _list2->push_back(*pos2);
+      }
+
+      _result_vec.resize(BATCH_SIZE);
+      _result_vec2.resize(BATCH_SIZE);
     }
   }
 

@@ -62,6 +62,15 @@ enum parameter_basetype_enum
   select = 4
 };
 
+// 
+enum connection_direction
+{
+  direction_none = 0,
+  direction_to = 1,
+  direction_from = 2,
+  direction_both = 4
+};
+
 typedef boost::variant <
 boost::blank,
       int, //interger

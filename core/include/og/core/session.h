@@ -47,6 +47,8 @@ public:
   session_object_ptr create_object(schema_object_ptr _schm_obj);
   OG_COREAPI void delete_object(string _id,
                                 map<string, session_parameter_ptr>* _param_map);
+  OG_COREAPI session_object_ptr copy_object(schema_object_ptr _schm_obj,
+                                map<string, session_parameter_ptr>* _param_map);
   void delete_object_parameter_definition(string _param_name, schema_parameter_ptr _param);
   void delete_relatoin_parameter_definition(string _param_name, schema_parameter_ptr _param);
 
@@ -54,6 +56,9 @@ public:
   void get_object(list<session_object_ptr>* _sesn_obj_list);
   void get_object(list<string>& _oid_list,
                   list<session_object_ptr>* _sesn_obj_list);
+
+  void get_object_relation(list<string>& _oid_list, list<string>& _rel_list,
+	  list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_objrel_list);
 
   void get_object_by_type(list<string>& _otype_list,
                           list<session_object_ptr>* _sesn_obj_list);
@@ -71,8 +76,6 @@ public:
                      const ptree& _param_elm);
   // object end
 
-
-
   ///////////////////////////////
   // relation
   ///////////////////////////////
@@ -82,6 +85,12 @@ public:
                                  list<session_object_ptr>* _sesn_obj_list);
   void get_connected_object_to(string _from_id, list<string> _rel_type_list,
                                list<session_object_ptr>* _sesn_obj_list);
+
+  void get_connected_from(string _to_id, list<string> _rel_type_list,
+                                 list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_objrel_list);
+  void get_connected_to(string _from_id, list<string> _rel_type_list,
+                               list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_objrel_list);
+
   OG_COREAPI bool validate_connect(string _from_id, string _to_id,
                                    list<string> _rel_type_list);
 

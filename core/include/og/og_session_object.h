@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <boost/shared_ptr.hpp>
+#include <boost/tuple/tuple.hpp>
 #include "og/og_schema.h"
 #include "og/og_schema_relation.h"
 
@@ -42,6 +43,13 @@ public:
   // property ends.
 
   ///////////////////////////////
+  // oepration
+  ///////////////////////////////
+  OG_COREAPI void delete_object();
+  OG_COREAPI og_session_object_ptr copy_object();
+  OG_COREAPI og_session_object_ptr copy_object(og::core::connection_direction _direction);
+	  
+	  ///////////////////////////////
   // relation
   ///////////////////////////////
   OG_COREAPI og_session_relation_ptr connect_to(og_session_object_ptr _sesn_obj,
@@ -49,7 +57,6 @@ public:
   OG_COREAPI og_session_relation_ptr connect_from(og_session_object_ptr _sesn_obj,
                                        string _rel_type);
   OG_COREAPI void disconnect(og_session_object_ptr _sesn_obj);
-  OG_COREAPI void delete_object();
 
   OG_COREAPI void get_connected_object(list<og_session_object_ptr>* _sesn_obj_list);
   OG_COREAPI void get_connected_object(list<string>& _rel_type_list,
@@ -60,6 +67,17 @@ public:
   OG_COREAPI void get_connected_object_to(list<og_session_object_ptr>* _sesn_obj_list);
   OG_COREAPI void get_connected_object_to(list<string>& _rel_type_list,
                                list<og_session_object_ptr>* _sesn_obj_list);
+
+  OG_COREAPI void get_connected(list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>* _sesn_obj_rel_list);
+  OG_COREAPI void get_connected(list<string>& _rel_type_list,
+                            list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>* _sesn_obj_rel_list);
+  OG_COREAPI void get_connected_from(list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>* _sesn_obj_rel_list);
+  OG_COREAPI void get_connected_from(list<string>& _rel_type_list,
+                                 list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>* _sesn_obj_rel_list);
+  OG_COREAPI void get_connected_to(list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>* _sesn_obj_rel_list);
+  OG_COREAPI void get_connected_to(list<string>& _rel_type_list,
+                               list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>* _sesn_obj_rel_list);
+
   OG_COREAPI bool validate_connect_to(og_session_object_ptr _sesn_obj_ptr);
   OG_COREAPI bool validate_connect_to(og_session_object_ptr _sesn_obj_ptr, string _rel_type);
   OG_COREAPI bool validate_connect_from(og_session_object_ptr _sesn_obj_ptr);

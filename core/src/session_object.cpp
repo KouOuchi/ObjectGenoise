@@ -53,6 +53,50 @@ void session_object::delete_object()
   session_->delete_object(id_, param_map);
 }
 
+session_object_ptr session_object::copy_object(og::core::connection_direction
+    _direction)
+{
+  map<string, session_parameter_ptr>* param_map(get_parameters());
+  session_object_ptr target = session_->copy_object(get_schema_object(),
+                              param_map);
+
+  // adjust name and comment
+  target->set_comment(get_comment());
+  stringstream ss("copy of ");
+  ss << get_name();
+  target->set_name(ss.str());
+
+  if (_direction == og::core::connection_direction::direction_from)
+  {
+    list<boost::tuple<session_object_ptr, session_relation_ptr>> from_objs;
+    get_connected_from(&from_objs);
+    for (list<boost::tuple<session_object_ptr, session_relation_ptr>>::iterator it =
+           from_objs.begin();
+         it != from_objs.end(); it++)
+    {
+      session_object_ptr parent_of_target = boost::get<0>(*it)->copy_object(
+                                             _direction);
+      target->connect_from(parent_of_target, boost::get<1>(*it)->get_type());
+    }
+  }
+
+  if (_direction == og::core::connection_direction::direction_to)
+  {
+    list<boost::tuple<session_object_ptr, session_relation_ptr>> to_objs;
+    get_connected_to(&to_objs);
+    for (list<boost::tuple<session_object_ptr, session_relation_ptr>>::iterator it =
+           to_objs.begin();
+         it != to_objs.end(); it++)
+    {
+      session_object_ptr child_of_target = boost::get<0>(*it)->copy_object(
+                                             _direction);
+      target->connect_to(child_of_target, boost::get<1>(*it)->get_type());
+    }
+  }
+
+  return target;
+}
+
 // relation ===>
 session_relation_ptr session_object::connect_to(session_object_ptr _sesn_obj,
     string _rel_type)
@@ -379,8 +423,50 @@ void session_object::set_parameter(string _param_name,
   p.get()->values_.assign(_values.begin(), _values.end());
 }
 
+void session_object::get_connected(
+  list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list)
+{
+  list<string> rel_type_list;
+  get_connected(rel_type_list, _sesn_obj_list);
+}
 
+void session_object::get_connected(list<string>& _rel_type_list,
+                                   list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list)
+{
+  list<boost::tuple<session_object_ptr, session_relation_ptr>> sesn_obj_list1;
+  list<boost::tuple<session_object_ptr, session_relation_ptr>> sesn_obj_list2;
 
+  get_connected_from(_rel_type_list, &sesn_obj_list1);
+  get_connected_to(_rel_type_list, &sesn_obj_list2);
+
+  _sesn_obj_list->clear();
+  _sesn_obj_list->splice(_sesn_obj_list->end(), sesn_obj_list1);
+  _sesn_obj_list->splice(_sesn_obj_list->end(), sesn_obj_list2);
+}
+
+void session_object::get_connected_from(
+  list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list)
+{
+  list<string> rel_type_list;
+  session_->get_connected_from(id_, rel_type_list, _sesn_obj_list);
+}
+void session_object::get_connected_from(list<string>& _rel_type_list,
+                                        list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list)
+{
+  session_->get_connected_from(id_, _rel_type_list, _sesn_obj_list);
+}
+
+void session_object::get_connected_to(
+  list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list)
+{
+  list<string> rel_type_list;
+  session_->get_connected_to(id_, rel_type_list, _sesn_obj_list);
+}
+void session_object::get_connected_to(list<string>& _rel_type_list,
+                                      list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list)
+{
+  session_->get_connected_to(id_, _rel_type_list, _sesn_obj_list);
+}
 
 } //namespace core;
 } //namespace og;

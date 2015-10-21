@@ -112,6 +112,20 @@ void OGSessionObject::delete_object()
   og_session_object_->delete_object();
 }
 
+OGSessionObject^ OGSessionObject::copy_object()
+{
+  return gcnew OGSessionObject(
+           OGSharedPtr<og::og_session_object>(
+             og_session_object_->copy_object()));
+}
+
+OGSessionObject^ OGSessionObject::copy_object(OGConnectionDirection _direction)
+{
+  return gcnew OGSessionObject(
+           OGSharedPtr<og::og_session_object>(
+             og_session_object_->copy_object((og::core::connection_direction)_direction)));
+}
+
 void OGSessionObject::get_connected_object(List<OGSessionObject^>^
     _sesn_obj_list)
 {

@@ -248,7 +248,7 @@ BOOST_AUTO_TEST_CASE( session_1002 )
 BOOST_AUTO_TEST_CASE( session_1003 )
 {
   og::og_schema_object_ptr o(new og::og_schema_object(
-	  cleaned_session_.schema().get()));
+                               cleaned_session_.schema().get()));
   BOOST_REQUIRE_THROW( cleaned_session_.create_object(o), og::core::exception );
 }
 #endif
@@ -1013,11 +1013,146 @@ BOOST_AUTO_TEST_CASE( session_1100 )
   string did = r1->get_id();
 
   o1->disconnect(o2);
-  optional<og::og_session_relation_ptr> disconnected = cleaned_session_.get_relation(did);
+  optional<og::og_session_relation_ptr> disconnected =
+    cleaned_session_.get_relation(did);
 
   BOOST_REQUIRE(!disconnected.is_initialized());
 }
 
+// COPY
+BOOST_AUTO_TEST_CASE( session_1111 )
+{
+#ifdef WINDOWS
+  og::core::CrtCheckMemory __check__;
+#endif
+
+  // initialize db
+  og::og_session cleaned_session_;
+  cleaned_session_.open(DBPATH);
+  cleaned_session_.purge();
+  cleaned_session_.schema()->purge();
+
+  string OTYPE1 = "type_session_1005_1";
+  string ONAME1 = "name_session_1005_1";
+  string OTYPE2 = "type_session_1005_2";
+  string ONAME2 = "name_session_1005_2";
+  string RELTYPE1 = "reltype_session_1004_1";
+
+  // create schema obj
+  og::og_schema_object_ptr schm_obj1 = cleaned_session_.schema()->create_object(
+                                         OTYPE1,
+                                         ONAME1);
+  og::og_schema_object_ptr schm_obj2 = cleaned_session_.schema()->create_object(
+                                         OTYPE2,
+                                         ONAME2);
+
+  schm_obj1->connect_to(schm_obj2, RELTYPE1);
+
+  og::og_session_object_ptr o1 = cleaned_session_.create_object(schm_obj1);
+  og::og_session_object_ptr o2 = cleaned_session_.create_object(schm_obj2);
+
+  og::og_session_relation_ptr r1 = o1->connect_to(o2, RELTYPE1);
+  og::og_session_relation_ptr r2 = o1->connect_to(o2, RELTYPE1);
+
+  // basic copy
+  {
+    og::og_session_object_ptr copied = o1->copy_object();
+    BOOST_REQUIRE_EQUAL(copied->get_schema_object_id(), o1->get_schema_object_id());
+    BOOST_REQUIRE_EQUAL(copied->get_schema_object_type(),
+                        o1->get_schema_object_type());
+  }
+
+  // recurive copy
+  {
+    og::og_session_object_ptr copied = o1->copy_object(
+                                         og::core::connection_direction::direction_to);
+    BOOST_REQUIRE_EQUAL(copied->get_schema_object_id(), o1->get_schema_object_id());
+    BOOST_REQUIRE_EQUAL(copied->get_schema_object_type(),
+		o1->get_schema_object_type());
+
+	{
+		list<og::og_session_object_ptr> childs;
+		copied->get_connected_object_to(&childs);
+
+		BOOST_REQUIRE_EQUAL(2, childs.size());
+	}
+	{
+		list<og::og_session_object_ptr> childs;
+		copied->get_connected_object_from(&childs);
+
+		BOOST_REQUIRE_EQUAL(0, childs.size());
+	}
+	{
+		list<og::og_session_object_ptr> childs;
+		copied->get_connected_object(&childs);
+
+		BOOST_REQUIRE_EQUAL(2, childs.size());
+	}
+	{
+		list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>> childs;
+		copied->get_connected_from(&childs);
+
+		BOOST_REQUIRE_EQUAL(0, childs.size());
+	}
+	{
+		list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>> childs;
+		copied->get_connected_to(&childs);
+
+		BOOST_REQUIRE_EQUAL(2, childs.size());
+	}
+	{
+		list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>> childs;
+		copied->get_connected(&childs);
+
+		BOOST_REQUIRE_EQUAL(2, childs.size());
+	}
+  }
+
+  {
+    og::og_session_object_ptr copied = o2->copy_object(
+                                         og::core::connection_direction::direction_from);
+    BOOST_REQUIRE_EQUAL(copied->get_schema_object_id(), o2->get_schema_object_id());
+    BOOST_REQUIRE_EQUAL(copied->get_schema_object_type(),
+		o2->get_schema_object_type());
+
+	{
+		list<og::og_session_object_ptr> childs;
+		copied->get_connected_object_to(&childs);
+
+		BOOST_REQUIRE_EQUAL(0, childs.size());
+	}
+	{
+		list<og::og_session_object_ptr> childs;
+		copied->get_connected_object_from(&childs);
+
+		BOOST_REQUIRE_EQUAL(2, childs.size());
+	}
+	{
+		list<og::og_session_object_ptr> childs;
+		copied->get_connected_object(&childs);
+
+		BOOST_REQUIRE_EQUAL(2, childs.size());
+	}
+	{
+		list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>> childs;
+		copied->get_connected_from(&childs);
+
+		BOOST_REQUIRE_EQUAL(2, childs.size());
+	}
+	{
+		list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>> childs;
+		copied->get_connected_to(&childs);
+
+		BOOST_REQUIRE_EQUAL(0, childs.size());
+	}
+	{
+		list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>> childs;
+		copied->get_connected(&childs);
+
+		BOOST_REQUIRE_EQUAL(2, childs.size());
+	}
+  }
+}
 
 BOOST_AUTO_TEST_SUITE_END()
 #endif // TEST_OG_SESSION

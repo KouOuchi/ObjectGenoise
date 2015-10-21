@@ -299,7 +299,7 @@ bool session::import_relation(session_relation_ptr _sesn_rel,
 }
 
 void session::import_parameter(const ptree& _param_elm,
-    map<string, list<parameter_value_variant>>* _params)
+                               map<string, list<parameter_value_variant>>* _params)
 {
   BOOST_FOREACH(const ptree::value_type& pt, _param_elm.get_child("parameters"))
   {
@@ -480,6 +480,28 @@ void session::get_object(list<string>& _oid_list,
   }
 }
 
+void session::get_object_relation(list<string>& _oid_list,
+                                  list<string>& _rel_list,
+                                  list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_objrel_list)
+{
+  _sesn_objrel_list->clear();
+
+  list<string>::iterator it = _oid_list.begin();
+  list<string>::iterator it2 = _rel_list.begin();
+  for(; it != _oid_list.end(); ++it, ++it2)
+  {
+    optional<session_object_ptr> ptr = get_object(*it);
+    optional<session_relation_ptr> ptr_rel = get_relation(*it2);
+
+    if(ptr.is_initialized() && ptr_rel.is_initialized())
+    {
+      _sesn_objrel_list->push_back(
+        boost::make_tuple<session_object_ptr, session_relation_ptr>(ptr.get(),
+            ptr_rel.get()));
+    }
+  }
+}
+
 void session::delete_object(string _id,
                             map<string, session_parameter_ptr>* _param_map)
 {
@@ -534,6 +556,28 @@ void session::delete_object(string _id,
       soci::use(_id);
 }
 
+session_object_ptr session::copy_object(schema_object_ptr _schm_obj,
+                                        map<string, session_parameter_ptr>* _param_map)
+{
+  session_object_ptr created(create_object(_schm_obj));
+
+  list<boost::tuple<string, schema_parameter_ptr>> param_name_types;
+  created->get_schema_object()->get_parameters(&param_name_types);
+
+  for (list<boost::tuple<string, schema_parameter_ptr>>::iterator fit =
+         param_name_types.begin();
+       fit != param_name_types.end(); fit++)
+  {
+    map<string, session_parameter_ptr>::iterator it = _param_map->find(
+          boost::get<0>(*fit));
+    if (it != _param_map->end())
+    {
+      insert_object_parameter_with_arg(created, *fit, it->second->values_);
+    }
+  }
+
+  return created;
+}
 void session::get_object_by_type(list<string>& _otype_list,
                                  list<session_object_ptr>* _sesn_obj_list)
 {
@@ -1697,6 +1741,47 @@ void session::insert_relation_parameter_with_arg(session_relation_ptr
                                          boost::get<1>(_sesn_rel_param)))));
 }
 
+void session::get_connected_from(string _to_id, list<string> _rel_type_list,
+                                 list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_objrel_list)
+{
+  list<string> id_list;
+  list<string> rel_list;
+
+  fetcher<string>::fetch_use1(
+    *soci_session_
+    , "SELECT SO_F.id_, SR.id_ FROM session_object SO_F "
+    "INNER JOIN session_relation SR ON "
+    "SR.from_id = SO_F.id_ "
+    "INNER JOIN schema_relation R ON "
+    "R.id_ = SR.schema_relation_id "
+    "WHERE SR.to_id = :to_id "
+    + where_condition<string>(_rel_type_list, "R.type")()
+    , soci::use(_to_id, "to_id")
+    , &id_list, &rel_list);
+
+  get_object_relation(id_list, rel_list, _sesn_objrel_list);
+}
+
+void session::get_connected_to(string _from_id, list<string> _rel_type_list,
+                               list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_objrel_list)
+{
+  list<string> id_list;
+  list<string> rel_list;
+
+  fetcher<string>::fetch_use1(
+    *soci_session_
+    , "SELECT SO_T.id_, SR.id_ FROM session_object SO_T "
+    "INNER JOIN session_relation SR ON "
+    "SR.to_id = SO_T.id_ "
+    "INNER JOIN schema_relation R ON "
+    "R.id_ = SR.schema_relation_id "
+    "WHERE SR.from_id = :from_id "
+    + where_condition<string>(_rel_type_list, "R.type")()
+    , soci::use(_from_id, "from_id")
+    , &id_list, &rel_list);
+
+  get_object_relation(id_list, rel_list, _sesn_objrel_list);
+}
 
 } // namespace core;
 } // namespace og;
