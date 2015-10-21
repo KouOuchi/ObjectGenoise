@@ -9,17 +9,15 @@ ObjectGenoise is a ORM, database middle ware and C++/.Net library.
 ### ObjectGenoise has 2 features:
 - schema : `schema' means a definition like a class.
 - session : `session' means an instance.
-
-```features
+```
+   features
        | Schema                | Session
        +---                    +---
        | SchemaObject     ===> SessionObject
        | SchemaRelation   ===> SessionRelation
        | SchemaParamaeter ===> SessionParameter
-```
 
-
-```notation_of_session
+    notation_of_session
        +-------------------+
        |<SessionObject>    | 0..*
        +-------------------+<----+
@@ -39,12 +37,9 @@ ObjectGenoise is a ORM, database middle ware and C++/.Net library.
 - SessionObject can has the other classes. This relationship of compositoin is called SessionRelation.
 - SessionRelation can also hold parameters.
 - SessionRelation has an direction. The direction is used while retrieving SessionObjects.
-
-
-```usage of connect and copy
-
+```
+usage of connect and copy
       Precondition :
-
        +-------------------+
        |<SchemaObject> SO_A|
        +-------------------+----+
@@ -60,8 +55,6 @@ ObjectGenoise is a ORM, database middle ware and C++/.Net library.
        |<SessionObject> EO_A1| 	       	       	       	       	|
        +---------------------+
                                  	                              |
-
-                                                             	  |
                                                       +---------------------+
                                                       |<SessoinObject> EO_B1|
                                                       +---------------------+
@@ -211,15 +204,14 @@ ObjectGenoise is a ORM, database middle ware and C++/.Net library.
                                                       +---------------------+
                                                       |<SessoinObject> EO-B2|
                                                       +---------------------+
-
 ```
-### ObjectGenoise Example : CAM system schema
+
+### Example : CAM system schema
 ![internal schema pdf](https://github.com/KouOuchi/ObjectGenoise/blob/master/sql/example.png)
 
-### ObjectGenoise internal
+### Internal
 ![internal schema pdf](https://github.com/KouOuchi/ObjectGenoise/blob/master/sql/OG-Schema.png)
 [Internal Schema PDF] and [InternalSchema SQL]
-
 
 ## Development
 This package includes 4 projects:
@@ -261,7 +253,11 @@ SQLITE3=c:\path\to\sqlite3
 use VisualStudio2013. Set platform to x64.
 
 ## Version and History
+0.6.1 add : schema catchup
+      add : copy_object
+0.4.0 internal release
 0.0.1 initial revision
+
 ## TODO
  - Code : Write CMake build script.
  - Code : Add Code Comments.
