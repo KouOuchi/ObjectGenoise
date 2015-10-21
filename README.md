@@ -35,7 +35,7 @@ ObjectGenoise is a ORM, database middle ware and C++/.Net library.
                              +-------------------+
 ```
 
-### Relation Operatoins : connect and disconnect, copy.
+### Relation Operatoins : connect, disconnect and copy_object.
 - SessionObject can has the other classes. This relationship of compositoin is called SessionRelation.
 - SessionRelation can also hold parameters.
 - SessionRelation has an direction. The direction is used while retrieving SessionObjects.
@@ -57,9 +57,9 @@ ObjectGenoise is a ORM, database middle ware and C++/.Net library.
                                                       |<SchemaObject> SO_B|
                   |                                   +-------------------+
        +---------------------+
-       |<SessionObject> EO_A1| 	       	       	       	       	  |
+       |<SessionObject> EO_A1| 	       	       	       	       	|
        +---------------------+
-                                 	      			  |
+                                 	                              |
 
                                                              	  |
                                                       +---------------------+
@@ -86,9 +86,9 @@ ObjectGenoise is a ORM, database middle ware and C++/.Net library.
                   |                                   +-------------------+
                                          |            |<SchemaObject> SO-B|
                   |                                   +-------------------+
-       +---------------------+		 |
+       +---------------------+		       |
        |<SessionObject> EO-A1|                                    |
-       +---------------------+----+	 |
+       +---------------------+----+	     |
                                   _\/                             |
                              +-----------------------+
                              |<SessionRelation> ER-X1|            |
