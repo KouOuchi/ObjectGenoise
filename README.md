@@ -1,14 +1,12 @@
 # ObjectGenoise
 
 ObjectGenoise is a ORM, database middle ware and C++/.Net library.
-  - Pseudo dynamic class definition. Its serialize and deserialize.
-  - Composite and Relation Class Association are supported.
 
 ## Technical Overview
 
 ### ObjectGenoise has 2 features:
-- schema : `schema' means a definition like a class.
-- session : `session' means an instance.
+- schema : `schema' means a definition of class.
+- session : `session' means an instance of class.
 ```
    features
        | Schema                | Session
@@ -114,7 +112,7 @@ usage of connect and copy
                      \       +-----------------------+----+
                       \                                    \      |
                        \   \ +-----------------------+      \
-                        +--- |<SessionRelation> ER-X1|       \    |
+                        +--- |<SessionRelation> ER-X2|       \    |
                              +-----------------------+----+   \
                                                           _\/ _\/ |
                                                       +---------------------+
@@ -144,7 +142,7 @@ usage of connect and copy
                      \       +-----------------------+----+
                       \                                    \      |
                        \   \ +-----------------------+      \
-                        +--- |<SessionRelation> ER-X1|       \    |
+                        +--- |<SessionRelation> ER-X2|       \    |
                              +-----------------------+----+   \
                                                           _\/ _\/ |
                                                       +---------------------+
@@ -209,7 +207,7 @@ usage of connect and copy
 ### Example : CAM system schema
 ![internal schema pdf](https://github.com/KouOuchi/ObjectGenoise/blob/master/sql/example.png)
 
-### Internal
+### Internal : Tables, primary keys and foreign keys.
 ![internal schema pdf](https://github.com/KouOuchi/ObjectGenoise/blob/master/sql/OG-Schema.png)
 [Internal Schema PDF] and [InternalSchema SQL]
 
