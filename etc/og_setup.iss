@@ -1,5 +1,5 @@
 ﻿#define MyAppSetupName 'ObjectGenoise'
-#define MyAppVersion '0.4' 
+#define MyAppVersion '0.62' 
 
 [Setup]
 AppName={#MyAppSetupName}
@@ -46,15 +46,15 @@ DirExistsWarning=no
 
 ;Source: "C:\mnt\lib2\Boost1.57_Ogre1.9.0 DevKit\boost_1_57_0\*"; DestDir: "{app}\boost_1_57_0\"; Flags: ignoreversion recursesubdirs createallsubdirs;
 Source: "C:\mnt\git2\ObjectGenoise\core\include\*"; DestDir: "{app}\include"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
-Source: "C:\mnt\git2\ObjectGenoise\x64\Debug\*.dll"; DestDir: "{app}\debug\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
-Source: "C:\mnt\git2\ObjectGenoise\x64\Debug\*.pdb"; DestDir: "{app}\debug\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
-Source: "C:\Program Files\SOCI\debug\bin\*.dll"; DestDir: "{app}\debug\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
+Source: "C:\mnt\git2\ObjectGenoise\test-og-net\bin\x64\Debug\*.dll"; DestDir: "{app}\debug\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
+Source: "C:\mnt\git2\ObjectGenoise\test-og-net\bin\x64\Debug\*.pdb"; DestDir: "{app}\debug\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
+;Source: "C:\Program Files\SOCI\debug\bin\*.dll"; DestDir: "{app}\debug\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
 Source: "C:\mnt\git2\ObjectGenoise\x64\Debug\*.lib"; DestDir: "{app}\debug\lib64"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
 ;Source: "C:\Program Files\SOCI\debug\lib64\*"; DestDir: "{app}\debug\lib64"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
 
-Source: "C:\mnt\git2\ObjectGenoise\x64\Release\*.dll"; DestDir: "{app}\release\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
-Source: "C:\mnt\git2\ObjectGenoise\x64\Release\*.pdb"; DestDir: "{app}\release\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
-Source: "C:\Program Files\SOCI\release\bin\*.dll"; DestDir: "{app}\release\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
+Source: "C:\mnt\git2\ObjectGenoise\test-og-net\bin\x64\Release\*.dll"; DestDir: "{app}\release\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
+Source: "C:\mnt\git2\ObjectGenoise\test-og-net\bin\x64\Release\*.pdb"; DestDir: "{app}\release\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
+;Source: "C:\Program Files\SOCI\release\bin\*.dll"; DestDir: "{app}\release\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
 Source: "C:\mnt\git2\ObjectGenoise\x64\Release\*.lib"; DestDir: "{app}\release\lib64"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
 ;Source: "C:\Program Files\SOCI\release\lib64\*"; DestDir: "{app}\release\lib64"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
 
@@ -70,7 +70,6 @@ Source: "C:\mnt\git2\ObjectGenoise\etc\env.bat"; DestDir: "{app}"; Flags: ignore
 
 [Components]
 Name: "UpdateEnv"; Description: "Create or Update OG_HOME environment value"; Types: custom full
-;Name: "Ogre"; Description: "Ogre 1.9.0"; Types: custom full
 
 [Run]
 Filename: "{app}\env.bat"; Components: UpdateEnv

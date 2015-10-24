@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using og.net;
+using System.IO;
 
 namespace test_og_net
 {
@@ -9,16 +10,11 @@ namespace test_og_net
     public class UnitTest_LargeData
     {
         og.net.OGSession cleaned_session_ = null;
-        const string DBPATH = "../../../../sql/og.db";
 
         [TestInitialize]
         public void TestInitialize()
         {
-            cleaned_session_ = new OGSession();
-            cleaned_session_.connect(DBPATH);
-            cleaned_session_.purge();
-            cleaned_session_.schema().purge();
-            cleaned_session_.build();
+            cleaned_session_ = new TestInitializer().initialize();
         }
 
         [TestMethod]

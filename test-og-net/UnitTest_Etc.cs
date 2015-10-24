@@ -2,23 +2,38 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using og.net;
+using System.IO;
 
 namespace test_og_net
 {
-    [TestClass]
-    public class UnitTest_Etc
+    public class TestInitializer
     {
-        og.net.OGSession cleaned_session_ = null;
-        const string DBPATH = "../../../../sql/og.db";
-
-        [TestInitialize]
-        public void TestInitialize()
+        public const string DBPATH = "../../../../sql/og.db";
+        const string DBPATH_SRC = "../../../../sql/og_src.db";
+        public og.net.OGSession initialize()
         {
+            new FileInfo(DBPATH_SRC).CopyTo(DBPATH, true);
+
+            og.net.OGSession cleaned_session_ = null;
             cleaned_session_ = new OGSession();
             cleaned_session_.connect(DBPATH);
             cleaned_session_.purge();
             cleaned_session_.schema().purge();
             cleaned_session_.build();
+            return cleaned_session_;
+        }
+    }
+
+
+    [TestClass]
+    public class UnitTest_Etc
+    {
+        og.net.OGSession cleaned_session_ = null;
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            cleaned_session_ = new TestInitializer().initialize();
         }
 
         [TestMethod]

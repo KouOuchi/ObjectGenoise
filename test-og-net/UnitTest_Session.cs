@@ -9,16 +9,11 @@ namespace test_og_net
     public class UnitTest_Session
     {
         og.net.OGSession cleaned_session_ = null;
-        const string DBPATH = "../../../../sql/og.db";
 
         [TestInitialize]
         public void TestInitialize()
         {
-            cleaned_session_ = new OGSession();
-            cleaned_session_.connect(DBPATH);
-            cleaned_session_.purge();
-            cleaned_session_.schema().purge();
-            cleaned_session_.build();
+            cleaned_session_ = new TestInitializer().initialize();
         }
         // basic
         [TestMethod]
@@ -79,7 +74,7 @@ namespace test_og_net
             {
                 // re open session
                 OGSession ses2 = new OGSession();
-                ses2.connect(DBPATH);
+                ses2.connect(TestInitializer.DBPATH);
 
                 List<OGSessionObject> sesn_obj_list = new List<OGSessionObject>();
                 ses2.get_object_by_type(otype_list, sesn_obj_list);

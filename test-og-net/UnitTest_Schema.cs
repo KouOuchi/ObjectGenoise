@@ -9,16 +9,11 @@ namespace test_og_net
     public class UnitTest_Schema
     {
         og.net.OGSession cleaned_session_ = null;
-        const string DBPATH = "../../../../sql/og.db";
 
         [TestInitialize]
         public void TestInitialize()
         {
-            cleaned_session_ = new OGSession();
-            cleaned_session_.connect(DBPATH);
-            cleaned_session_.purge();
-            cleaned_session_.schema().purge();
-            cleaned_session_.build();
+            cleaned_session_ = new TestInitializer().initialize();
         }
 
         void _check_OGSchemaObject(OGSchemaObject _soptr, string _oid, string _otype,
@@ -82,7 +77,7 @@ namespace test_og_net
 
             {
                 OGSession ses2 = new OGSession();
-                ses2.connect(DBPATH);
+                ses2.connect(TestInitializer.DBPATH);
 
                 // get_object_id
                 OGSchemaObject soptr2 = ses2.schema().get_object(oid);
@@ -120,7 +115,7 @@ namespace test_og_net
 
             {
                 OGSession ses2 = new OGSession();
-                ses2.connect(DBPATH);
+                ses2.connect(TestInitializer.DBPATH);
                 List<OGSchemaObject> obj_list1 = new List<OGSchemaObject>();
                 ses2.schema().get_object_by_type(otype_list, obj_list1);
 
@@ -159,7 +154,7 @@ namespace test_og_net
 
             {
                 OGSession ses2 = new OGSession();
-                ses2.connect(DBPATH);
+                ses2.connect(TestInitializer.DBPATH);
                 List<OGSchemaObject> obj_list2 = new List<OGSchemaObject>();
                 ses2.schema().get_object_by_name(oname_list, obj_list2);
 

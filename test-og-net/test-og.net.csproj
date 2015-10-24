@@ -115,8 +115,7 @@
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>XCOPY.EXE /Y "$(SolutionDir)lib\*.dll" "$(TargetDir)"
-XCOPY.EXE /Y "$(SolutionDir)lib\$(ConfigurationName)\*.dll" "$(TargetDir)"
+    <PostBuildEvent>XCOPY.EXE /Y "$(SolutionDir)lib\$(ConfigurationName)\*.dll" "$(TargetDir)"
 XCOPY.EXE /Y "$(SolutionDir)x64\$(ConfigurationName)\core*.dll" "$(TargetDir)"
 </PostBuildEvent>
   </PropertyGroup>
