@@ -115,6 +115,9 @@ public:
   OGSchemaParameter^ create_parameter_bool(String^ _param_type,
 	  String^ _comment, OGBool^ _basetype, int _default_array_size, int _min_array_size, int _max_array_size);
 
+  static String^ schema_property_object_type();
+  static String^ schema_property_object_name();
+  static String^ schema_property_core_revision();
 
   // parameters ends.
 
@@ -124,6 +127,7 @@ public:
   void export_to_file(String^ _path);
   bool import_from_file(String^ _path);
   void purge();
+
 internal:
   og::og_schema* og_schema_;
 

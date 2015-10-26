@@ -8,17 +8,11 @@ namespace test_og_net
     [TestClass]
     public class UnitTest_Transaction
     {
-        og.net.OGSession cleaned_session_ = null;
-
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            cleaned_session_ = new TestInitializer().initialize();
-        }
-
         [TestMethod]
         public void transaction_1000()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "type_session_1002_1";
             string ONAME1 = "name_session_1002_1";
             string OTYPE2 = "type_session_1002_2";
@@ -64,6 +58,8 @@ namespace test_og_net
         [TestMethod]
         public void transaction_1001()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "type_session_1002_1";
             string ONAME1 = "name_session_1002_1";
             string OTYPE2 = "type_session_1002_2";
@@ -111,6 +107,8 @@ namespace test_og_net
         [TestMethod]
         public void transaction_1002()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "Document2002from";
             string OTYPE2 = "Document2002to";
             string RELTYPE = "Document2002rel";

@@ -31,23 +31,23 @@ public:
   ///////////////////////////////
   // file io and management
   ///////////////////////////////
-  OG_COREAPI bool import_from_file(string _path);
-  OG_COREAPI void export_to_file(string _path);
-  OG_COREAPI bool catchup_schema(string _path);
+  bool import_from_file(string _path);
+  void export_to_file(string _path);
+  bool catchup_schema(string _path);
 
   OG_COREAPI void build();
-  OG_COREAPI void open(string _connection_string);
-  OG_COREAPI void close();
-  OG_COREAPI void purge(bool _delete_schema_property_object);
+  void open(string _connection_string);
+  void close();
+  void purge(bool _delete_schema_property_object);
   // file io and management end
 
   ///////////////////////////////
   // object
   ///////////////////////////////
   session_object_ptr create_object(schema_object_ptr _schm_obj);
-  OG_COREAPI void delete_object(string _id,
+  void delete_object(string _id,
                                 map<string, session_parameter_ptr>* _param_map);
-  OG_COREAPI session_object_ptr copy_object(schema_object_ptr _schm_obj,
+  session_object_ptr copy_object(schema_object_ptr _schm_obj,
                                 map<string, session_parameter_ptr>* _param_map);
   void delete_object_parameter_definition(string _param_name, schema_parameter_ptr _param);
   void delete_relatoin_parameter_definition(string _param_name, schema_parameter_ptr _param);

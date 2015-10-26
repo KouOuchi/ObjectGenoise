@@ -24,7 +24,8 @@ public:
   // schema
   ///////////////////////////////
   OGSchema^ schema();
-  void connect(String^ _connection_string);
+  void open(String^ _connection_string);
+  void close();
 
   ///////////////////////////////
   // file io and management
@@ -82,6 +83,8 @@ public:
 
   void disconnect(String^ _rel_id);
   // relation ends.
+
+  bool catchup_schema(String^ _path);
 
 internal:
   OGSharedPtr<og::og_session> og_session_;

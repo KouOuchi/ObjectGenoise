@@ -8,17 +8,12 @@ namespace test_og_net
     [TestClass]
     public class UnitTest_Session
     {
-        og.net.OGSession cleaned_session_ = null;
-
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            cleaned_session_ = new TestInitializer().initialize();
-        }
         // basic
         [TestMethod]
         public void session_1000()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE = "type_session_1000";
             string ONAME = "name_session_1000";
             List<string> oname_list = new List<string>(); oname_list.Add(ONAME);
@@ -39,6 +34,8 @@ namespace test_og_net
         [TestMethod]
         public void session_1001()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE = "type_session_1001";
             string ONAME = "name_session_1001";
             List<string> otype_list = new List<string>(); otype_list.Add(OTYPE);
@@ -74,7 +71,7 @@ namespace test_og_net
             {
                 // re open session
                 OGSession ses2 = new OGSession();
-                ses2.connect(TestInitializer.DBPATH);
+                ses2.open(TestInitializer.DBPATH);
 
                 List<OGSessionObject> sesn_obj_list = new List<OGSessionObject>();
                 ses2.get_object_by_type(otype_list, sesn_obj_list);
@@ -93,6 +90,8 @@ namespace test_og_net
         [TestMethod]
         public void session_1002()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "type_session_1002_1";
             string ONAME1 = "name_session_1002_1";
             string OTYPE2 = "type_session_1002_2";
@@ -243,6 +242,8 @@ namespace test_og_net
         [TestMethod]
         public void session_1004()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "type_session_1004_1";
             string ONAME1 = "name_session_1004_1";
             string OTYPE2 = "type_session_1004_2";
@@ -332,13 +333,12 @@ namespace test_og_net
             }
         }
 
-
-
-
         // 2 schema relation
         [TestMethod]
         public void session_1005()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "type_session_1005_1";
             string ONAME1 = "name_session_1005_1";
             string OTYPE2 = "type_session_1005_2";
@@ -376,6 +376,8 @@ namespace test_og_net
         [TestMethod]
         public void session_1006()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "Document2002from";
             string OTYPE2 = "Document2002to";
             string RELTYPE = "Document2002rel";
@@ -541,12 +543,12 @@ namespace test_og_net
             }
         }
 
-
-
         // parameter test (real)
         [TestMethod]
         public void session_1007()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "Document2002from";
             string OTYPE2 = "Document2002to";
             string RELTYPE = "Document2002rel";
@@ -712,12 +714,12 @@ namespace test_og_net
             }
         }
 
-
-
-        // parameter test text
+       // parameter test text
         [TestMethod]
         public void session_1008()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "Document2002from";
             string OTYPE2 = "Document2002to";
             string RELTYPE = "Document2002rel";
@@ -888,6 +890,8 @@ namespace test_og_net
         [TestMethod]
         public void session_1009()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "Document2002from";
             string OTYPE2 = "Document2002to";
             string RELTYPE = "Document2002rel";
@@ -1057,6 +1061,8 @@ namespace test_og_net
         [TestMethod]
         public void session_1100()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "Documentt1";
             string ONAME1 = "Documentn1";
             string OTYPE2 = "Documentt2";
@@ -1094,6 +1100,8 @@ namespace test_og_net
         [TestMethod]
         public void session_1112()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "type_session_1002_1";
             string ONAME1 = "name_session_1002_1";
             string OTYPE2 = "type_session_1002_2";

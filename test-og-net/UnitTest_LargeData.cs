@@ -9,17 +9,11 @@ namespace test_og_net
     [TestClass]
     public class UnitTest_LargeData
     {
-        og.net.OGSession cleaned_session_ = null;
-
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            cleaned_session_ = new TestInitializer().initialize();
-        }
-
         [TestMethod]
         public void large_data_1001()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "Document2002from";
             string OTYPE2 = "Document2002to";
             string RELTYPE = "Document2002rel";

@@ -1,10 +1,10 @@
 #pragma once
 
-#undef TEST_ALL
-//#define TEST_ALL
+//#undef TEST_ALL
+#define TEST_ALL
 //#define TEST_OG_BASIC 1
 //#define TEST_OG_SCHEMA 1
-#define TEST_OG_SESSION 1
+//#define TEST_OG_SESSION 1
 //#define TEST_OG_TRAN 1
 //#define TEST_OG_ETC 1
 //#define TEST_OG_LARGE_DATA 1

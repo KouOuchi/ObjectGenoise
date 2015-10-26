@@ -106,5 +106,13 @@ void OGSchemaRelation::revision_up()
   og_schema_relation_->revision_up();
 }
 
+void OGSchemaRelation::delete_parameter_definition(String^ _param_name, OGSchemaParameter^ _schm_par)
+{
+  std::string str;
+  OGConverter::convert_clr_to_std<String, std::string>(_param_name, &str);
+
+  og_schema_relation_->delete_parameter_definition(str, _schm_par->og_schema_parameter_);
+}
+
 }
 }

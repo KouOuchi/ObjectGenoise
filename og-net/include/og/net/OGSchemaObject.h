@@ -82,6 +82,8 @@ public:
   template <typename P>
   void get_parameter_definition(String^ _param_name, P^ _param_basetype) {}
 
+  void delete_parameter_definition(String^ _param_name, OGSchemaParameter^ _schm_par);
+  
 internal:
   OGSharedPtr<og::og_schema_object> og_schema_object_;
 

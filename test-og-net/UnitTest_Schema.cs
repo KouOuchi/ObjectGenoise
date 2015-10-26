@@ -8,14 +8,6 @@ namespace test_og_net
     [TestClass]
     public class UnitTest_Schema
     {
-        og.net.OGSession cleaned_session_ = null;
-
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            cleaned_session_ = new TestInitializer().initialize();
-        }
-
         void _check_OGSchemaObject(OGSchemaObject _soptr, string _oid, string _otype,
                                   string _oname)
         {
@@ -28,6 +20,7 @@ namespace test_og_net
         [TestMethod]
         public void schema_1000()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
 
             string OTYPE = "Document";
             string ONAME = "Dcument-Name";
@@ -63,6 +56,8 @@ namespace test_og_net
         [TestMethod]
         public void schema_1001()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE = "Document1001";
             string ONAME = "Dcument-Name1001";
             string oid;
@@ -77,7 +72,7 @@ namespace test_og_net
 
             {
                 OGSession ses2 = new OGSession();
-                ses2.connect(TestInitializer.DBPATH);
+                ses2.open(TestInitializer.DBPATH);
 
                 // get_object_id
                 OGSchemaObject soptr2 = ses2.schema().get_object(oid);
@@ -91,6 +86,8 @@ namespace test_og_net
         [TestMethod]
         public void schema_1002()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "Document1002a";
             string OTYPE2 = "Document1002b";
             string ONAME = "Dcument-Name1002";
@@ -115,7 +112,7 @@ namespace test_og_net
 
             {
                 OGSession ses2 = new OGSession();
-                ses2.connect(TestInitializer.DBPATH);
+                ses2.open(TestInitializer.DBPATH);
                 List<OGSchemaObject> obj_list1 = new List<OGSchemaObject>();
                 ses2.schema().get_object_by_type(otype_list, obj_list1);
 
@@ -133,6 +130,8 @@ namespace test_og_net
         [TestMethod]
         public void schema_1003()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "Document1003a";
             string OTYPE2 = "Document1003b";
             string ONAME1 = "Dcument-Name1003a";
@@ -154,7 +153,7 @@ namespace test_og_net
 
             {
                 OGSession ses2 = new OGSession();
-                ses2.connect(TestInitializer.DBPATH);
+                ses2.open(TestInitializer.DBPATH);
                 List<OGSchemaObject> obj_list2 = new List<OGSchemaObject>();
                 ses2.schema().get_object_by_name(oname_list, obj_list2);
 
@@ -172,6 +171,8 @@ namespace test_og_net
         [TestMethod]
         public void schema_1005()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+            
             string OTYPE = "Document";
             string ONAME = "Dcument-Name";
             string RELTYPE = "Document2000rel";
@@ -196,6 +197,8 @@ namespace test_og_net
         [TestMethod]
         public void schema_2000()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "Document2000from";
             string OTYPE2 = "Document2000to";
             string RELTYPE = "Document2000rel";
@@ -336,6 +339,8 @@ namespace test_og_net
         [TestMethod]
         public void schema_2001()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "Document2001from";
             string OTYPE2 = "Document2001to";
             string RELTYPE = "Document2001rel";
@@ -366,6 +371,8 @@ namespace test_og_net
         [TestMethod]
         public void schema_2002()
         {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
             string OTYPE1 = "Document2002from";
             string OTYPE2 = "Document2002to";
             string RELTYPE = "Document2002rel";

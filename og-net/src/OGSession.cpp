@@ -24,37 +24,41 @@ OGSchema^ OGSession::schema()
   return schema_;
 }
 
-void OGSession::connect(String^ _connection_string)
+void OGSession::open(String^ _connection_string)
 {
   std::string str;
   OGConverter::convert_clr_to_std<String, std::string>(_connection_string, &str);
 
-  og_session_->session_->open(str);
+  og_session_->open(str);
 }
 
+void OGSession::close()
+{
+  og_session_->close();
+}
 
 bool OGSession::import_from_file(String^ _path)
 {
   std::string str;
   OGConverter::convert_clr_to_std<String, std::string>(_path, &str);
 
-  return og_session_->session_->import_from_file(str);
+  return og_session_->import_from_file(str);
 }
 void OGSession::export_to_file(String^ _path)
 {
   std::string str;
   OGConverter::convert_clr_to_std<String, std::string>(_path, &str);
 
-  og_session_->session_->export_to_file(str);
+  og_session_->export_to_file(str);
 }
 
 void OGSession::purge()
 {
-  og_session_->session_->purge(false);
+  og_session_->purge();
 }
 void OGSession::build()
 {
-  og_session_->session_->build();
+  og_session_->build();
 }
 
 OGSessionObject^ OGSession::create_object(OGSchemaObject^ _schm_obj)
@@ -315,6 +319,14 @@ void OGSession::disconnect(String^ _rel_id)
   OGConverter::convert_clr_to_std<String, std::string>(_rel_id, &str);
 
   og_session_->disconnect(str);
+}
+
+bool OGSession::catchup_schema(String^ _path)
+{
+  std::string str;
+  OGConverter::convert_clr_to_std<String, std::string>(_path, &str);
+
+  return og_session_->catchup_schema(str);
 }
 
 } // namespace net
