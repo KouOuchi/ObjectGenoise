@@ -1519,6 +1519,15 @@ void session::insert_object_parameter_with_arg(session_object_ptr _sesn_obj,
     {
     case parameter_basetype_enum::integer:
     {
+      if (i == 0)
+      {
+        *(soci_session_.get())
+            <<
+            "DELETE FROM session_object_parameter_basetype_integer WHERE "
+            "oid = :oid AND param_name = :param_name"
+            , soci::use(_sesn_obj->get_id())
+            , soci::use(_sesn_obj_param.get<0>());
+      }
       *(soci_session_.get())
           <<
           "INSERT INTO session_object_parameter_basetype_integer(oid, param_name, "
@@ -1533,7 +1542,17 @@ void session::insert_object_parameter_with_arg(session_object_ptr _sesn_obj,
 
     case parameter_basetype_enum::real:
     {
-      *(soci_session_.get())
+      if (i == 0)
+      {
+        *(soci_session_.get())
+            <<
+            "DELETE FROM session_object_parameter_basetype_real WHERE "
+            "oid = :oid AND param_name = :param_name"
+            , soci::use(_sesn_obj->get_id())
+            , soci::use(_sesn_obj_param.get<0>());
+      }
+
+	  *(soci_session_.get())
           <<
           "INSERT INTO session_object_parameter_basetype_real(oid, param_name, "
           "array_index, value) VALUES "
@@ -1547,7 +1566,17 @@ void session::insert_object_parameter_with_arg(session_object_ptr _sesn_obj,
 
     case parameter_basetype_enum::text:
     {
-      *(soci_session_.get())
+      if (i == 0)
+      {
+        *(soci_session_.get())
+            <<
+            "DELETE FROM session_object_parameter_basetype_text WHERE "
+            "oid = :oid AND param_name = :param_name"
+            , soci::use(_sesn_obj->get_id())
+            , soci::use(_sesn_obj_param.get<0>());
+      }
+
+	  *(soci_session_.get())
           <<
           "INSERT INTO session_object_parameter_basetype_text(oid, param_name, "
           "array_index, value) VALUES "
