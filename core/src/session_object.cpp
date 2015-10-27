@@ -62,9 +62,11 @@ session_object_ptr session_object::copy_object(og::core::connection_direction
 
   // adjust name and comment
   target->set_comment(get_comment());
-  stringstream ss("copy of ");
+  stringstream ss;
+  ss << "copy of ";
   ss << get_name();
   target->set_name(ss.str());
+  target->sync();
 
   if (_direction == og::core::connection_direction::direction_from)
   {
@@ -75,7 +77,7 @@ session_object_ptr session_object::copy_object(og::core::connection_direction
          it != from_objs.end(); it++)
     {
       session_object_ptr parent_of_target = boost::get<0>(*it)->copy_object(
-                                             _direction);
+                                              _direction);
       target->connect_from(parent_of_target, boost::get<1>(*it)->get_type());
     }
   }

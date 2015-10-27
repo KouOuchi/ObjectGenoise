@@ -1050,6 +1050,8 @@ BOOST_AUTO_TEST_CASE( session_1111 )
 
   og::og_session_object_ptr o1 = cleaned_session_.create_object(schm_obj1);
   og::og_session_object_ptr o2 = cleaned_session_.create_object(schm_obj2);
+  o1->set_instance_name("abc");
+  o2->set_instance_name("xyz");
 
   og::og_session_relation_ptr r1 = o1->connect_to(o2, RELTYPE1);
   og::og_session_relation_ptr r2 = o1->connect_to(o2, RELTYPE1);
@@ -1057,6 +1059,7 @@ BOOST_AUTO_TEST_CASE( session_1111 )
   // basic copy
   {
     og::og_session_object_ptr copied = o1->copy_object();
+
     BOOST_REQUIRE_EQUAL(copied->get_schema_object_id(), o1->get_schema_object_id());
     BOOST_REQUIRE_EQUAL(copied->get_schema_object_type(),
                         o1->get_schema_object_type());
@@ -1064,48 +1067,57 @@ BOOST_AUTO_TEST_CASE( session_1111 )
 
   // recurive copy
   {
+
     og::og_session_object_ptr copied = o1->copy_object(
                                          og::core::connection_direction::direction_to);
     BOOST_REQUIRE_EQUAL(copied->get_schema_object_id(), o1->get_schema_object_id());
     BOOST_REQUIRE_EQUAL(copied->get_schema_object_type(),
-		o1->get_schema_object_type());
+                        o1->get_schema_object_type());
 
-	{
-		list<og::og_session_object_ptr> childs;
-		copied->get_connected_object_to(&childs);
+    BOOST_REQUIRE_EQUAL("copy of abc", copied->get_instance_name());
 
-		BOOST_REQUIRE_EQUAL(2, childs.size());
-	}
-	{
-		list<og::og_session_object_ptr> childs;
-		copied->get_connected_object_from(&childs);
+    {
+      list<og::og_session_object_ptr> childs;
+      copied->get_connected_object_to(&childs);
 
-		BOOST_REQUIRE_EQUAL(0, childs.size());
-	}
-	{
-		list<og::og_session_object_ptr> childs;
-		copied->get_connected_object(&childs);
+      BOOST_REQUIRE_EQUAL(2, childs.size());
+      BOOST_REQUIRE_EQUAL("copy of xyz", childs.front()->get_instance_name());
+      BOOST_REQUIRE_EQUAL("copy of xyz", childs.back()->get_instance_name());
 
-		BOOST_REQUIRE_EQUAL(2, childs.size());
-	}
-	{
-		list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>> childs;
-		copied->get_connected_from(&childs);
+    }
+    {
+      list<og::og_session_object_ptr> childs;
+      copied->get_connected_object_from(&childs);
 
-		BOOST_REQUIRE_EQUAL(0, childs.size());
-	}
-	{
-		list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>> childs;
-		copied->get_connected_to(&childs);
+      BOOST_REQUIRE_EQUAL(0, childs.size());
+    }
+    {
+      list<og::og_session_object_ptr> childs;
+      copied->get_connected_object(&childs);
 
-		BOOST_REQUIRE_EQUAL(2, childs.size());
-	}
-	{
-		list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>> childs;
-		copied->get_connected(&childs);
+      BOOST_REQUIRE_EQUAL(2, childs.size());
+    }
+    {
+      list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
+          childs;
+      copied->get_connected_from(&childs);
 
-		BOOST_REQUIRE_EQUAL(2, childs.size());
-	}
+      BOOST_REQUIRE_EQUAL(0, childs.size());
+    }
+    {
+      list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
+          childs;
+      copied->get_connected_to(&childs);
+
+      BOOST_REQUIRE_EQUAL(2, childs.size());
+    }
+    {
+      list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
+          childs;
+      copied->get_connected(&childs);
+
+      BOOST_REQUIRE_EQUAL(2, childs.size());
+    }
   }
 
   {
@@ -1113,44 +1125,47 @@ BOOST_AUTO_TEST_CASE( session_1111 )
                                          og::core::connection_direction::direction_from);
     BOOST_REQUIRE_EQUAL(copied->get_schema_object_id(), o2->get_schema_object_id());
     BOOST_REQUIRE_EQUAL(copied->get_schema_object_type(),
-		o2->get_schema_object_type());
+                        o2->get_schema_object_type());
 
-	{
-		list<og::og_session_object_ptr> childs;
-		copied->get_connected_object_to(&childs);
+    {
+      list<og::og_session_object_ptr> childs;
+      copied->get_connected_object_to(&childs);
 
-		BOOST_REQUIRE_EQUAL(0, childs.size());
-	}
-	{
-		list<og::og_session_object_ptr> childs;
-		copied->get_connected_object_from(&childs);
+      BOOST_REQUIRE_EQUAL(0, childs.size());
+    }
+    {
+      list<og::og_session_object_ptr> childs;
+      copied->get_connected_object_from(&childs);
 
-		BOOST_REQUIRE_EQUAL(2, childs.size());
-	}
-	{
-		list<og::og_session_object_ptr> childs;
-		copied->get_connected_object(&childs);
+      BOOST_REQUIRE_EQUAL(2, childs.size());
+    }
+    {
+      list<og::og_session_object_ptr> childs;
+      copied->get_connected_object(&childs);
 
-		BOOST_REQUIRE_EQUAL(2, childs.size());
-	}
-	{
-		list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>> childs;
-		copied->get_connected_from(&childs);
+      BOOST_REQUIRE_EQUAL(2, childs.size());
+    }
+    {
+      list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
+          childs;
+      copied->get_connected_from(&childs);
 
-		BOOST_REQUIRE_EQUAL(2, childs.size());
-	}
-	{
-		list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>> childs;
-		copied->get_connected_to(&childs);
+      BOOST_REQUIRE_EQUAL(2, childs.size());
+    }
+    {
+      list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
+          childs;
+      copied->get_connected_to(&childs);
 
-		BOOST_REQUIRE_EQUAL(0, childs.size());
-	}
-	{
-		list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>> childs;
-		copied->get_connected(&childs);
+      BOOST_REQUIRE_EQUAL(0, childs.size());
+    }
+    {
+      list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
+          childs;
+      copied->get_connected(&childs);
 
-		BOOST_REQUIRE_EQUAL(2, childs.size());
-	}
+      BOOST_REQUIRE_EQUAL(2, childs.size());
+    }
   }
 }
 
