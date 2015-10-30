@@ -115,9 +115,18 @@ public:
   OGSchemaParameter^ create_parameter_bool(String^ _param_type,
 	  String^ _comment, OGBool^ _basetype, int _default_array_size, int _min_array_size, int _max_array_size);
 
-  static String^ schema_property_object_type();
-  static String^ schema_property_object_name();
-  static String^ schema_property_core_revision();
+  static property String^ schema_property_object_type
+  {
+	  String^ get();
+  }
+  static property String^ schema_property_object_name
+  {
+	  String^ get();
+  }
+  static property String^ schema_property_core_revision
+  {
+	  String^ get();
+  }
 
   // parameters ends.
 

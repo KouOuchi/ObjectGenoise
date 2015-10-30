@@ -15,16 +15,15 @@ namespace og
 namespace net
 {
 
-String^ OGSchema::schema_property_object_type()
+String^ OGSchema::schema_property_object_type::get()
 {
   return gcnew String(og_schema::schema_property_object_type());
 }
-
-String^ OGSchema::schema_property_object_name()
+String^ OGSchema::schema_property_object_name::get()
 {
   return gcnew String(og_schema::schema_property_object_name());
 }
-String^ OGSchema::schema_property_core_revision()
+String^ OGSchema::schema_property_core_revision::get()
 {
   return gcnew String(og_schema::schema_property_core_revision());
 }

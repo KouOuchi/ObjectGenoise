@@ -352,7 +352,7 @@ namespace test_og_net
 
             // catchup schema
             List<string> prop_type = new List<string>();
-            prop_type.Add(OGSchema.schema_property_object_type());
+            prop_type.Add(OGSchema.schema_property_object_type);
 
             List<OGSessionObject> prop_objs = new List<OGSessionObject>();
             cleaned_session_.get_object_by_type(prop_type, prop_objs);
@@ -360,11 +360,11 @@ namespace test_og_net
             Assert.AreEqual(prop_objs.Count, 1);
 
             int ver = prop_objs[0].get_parameter_value_integer(
-            OGSchema.schema_property_core_revision());
+            OGSchema.schema_property_core_revision);
 
             ++ver;
             prop_objs[0].set_parameter_value_integer
-            (OGSchema.schema_property_core_revision(), ver);
+            (OGSchema.schema_property_core_revision, ver);
 
             //"delete param definition" deletes all session's parameters
             p2.add_parameter_definition(("add int"), ptest1);
@@ -516,6 +516,24 @@ namespace test_og_net
                         }
                     }
                 }
+            }
+        }
+
+        // xml import
+        [TestMethod]
+        public void etc_schema_update()
+        {
+            OGSession session = null;
+
+            session = new OGSession();
+            session.open("project.db");
+
+            if (session.catchup_schema("GhostProject.schema.xml.gz"))
+            {
+            }
+            else
+            {
+                Assert.Fail();
             }
         }
     }

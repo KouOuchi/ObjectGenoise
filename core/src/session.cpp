@@ -1034,9 +1034,9 @@ bool session::import_from_file(string _path)
           schema_->get_object_by_type(prep, &schm_objs);
           sesn_obj->set_schema_object(schm_objs.front());
         }
-      }
 
-      if (!import_object(sesn_obj, child.second)) { continue; }
+        if (!import_object(sesn_obj, child.second)) { continue; }
+      }
     }
   }
 
@@ -1049,7 +1049,33 @@ bool session::import_from_file(string _path)
     // deserialize
     if (serializer<session_relation_ptr>::deserialize(child, sesn_rel))
     {
-      if (!import_relation(sesn_rel, child.second)) { continue; }
+      boost::optional<schema_relation_ptr> schm_rel =
+        schema_->get_relation(sesn_rel->get_schema_relation_id());
+
+      if (schm_rel.is_initialized())
+      {
+        if (schm_rel.get()->get_type().compare(schema::schema_property_object_type_) ==
+            0)
+        {
+          list<string> prep;
+          list<schema_relation_ptr> schm_rels;
+          prep.push_back(schema::schema_property_object_type_);
+
+          schema_->get_relation_by_type(prep, &schm_rels);
+          sesn_rel->set_schema_relation(schm_rels.front());
+        }
+
+        // check from/to
+        boost::optional<session_object_ptr> sesn_from =
+          get_object(sesn_rel->get_from_id());
+        boost::optional<session_object_ptr> sesn_to =
+          get_object(sesn_rel->get_to_id());
+
+        if (sesn_from.is_initialized() && sesn_to.is_initialized())
+        {
+          if (!import_relation(sesn_rel, child.second)) { continue; }
+        }
+      }
     }
   }
 
@@ -1263,8 +1289,12 @@ bool session::catchup_schema(string _path)
     throw og::core::exception() << exception_message("schema file is not found.");
   }
 
-  fs::path session_temp = fs::unique_path("SESSION-%%%%-%%%%-%%%%-%%%%.xml.gz");
-  fs::path schema_temp = fs::unique_path("SCHEMA-%%%%-%%%%-%%%%-%%%%.xml.gz");
+  char* tempdir = getenv("TEMP");
+  stringstream session_tempname, schema_tempname;
+  session_tempname << tempdir << "/SESSION-%%%%-%%%%-%%%%-%%%%.xml.gz";
+  schema_tempname << tempdir << "/SCHEMA-%%%%-%%%%-%%%%-%%%%.xml.gz";
+  fs::path session_temp = fs::unique_path(session_tempname.str());
+  fs::path schema_temp = fs::unique_path(schema_tempname.str());
 
   // start transaction
   //transaction tran(*this);
@@ -1552,7 +1582,7 @@ void session::insert_object_parameter_with_arg(session_object_ptr _sesn_obj,
             , soci::use(_sesn_obj_param.get<0>());
       }
 
-	  *(soci_session_.get())
+      *(soci_session_.get())
           <<
           "INSERT INTO session_object_parameter_basetype_real(oid, param_name, "
           "array_index, value) VALUES "
@@ -1576,7 +1606,7 @@ void session::insert_object_parameter_with_arg(session_object_ptr _sesn_obj,
             , soci::use(_sesn_obj_param.get<0>());
       }
 
-	  *(soci_session_.get())
+      *(soci_session_.get())
           <<
           "INSERT INTO session_object_parameter_basetype_text(oid, param_name, "
           "array_index, value) VALUES "
