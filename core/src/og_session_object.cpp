@@ -106,26 +106,26 @@ void og_session_object::get_connected_object_to(list<string>& _rel_type_list,
   (objs, _sesn_obj_list);
 }
 
-bool og_session_object::validate_connect_to(og_session_object_ptr
-    _sesn_obj_ptr)
-{
-  return session_object_ptr_->validate_connect_to(
-           _sesn_obj_ptr->session_object_ptr_);
-}
+//connection_validation_result_enum og_session_object::validate_connect_to(og_session_object_ptr
+//    _sesn_obj_ptr)
+//{
+//  return session_object_ptr_->validate_connect_to(
+//           _sesn_obj_ptr->session_object_ptr_);
+//}
 
-bool og_session_object::validate_connect_to(og_session_object_ptr _sesn_obj_ptr,
+og::core::connection_validation_result_enum og_session_object::validate_connect_to(og_session_object_ptr _sesn_obj_ptr,
     string _rel_type)
 {
   return session_object_ptr_->validate_connect_to(
            _sesn_obj_ptr->session_object_ptr_, _rel_type);
 }
-bool og_session_object::validate_connect_from(og_session_object_ptr
-    _sesn_obj_ptr)
-{
-  return session_object_ptr_->validate_connect_from(
-           _sesn_obj_ptr->session_object_ptr_);
-}
-bool og_session_object::validate_connect_from(og_session_object_ptr
+//connection_validation_result_enum og_session_object::validate_connect_from(og_session_object_ptr
+//    _sesn_obj_ptr)
+//{
+//  return session_object_ptr_->validate_connect_from(
+//           _sesn_obj_ptr->session_object_ptr_);
+//}
+og::core::connection_validation_result_enum og_session_object::validate_connect_from(og_session_object_ptr
     _sesn_obj_ptr, string _rel_type)
 {
   return session_object_ptr_->validate_connect_from(
@@ -259,11 +259,11 @@ void og_session_object::delete_object()
 og_session_object_ptr og_session_object::copy_object()
 {
   return copy_object(
-           og::core::connection_direction::direction_none);
+           og::core::connection_direction_enum::direction_none);
 }
 
 og_session_object_ptr og_session_object::copy_object(
-  og::core::connection_direction _direction)
+  og::core::connection_direction_enum _direction)
 {
   og::core::session_object_ptr o(session_object_ptr_->copy_object(_direction));
   og_session_object_ptr ret;

@@ -12,14 +12,28 @@ namespace core
 {
 
 schema_relation::schema_relation(schema* _schema)
-  : from_multiplicity_(1, 1), to_multiplicity_(1, 0), schema_base(_schema)
+  : from_multiplicity_(), to_multiplicity_(), schema_base(_schema)
 {
 }
 
 schema_relation::schema_relation(
   schema* _schema, string _rel_id, string _rel_type,
   string _rel_name, string _from_o_id, string _to_o_id)
-  : from_multiplicity_(1, 1), to_multiplicity_(1, 0), schema_base(_schema)
+  : from_multiplicity_(), to_multiplicity_(), schema_base(_schema)
+{
+  id_ = _rel_id;
+  type_ = _rel_type;
+  name_ = _rel_name;
+  schema_ = _schema;
+  from_id_ = _from_o_id;
+  to_id_ = _to_o_id;
+}
+
+schema_relation::schema_relation(
+  schema* _schema, string _rel_id, string _rel_type,
+  string _rel_name, string _from_o_id, string _to_o_id, multiplicity& _from_mul,
+  multiplicity& _to_mul)
+  : from_multiplicity_(_from_mul), to_multiplicity_(_to_mul), schema_base(_schema)
 {
   id_ = _rel_id;
   type_ = _rel_type;

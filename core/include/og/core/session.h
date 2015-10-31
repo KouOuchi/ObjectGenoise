@@ -81,18 +81,19 @@ public:
   ///////////////////////////////
   session_relation_ptr connect(string _from_id, string _to_id,
                                schema_relation_ptr _schm_rel);
-  void get_connected_object_from(string _to_id, list<string> _rel_type_list,
+  void get_connected_object_from(string _to_id, list<string>& _rel_type_list,
                                  list<session_object_ptr>* _sesn_obj_list);
-  void get_connected_object_to(string _from_id, list<string> _rel_type_list,
+  void get_connected_object_to(string _from_id, list<string>& _rel_type_list,
                                list<session_object_ptr>* _sesn_obj_list);
 
-  void get_connected_from(string _to_id, list<string> _rel_type_list,
+  void get_connected_from(string _to_id, list<string>& _rel_type_list,
                                  list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_objrel_list);
-  void get_connected_to(string _from_id, list<string> _rel_type_list,
+  void get_connected_to(string _from_id, list<string>& _rel_type_list,
                                list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_objrel_list);
 
-  OG_COREAPI bool validate_connect(string _from_id, string _to_id,
-                                   list<string> _rel_type_list);
+  OG_COREAPI void validate_connect(string _from_id, string _to_id,
+                                   list<string>& _rel_type_list,
+								   list<schema_relation_ptr>* _schm_rel_list);
 
   optional<session_relation_ptr> get_relation(string _rel_id);
   void get_relation(list<session_relation_ptr>* _sesn_rel_list);

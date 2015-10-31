@@ -7,6 +7,7 @@ namespace og
 {
 namespace core
 {
+class multiplicity;
 
 class schema_object : public schema_base
 {
@@ -20,6 +21,8 @@ public:
   ///////////////////////////////
   schema_relation_ptr connect_from(schema_object_ptr _from, string _oname);
   schema_relation_ptr connect_to(schema_object_ptr _to, string _otype);
+  schema_relation_ptr connect_from(schema_object_ptr _from, string _oname, multiplicity& _from_mul, multiplicity& _to_mul);
+  schema_relation_ptr connect_to(schema_object_ptr _to, string _otype, multiplicity& _from_mul, multiplicity& _to_mul);
   void disconnect();
   void disconnect(schema_object_ptr _schm_obj);
 
@@ -58,16 +61,6 @@ public:
   template <typename P>
   void get_parameter_definition(string _param_name, P* _param_basetype) {}
   // parameters end.
-
-  ///////////////////////////////
-  // validation
-  ///////////////////////////////
-  bool validate_connect_From(string _otype);
-  bool validate_connect_from(schema_object_ptr _obj, string _otype);
-  bool validate_connect_to(string _otype);
-  bool validate_connect_to(schema_object_ptr _obj, string _otype);
-  bool validate_parameter_valuerange();
-  // validations end.
 
   // by defualt, sync is automatically.
   virtual void sync();

@@ -106,18 +106,19 @@ void OGSchemaObject::delete_object()
   og_schema_object_->delete_object();
 }
 
-void OGSchemaObject::get_connected_object(List<OGSchemaObject^>^
-    _schm_obj_list)
+List<OGSchemaObject^>^ OGSchemaObject::get_connected_object()
 {
   std::list<og::og_schema_object_ptr> objs;
   og_schema_object_->get_connected_object(&objs);
 
+  List<OGSchemaObject^>^ schm_obj_list = gcnew List<OGSchemaObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_object_ptr>, List<OGSchemaObject^>>
-      (&objs, _schm_obj_list);
+      (&objs, schm_obj_list);
+
+  return schm_obj_list;
 }
-void OGSchemaObject::get_connected_object(List<String^>^ _rel_type_list,
-    List<OGSchemaObject^>^ _schm_obj_list)
+List<OGSchemaObject^>^ OGSchemaObject::get_connected_object(List<String^>^ _rel_type_list)
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -126,23 +127,27 @@ void OGSchemaObject::get_connected_object(List<String^>^ _rel_type_list,
   std::list<og::og_schema_object_ptr> objs;
   og_schema_object_->get_connected_object(strl, &objs);
 
+  List<OGSchemaObject^>^ schm_obj_list = gcnew List<OGSchemaObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_object_ptr>, List<OGSchemaObject^>>
-      (&objs, _schm_obj_list);
+      (&objs, schm_obj_list);
+
+  return schm_obj_list;
 }
-void OGSchemaObject::get_connected_object_to(List<OGSchemaObject^>^
-    _schm_obj_list)
+List<OGSchemaObject^>^ OGSchemaObject::get_connected_object_to()
 {
   std::list<og::og_schema_object_ptr> objs;
   og_schema_object_->get_connected_object_to(&objs);
 
+  List<OGSchemaObject^>^ schm_obj_list = gcnew List<OGSchemaObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_object_ptr>, List<OGSchemaObject^>>
-      (&objs, _schm_obj_list);
+      (&objs, schm_obj_list);
+
+  return schm_obj_list;
 }
 
-void OGSchemaObject::get_connected_object_to(List<String^>^ _rel_type_list,
-    List<OGSchemaObject^>^ _schm_obj_list)
+List<OGSchemaObject^>^ OGSchemaObject::get_connected_object_to(List<String^>^ _rel_type_list)
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -151,24 +156,28 @@ void OGSchemaObject::get_connected_object_to(List<String^>^ _rel_type_list,
   std::list<og::og_schema_object_ptr> objs;
   og_schema_object_->get_connected_object_to(strl, &objs);
 
+  List<OGSchemaObject^>^ schm_obj_list = gcnew List<OGSchemaObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_object_ptr>, List<OGSchemaObject^>>
-      (&objs, _schm_obj_list);
+      (&objs, schm_obj_list);
+
+  return schm_obj_list;
 }
 
-void OGSchemaObject::get_connected_object_from(List<OGSchemaObject^>^
-    _schm_obj_list)
+List<OGSchemaObject^>^ OGSchemaObject::get_connected_object_from()
 {
   std::list<og::og_schema_object_ptr> objs;
   og_schema_object_->get_connected_object_from(&objs);
 
+  List<OGSchemaObject^>^ schm_obj_list = gcnew List<OGSchemaObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_object_ptr>, List<OGSchemaObject^>>
-      (&objs, _schm_obj_list);
+      (&objs, schm_obj_list);
+
+  return schm_obj_list;
 }
 
-void OGSchemaObject::get_connected_object_from(List<String^>^ _rel_type_list,
-    List<OGSchemaObject^>^ _schm_obj_list)
+List<OGSchemaObject^>^ OGSchemaObject::get_connected_object_from(List<String^>^ _rel_type_list)
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -177,9 +186,12 @@ void OGSchemaObject::get_connected_object_from(List<String^>^ _rel_type_list,
   std::list<og::og_schema_object_ptr> objs;
   og_schema_object_->get_connected_object_from(strl, &objs);
 
+  List<OGSchemaObject^>^ schm_obj_list = gcnew List<OGSchemaObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_object_ptr>, List<OGSchemaObject^>>
-      (&objs, _schm_obj_list);
+      (&objs, schm_obj_list);
+
+  return schm_obj_list;
 }
 
 void OGSchemaObject::get_parameters(

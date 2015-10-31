@@ -18,7 +18,7 @@ public:
   OG_COREAPI virtual ~session_object();
 
   void delete_object();
-  session_object_ptr copy_object(og::core::connection_direction _direction);
+  session_object_ptr copy_object(og::core::connection_direction_enum _direction);
 
   ///////////////////////////////
   // relation
@@ -48,10 +48,10 @@ public:
   void get_connected_to(list<string>& _rel_type_list,
                                list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
 
-  bool validate_connect_to(session_object_ptr _sesn_obj_ptr);
-  bool validate_connect_to(session_object_ptr _sesn_obj_ptr, string _rel_type);
-  bool validate_connect_from(session_object_ptr _sesn_obj_ptr);
-  bool validate_connect_from(session_object_ptr _sesn_obj_ptr, string _rel_type);
+  //bool validate_connect_to(session_object_ptr _sesn_obj_ptr);
+  connection_validation_result_enum validate_connect_to(session_object_ptr _sesn_obj_ptr, string _rel_type);
+  //bool validate_connect_from(session_object_ptr _sesn_obj_ptr);
+  connection_validation_result_enum validate_connect_from(session_object_ptr _sesn_obj_ptr, string _rel_type);
   void get_connectable_relation_type_to(list<string>* _rel_type_list);
   void get_connectable_relation_type_from(list<string>* _rel_type_list);
   void get_connectable_to(map<string, list<schema_object_ptr> >* _rel_type_map);

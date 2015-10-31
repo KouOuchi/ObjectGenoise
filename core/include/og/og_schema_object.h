@@ -12,6 +12,7 @@ namespace og
 namespace core
 {
 class schema_object;
+class multiplicity;
 }
 using namespace boost;
 using namespace std;
@@ -44,7 +45,9 @@ public:
   // relation
   ///////////////////////////////
   OG_COREAPI og_schema_relation_ptr connect_from(og_schema_object_ptr _from, string _oname);
+  OG_COREAPI og_schema_relation_ptr connect_from(og_schema_object_ptr _from, string _oname, og::core::multiplicity _from_mul, og::core::multiplicity _to_mul);
   OG_COREAPI og_schema_relation_ptr connect_to(og_schema_object_ptr _to, string _otype);
+  OG_COREAPI og_schema_relation_ptr connect_to(og_schema_object_ptr _to, string _otype, og::core::multiplicity _from_mul, og::core::multiplicity _to_mul);
   //void disconnect();
   //void disconnect(og_schema_object_ptr _object);
 

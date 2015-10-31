@@ -145,8 +145,8 @@ namespace test_og_net
             cleaned_session_.purge();
             cleaned_session_.import_from_file("session.xml.gz");
 
-            List<OGSessionObject> sesn_objs = new List<OGSessionObject>();
-            cleaned_session_.get_object_by_type(otype_list, sesn_objs);
+            List<OGSessionObject> sesn_objs = 
+            cleaned_session_.get_object_by_type(otype_list);
 
             Assert.AreEqual(sesn_objs.Count, 2);
 
@@ -154,8 +154,8 @@ namespace test_og_net
             {
                 if (it.get_schema_object_type() == OTYPE1)
                 {
-                    List<OGSessionObject> sesn_cons = new List<OGSessionObject>();
-                    it.get_connected_object(sesn_cons);
+                    List<OGSessionObject> sesn_cons = 
+                    it.get_connected_object();
                     Assert.AreEqual(sesn_cons.Count, 1);
                 }
             }
@@ -185,8 +185,8 @@ namespace test_og_net
             cleaned_session_.import_from_file("session.xml.gz");
 
 
-            List<OGSessionObject> sesn_objs = new List<OGSessionObject>();
-            cleaned_session_.get_object_by_type(otype_list, sesn_objs);
+            List<OGSessionObject> sesn_objs = 
+            cleaned_session_.get_object_by_type(otype_list);
 
             Assert.AreEqual(sesn_objs.Count, 2);
 
@@ -194,8 +194,8 @@ namespace test_og_net
             {
                 if (it.get_schema_object_type() == OTYPE1)
                 {
-                    List<OGSessionObject> sesn_cons = new List<OGSessionObject>();
-                    it.get_connected_object(sesn_cons);
+                    List<OGSessionObject> sesn_cons = 
+                    it.get_connected_object();
                     Assert.AreEqual(sesn_cons.Count, 1);
                 }
             }
@@ -354,8 +354,8 @@ namespace test_og_net
             List<string> prop_type = new List<string>();
             prop_type.Add(OGSchema.schema_property_object_type);
 
-            List<OGSessionObject> prop_objs = new List<OGSessionObject>();
-            cleaned_session_.get_object_by_type(prop_type, prop_objs);
+            List<OGSessionObject> prop_objs =
+            cleaned_session_.get_object_by_type(prop_type);
 
             Assert.AreEqual(prop_objs.Count, 1);
 
@@ -380,8 +380,8 @@ namespace test_og_net
             cleaned_session_.purge();
             Assert.AreEqual(true, cleaned_session_.import_from_file("session_xml_catchup0.xml.gz"));
 
-            List<OGSessionObject> sesn_objs = new List<OGSessionObject>();
-            cleaned_session_.get_object_by_type(otype_list, sesn_objs);
+            List<OGSessionObject> sesn_objs = 
+            cleaned_session_.get_object_by_type(otype_list);
 
             Assert.AreEqual(sesn_objs.Count, 3);
 
@@ -389,8 +389,8 @@ namespace test_og_net
             {
                 if (it.get_schema_object_type() == OTYPE1)
                 {
-                    List<OGSessionObject> sesn_cons = new List<OGSessionObject>();
-                    it.get_connected_object(sesn_cons);
+                    List<OGSessionObject> sesn_cons = 
+                    it.get_connected_object();
                     Assert.AreEqual(sesn_cons.Count, 2);
 
                     {
@@ -464,8 +464,8 @@ namespace test_og_net
 
             Assert.AreEqual(true, res);
 
-            List<OGSessionObject> sesn_objs = new List<OGSessionObject>();
-            cleaned_session_.get_object_by_type(otype_list, sesn_objs);
+            List<OGSessionObject> sesn_objs = 
+            cleaned_session_.get_object_by_type(otype_list);
 
             Assert.AreEqual(sesn_objs.Count, 3);
 
@@ -473,8 +473,8 @@ namespace test_og_net
             {
                 if (it.get_schema_object_type() == OTYPE1)
                 {
-                    List<OGSessionObject> sesn_cons = new List<OGSessionObject>();
-                    it.get_connected_object(sesn_cons);
+                    List<OGSessionObject> sesn_cons = 
+                    it.get_connected_object();
                     Assert.AreEqual(sesn_cons.Count, 2);
 
                     {

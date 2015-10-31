@@ -81,6 +81,14 @@ void schema::add_object(schema_object_ptr _schm_obj)
 schema_relation_ptr schema::create_relation(string _rel_type, string _rel_name,
     string _from_oid, string _to_oid)
 {
+  return create_relation(_rel_type, _rel_name,
+                         _from_oid, _to_oid, multiplicity(), multiplicity());
+}
+
+schema_relation_ptr schema::create_relation(string _rel_type, string _rel_name,
+    string _from_oid, string _to_oid, multiplicity& _from_mul,
+    multiplicity& _to_mul)
+{
   //create sequence
   int id_seed;
   *session_->soci_session_ <<
@@ -93,7 +101,7 @@ schema_relation_ptr schema::create_relation(string _rel_type, string _rel_name,
   //create object
   schema_relation_ptr schm_rel(new schema_relation(this, rel_id, _rel_type,
                                _rel_name,
-                               _from_oid, _to_oid));
+                               _from_oid, _to_oid, _from_mul, _to_mul));
 
   // set date
   pt::ptime now = pt::microsec_clock::local_time();
@@ -108,15 +116,18 @@ schema_relation_ptr schema::create_relation(string _rel_type, string _rel_name,
   return schm_rel;
 }
 
+
 void schema::add_relation(schema_relation_ptr _schm_rel)
 {
   //insert record
   *session_->soci_session_
       <<
       "INSERT INTO schema_relation(id_, from_id, to_id, comment, type, "
-      "name, revision, create_date, update_date) "
+      "name, revision, create_date, update_date, "
+	  "from_multiplicity_min, from_multiplicity_max, to_multiplicity_min, to_multiplicity_max) "
       "VALUES(:id_, :from_id, :to_id, :comment, :type, "
-      ":name, :revision, :create_date, :update_date)",
+      ":name, :revision, :create_date, :update_date, "
+	  ":from_multiplicity_min, :from_multiplicity_max, :to_multiplicity_min, :to_multiplicity_max)",
       soci::use(*(_schm_rel.get()));
 
   // drop updated/bulk sync flag

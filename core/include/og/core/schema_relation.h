@@ -14,6 +14,9 @@ public:
   schema_relation(schema* _schema);
   schema_relation(schema* _schema, string _oid, string _rel_type,
                   string _rel_name, string _from_o_id, string _to_o_id);
+  schema_relation(schema* _schema, string _oid, string _rel_type,
+                  string _rel_name, string _from_o_id, string _to_o_id, multiplicity& _from_mul,
+                  multiplicity& _to_mul);
   schema_relation();
   virtual ~schema_relation();
 
@@ -42,7 +45,7 @@ public:
   void add_parameter_definition(string _param_name,
                                 const schema_parameter_ptr _schm_par);
   void delete_parameter_definition(string _param_name,
-                                const schema_parameter_ptr _schm_par);
+                                   const schema_parameter_ptr _schm_par);
 
   template <typename P>
   void get_parameter_definition(string _param_name, P* _param_basetype) {}
@@ -68,6 +71,10 @@ public:
   ///////////////////////////////
   multiplicity& get_from_multiplicity() { return from_multiplicity_; }
   multiplicity& get_to_multiplicity() { return to_multiplicity_; }
+  void set_from_multiplicity(multiplicity& _mul)
+  { from_multiplicity_.set_multiplicity(_mul.get_min(), _mul.get_max()); }
+  void set_to_multiplicity(multiplicity& _mul)
+  { to_multiplicity_.set_multiplicity(_mul.get_min(), _mul.get_max()); }
   // multiplicity ends.
 
   // by defualt, sync is automatically.

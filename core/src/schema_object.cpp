@@ -31,15 +31,27 @@ schema_object::~schema_object()
 }
 
 schema_relation_ptr schema_object::connect_from(schema_object_ptr _from,
-    string _otype)
+    string _rel_type)
 {
-  return  schema_relation_ptr();
+  return schema_->create_relation(_rel_type,  "", _from->get_id(), id_);
 }
 
 schema_relation_ptr schema_object::connect_to(schema_object_ptr _to,
     string _rel_type)
 {
   return schema_->create_relation(_rel_type,  "", id_, _to->get_id());
+}
+
+schema_relation_ptr schema_object::connect_from(schema_object_ptr _from,
+    string _rel_type, multiplicity& _from_mul, multiplicity& _to_mul)
+{
+  return schema_->create_relation(_rel_type,  "", _from->get_id(), id_, _from_mul, _to_mul);
+}
+
+schema_relation_ptr schema_object::connect_to(schema_object_ptr _to,
+    string _rel_type, multiplicity& _from_mul, multiplicity& _to_mul)
+{
+  return schema_->create_relation(_rel_type,  "", id_, _to->get_id(), _from_mul, _to_mul);
 }
 
 void schema_object::disconnect()
@@ -249,38 +261,6 @@ schema_object::get_parameter_basetype_enum_by_param_name(
 {
   return schema_->get_object_parameter_basetype_enum_by_param_name(id_,
          _param_name);
-}
-
-
-bool schema_object::validate_connect_From(string _otype)
-{
-
-  return false;
-}
-
-bool schema_object::validate_connect_from(schema_object_ptr _obj, string _otype)
-{
-
-  return false;
-}
-
-bool schema_object::validate_connect_to(string _otype)
-{
-
-  return false;
-}
-
-bool schema_object::validate_connect_to(schema_object_ptr _obj, string _otype)
-{
-
-  return false;
-}
-
-// return error_bit
-bool schema_object::validate_parameter_valuerange()
-{
-
-  return false;
 }
 
 void schema_object::revision_up()

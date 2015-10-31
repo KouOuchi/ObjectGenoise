@@ -76,7 +76,7 @@ public:
   OG_COREAPI void get_connected_object_to(string _from_id,
                                           list<string> _rel_type_list,
                                           list<og_session_object_ptr>* _sesn_obj_list);
-  OG_COREAPI bool validate_connect(string _from_id, string _to_id,
+  OG_COREAPI og::core::connection_validation_result_enum validate_connect(string _from_id, string _to_id,
                                    list<string> _rel_type_list);
 
   OG_COREAPI boost::optional<og_session_relation_ptr> get_relation(

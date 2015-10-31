@@ -56,8 +56,8 @@ namespace test_og_net
                     //sesn_ptr.sync();
                 }
 
-                List<OGSessionObject> sesn_obj_list = new List<OGSessionObject>();
-                cleaned_session_.get_object_by_type(otype_list, sesn_obj_list);
+                List<OGSessionObject> sesn_obj_list = 
+                cleaned_session_.get_object_by_type(otype_list);
 
                 Assert.IsTrue(sesn_obj_list.Count == 2);
                 foreach (OGSessionObject r in sesn_obj_list)
@@ -73,8 +73,8 @@ namespace test_og_net
                 OGSession ses2 = new OGSession();
                 ses2.open(TestInitializer.DBPATH);
 
-                List<OGSessionObject> sesn_obj_list = new List<OGSessionObject>();
-                ses2.get_object_by_type(otype_list, sesn_obj_list);
+                List<OGSessionObject> sesn_obj_list = 
+                ses2.get_object_by_type(otype_list);
 
                 Assert.IsTrue(sesn_obj_list.Count == 2);
                 foreach (OGSessionObject r in sesn_obj_list)
@@ -117,112 +117,101 @@ namespace test_og_net
                 OGSessionObject o1 = cleaned_session_.create_object(schm_obj1);
                 OGSessionObject o2 = cleaned_session_.create_object(schm_obj2);
 
-                Assert.IsTrue(o1.validate_connect_to(o2));
-                Assert.IsTrue(o1.validate_connect_to(o2, RELTYPE));
-                Assert.IsTrue(!o2.validate_connect_to(o1));
-                Assert.IsTrue(!o2.validate_connect_to(o1, RELTYPE));
-                Assert.IsTrue(!o1.validate_connect_to(o1));
-                Assert.IsTrue(!o1.validate_connect_to(o1, RELTYPE));
-                Assert.IsTrue(!o2.validate_connect_to(o2));
-                Assert.IsTrue(!o2.validate_connect_to(o2, RELTYPE));
+                Assert.IsTrue(o1.validate_connect_to(o2, RELTYPE).HasFlag(OGConnectionValidationResult.Valid));
+                Assert.IsTrue(o2.validate_connect_to(o1, RELTYPE).HasFlag(OGConnectionValidationResult.Invalid));
+                Assert.IsTrue(o1.validate_connect_to(o1, RELTYPE).HasFlag(OGConnectionValidationResult.Invalid));
+                Assert.IsTrue(o2.validate_connect_to(o2, RELTYPE).HasFlag(OGConnectionValidationResult.Invalid));
 
-                Assert.IsTrue(!o1.validate_connect_from(o2));
-                Assert.IsTrue(!o1.validate_connect_from(o2, RELTYPE));
-                Assert.IsTrue(o2.validate_connect_from(o1));
-                Assert.IsTrue(o2.validate_connect_from(o1, RELTYPE));
-                Assert.IsTrue(!o1.validate_connect_from(o1));
-                Assert.IsTrue(!o1.validate_connect_from(o1, RELTYPE));
-                Assert.IsTrue(!o2.validate_connect_from(o2));
-                Assert.IsTrue(!o2.validate_connect_from(o2, RELTYPE));
+                Assert.IsTrue(o1.validate_connect_from(o2, RELTYPE).HasFlag(OGConnectionValidationResult.Invalid));
+                Assert.IsTrue(o2.validate_connect_from(o1, RELTYPE).HasFlag(OGConnectionValidationResult.Valid));
+                Assert.IsTrue(o1.validate_connect_from(o1, RELTYPE).HasFlag(OGConnectionValidationResult.Invalid));
+                Assert.IsTrue(o2.validate_connect_from(o2, RELTYPE).HasFlag(OGConnectionValidationResult.Invalid));
 
                 o1.connect_to(o2, RELTYPE);
 
-                List<OGSessionObject> sesn_obj_list = new List<OGSessionObject>();
-                o1.get_connected_object_to(sesn_obj_list);
+                List<OGSessionObject> sesn_obj_list =                 o1.get_connected_object_to();
                 Assert.IsTrue(sesn_obj_list.Count == 1);
                 Assert.IsTrue(sesn_obj_list[0].get_id() == o2.get_id());
 
-                sesn_obj_list.Clear();
-                o1.get_connected_object_from(sesn_obj_list);
+                sesn_obj_list = o1.get_connected_object_from();
                 Assert.IsTrue(sesn_obj_list.Count == 0);
 
-                sesn_obj_list.Clear();
-                o2.get_connected_object_from(sesn_obj_list);
+                sesn_obj_list =                 o2.get_connected_object_from();
                 Assert.IsTrue(sesn_obj_list.Count == 1);
                 Assert.IsTrue(sesn_obj_list[0].get_id() == o1.get_id());
 
-                sesn_obj_list.Clear();
-                o2.get_connected_object_to(sesn_obj_list);
+                sesn_obj_list = 
+                o2.get_connected_object_to();
                 Assert.IsTrue(sesn_obj_list.Count == 0);
 
-                sesn_obj_list.Clear();
-                o2.get_connected_object(sesn_obj_list);
+                sesn_obj_list = 
+                o2.get_connected_object();
                 Assert.IsTrue(sesn_obj_list.Count == 1);
                 Assert.IsTrue(sesn_obj_list[0].get_id() == o1.get_id());
 
-                sesn_obj_list.Clear();
-                o2.get_connected_object(reltype_list, sesn_obj_list);
+                sesn_obj_list= 
+                o2.get_connected_object(reltype_list);
                 Assert.IsTrue(sesn_obj_list.Count == 1);
                 Assert.IsTrue(sesn_obj_list[0].get_id() == o1.get_id());
 
-                sesn_obj_list.Clear();
-                o1.get_connected_object(sesn_obj_list);
+                sesn_obj_list = 
+                o1.get_connected_object();
                 Assert.IsTrue(sesn_obj_list.Count == 1);
                 Assert.IsTrue(sesn_obj_list[0].get_id() == o2.get_id());
 
-                sesn_obj_list.Clear();
-                o1.get_connected_object(reltype_list, sesn_obj_list);
+                sesn_obj_list = 
+                o1.get_connected_object(reltype_list);
                 Assert.IsTrue(sesn_obj_list.Count == 1);
                 Assert.IsTrue(sesn_obj_list[0].get_id() == o2.get_id());
 
-                List<OGSessionRelation> sesn_rel_list = new List<OGSessionRelation>();
-                cleaned_session_.get_relation_by_type(reltype_list, sesn_rel_list);
+                List<OGSessionRelation> sesn_rel_list = 
+                cleaned_session_.get_relation_by_type(reltype_list);
                 Assert.IsTrue(sesn_rel_list.Count == 1);
 
-                sesn_rel_list.Clear();
-                cleaned_session_.get_relation_by_name(relname_list, sesn_rel_list);
+                sesn_rel_list = 
+                cleaned_session_.get_relation_by_name(relname_list);
                 Assert.IsTrue(sesn_rel_list.Count == 1);
 
                 o1.disconnect(o2);
 
-                sesn_obj_list.Clear();
-                o1.get_connected_object_to(sesn_obj_list);
+                sesn_obj_list =
+                o1.get_connected_object_to();
                 Assert.IsTrue(sesn_obj_list.Count == 0);
 
-                sesn_obj_list.Clear();
-                o1.get_connected_object_from(sesn_obj_list);
+                sesn_obj_list = 
+                o1.get_connected_object_from();
                 Assert.IsTrue(sesn_obj_list.Count == 0);
 
-                sesn_obj_list.Clear();
-                o2.get_connected_object_from(sesn_obj_list);
+                sesn_obj_list =
+                o2.get_connected_object_from();
                 Assert.IsTrue(sesn_obj_list.Count == 0);
 
-                sesn_obj_list.Clear();
-                o2.get_connected_object_to(sesn_obj_list);
+                sesn_obj_list =
+                o2.get_connected_object_to();
                 Assert.IsTrue(sesn_obj_list.Count == 0);
 
-                sesn_obj_list.Clear();
-                o2.get_connected_object(sesn_obj_list);
+                sesn_obj_list = 
+                o2.get_connected_object();
                 Assert.IsTrue(sesn_obj_list.Count == 0);
 
-                sesn_obj_list.Clear();
-                o2.get_connected_object(reltype_list, sesn_obj_list);
+                sesn_obj_list =
+                o2.get_connected_object(reltype_list);
                 Assert.IsTrue(sesn_obj_list.Count == 0);
 
-                sesn_obj_list.Clear();
-                o1.get_connected_object(sesn_obj_list);
+                sesn_obj_list =
+                o1.get_connected_object();
                 Assert.IsTrue(sesn_obj_list.Count == 0);
 
-                sesn_obj_list.Clear();
-                o1.get_connected_object(reltype_list, sesn_obj_list);
+                sesn_obj_list =
+                o1.get_connected_object(reltype_list);
                 Assert.IsTrue(sesn_obj_list.Count == 0);
 
-                sesn_rel_list.Clear();
-                cleaned_session_.get_relation_by_type(reltype_list, sesn_rel_list);
+                sesn_rel_list =
+                cleaned_session_.get_relation_by_type(reltype_list);
                 Assert.IsTrue(sesn_rel_list.Count == 0);
 
-                sesn_rel_list.Clear();
-                cleaned_session_.get_relation_by_name(relname_list, sesn_rel_list);
+                sesn_rel_list =
+                cleaned_session_.get_relation_by_name(relname_list);
                 Assert.IsTrue(sesn_rel_list.Count == 0);
             }
         }
@@ -277,27 +266,27 @@ namespace test_og_net
             OGSessionObject o2 = cleaned_session_.create_object(schm_obj2);
 
             // check connectable rel type
-            List<string> con_type1 = new List<string>();
-            o1.get_connectable_relation_type_to(con_type1);
+            List<string> con_type1 = 
+            o1.get_connectable_relation_type_to();
             Assert.IsTrue(con_type1.Count == 1);
             Assert.IsTrue(RELTYPE1.Equals(con_type1[0]));
 
-            List<string> con_type2 = new List<string>();
-            o1.get_connectable_relation_type_from(con_type2);
+            List<string> con_type2 = 
+            o1.get_connectable_relation_type_from();
             Assert.IsTrue(con_type2.Count == 0);
 
-            List<string> con_type3 = new List<string>();
-            o2.get_connectable_relation_type_to(con_type3);
+            List<string> con_type3 = 
+            o2.get_connectable_relation_type_to();
             Assert.IsTrue(con_type3.Count == 0);
 
-            List<string> con_type4 = new List<string>();
-            o2.get_connectable_relation_type_from(con_type4);
+            List<string> con_type4 = 
+            o2.get_connectable_relation_type_from();
             Assert.IsTrue(con_type4.Count == 1);
             Assert.IsTrue(RELTYPE1.Equals(con_type4[0]));
 
             // check connectable rel type and schema obj
-            Dictionary<string, List<OGSchemaObject>> con_pair1 = new Dictionary<string, List<OGSchemaObject>>();
-            o1.get_connectable_to(con_pair1);
+            Dictionary<string, List<OGSchemaObject>> con_pair1 = 
+            o1.get_connectable_to();
             Assert.IsTrue(con_pair1.Count == 1);
             Assert.IsTrue(con_pair1.ContainsKey(RELTYPE1));
 
@@ -308,19 +297,16 @@ namespace test_og_net
                                || it.get_id() == schm_obj4.get_id());
             }
 
-            Dictionary<string, List<OGSchemaObject>> con_pair2
-          = new Dictionary<string, List<OGSchemaObject>>();
-            o1.get_connectable_from(con_pair2);
+            Dictionary<string, List<OGSchemaObject>> con_pair2 =
+            o1.get_connectable_from();
             Assert.IsTrue(con_pair2.Count == 0);
 
-            Dictionary<string, List<OGSchemaObject>> con_pair3
-                = new Dictionary<string, List<OGSchemaObject>>();
-            o2.get_connectable_to(con_pair3);
+            Dictionary<string, List<OGSchemaObject>> con_pair3 =
+            o2.get_connectable_to();
             Assert.IsTrue(con_pair3.Count == 0);
 
-            Dictionary<string, List<OGSchemaObject>> con_pair4
-                = new Dictionary<string, List<OGSchemaObject>>();
-            o2.get_connectable_from(con_pair4);
+            Dictionary<string, List<OGSchemaObject>> con_pair4 =
+            o2.get_connectable_from();
             Assert.IsTrue(con_pair4.Count == 1);
             Assert.IsTrue(con_pair4.ContainsKey(RELTYPE1));
             Assert.IsTrue(con_pair4[RELTYPE1].Count == 1);
@@ -1138,24 +1124,24 @@ namespace test_og_net
                 // copy recursively
                 {
                     OGSessionObject o1copy2 = o1.copy_object(OGConnectionDirection.Direction_To);
-                    List<OGSessionObject> child = new List<OGSessionObject>();
-                    o1copy2.get_connected_object_to(child);
+                    List<OGSessionObject> child = 
+                    o1copy2.get_connected_object_to();
 
                     Assert.AreEqual(2, child.Count);
                 }
                 // copy recursively
                 {
                     OGSessionObject o1copy2 = o1.copy_object(OGConnectionDirection.Direction_From);
-                    List<OGSessionObject> child = new List<OGSessionObject>();
-                    o1copy2.get_connected_object_to(child);
+                    List<OGSessionObject> child = 
+                    o1copy2.get_connected_object_to();
 
                     Assert.AreEqual(0, child.Count);
                 }
                 // copy recursively
                 {
                     OGSessionObject o1copy2 = o2.copy_object(OGConnectionDirection.Direction_From);
-                    List<OGSessionObject> child = new List<OGSessionObject>();
-                    o1copy2.get_connected_object_from(child);
+                    List<OGSessionObject> child = 
+                    o1copy2.get_connected_object_from();
 
                     Assert.AreEqual(2, child.Count);
                 }

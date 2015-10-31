@@ -48,9 +48,8 @@ namespace test_og_net
                     id);
                 Assert.IsTrue(schm_obj1 != null);
 
-                List<OGSchemaObject> schm_children
-                    = new List<OGSchemaObject>();
-                schm_obj1.get_connected_object_to(reltype_list, schm_children);
+                List<OGSchemaObject> schm_children =
+                schm_obj1.get_connected_object_to(reltype_list);
                 Assert.IsTrue(schm_children.Count == 1);
             }
         }
@@ -230,8 +229,7 @@ namespace test_og_net
 
                 tran.rollback();
 
-                List<OGSessionObject> connected = new List<OGSessionObject>();
-                o1.get_connected_object(connected);
+                List<OGSessionObject> connected =                o1.get_connected_object();
                 Assert.AreEqual(connected.Count, 0);
             }
 
@@ -248,8 +246,8 @@ namespace test_og_net
 
                 } //explicit rollback;
 
-                List<OGSessionObject> connected = new List<OGSessionObject>();
-                o1.get_connected_object(connected);
+                List<OGSessionObject> connected = 
+                o1.get_connected_object();
                 Assert.AreEqual(connected.Count, 0);
             }
 
@@ -265,8 +263,8 @@ namespace test_og_net
 
                 tran.commit();
 
-                List<OGSessionObject> connected = new List<OGSessionObject>();
-                o1.get_connected_object(connected);
+                List<OGSessionObject> connected = 
+                o1.get_connected_object();
                 Assert.AreEqual(connected.Count, 1);
             }
 

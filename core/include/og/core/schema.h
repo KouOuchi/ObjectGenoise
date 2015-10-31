@@ -39,6 +39,7 @@ using std::map;
 //using boost::optional;
 
 class session;
+class multiplicity;
 
 class schema
 {
@@ -54,11 +55,14 @@ public:
   schema_object_ptr create_object(string _otype, string _oname);
   //schema_object_ptr copy_object(schema_object _object);
   void delete_object(string _oid,
-	  list<boost::tuple<string, schema_parameter_ptr>>* _param_name_types);
+                     list<boost::tuple<string, schema_parameter_ptr>>* _param_name_types);
 
   schema_relation_ptr create_relation(string _rel_type, string _rel_name,
-                                      string _from_oid,
-                                      string _to_oid);
+                                      string _from_oid, string _to_oid);
+
+  schema_relation_ptr create_relation(string _rel_type, string _rel_name,
+                                      string _from_oid, string _to_oid,
+                                      multiplicity& _from_mul, multiplicity& _to_mul);
 
   void disconnect(string _rel_id,
                   list<boost::tuple<string, schema_parameter_ptr>>* _param_name_types);

@@ -38,6 +38,22 @@ og_schema_relation_ptr og_schema_object::connect_to(og_schema_object_ptr _to,
                                   schema_object_ptr_->connect_to(_to->schema_object_ptr_, _otype), true));
 }
 
+og_schema_relation_ptr og_schema_object::connect_from(og_schema_object_ptr
+    _from, string _otype, og::core::multiplicity _from_mul,
+    og::core::multiplicity _to_mul)
+{
+  return og_schema_relation_ptr(new og_schema_relation(
+                                  schema_object_ptr_->connect_from(_from->schema_object_ptr_, _otype, _from_mul,
+                                      _to_mul), true));
+}
+og_schema_relation_ptr og_schema_object::connect_to(og_schema_object_ptr _to,
+    string _otype, og::core::multiplicity _from_mul, og::core::multiplicity _to_mul)
+{
+  return og_schema_relation_ptr(new og_schema_relation(
+                                  schema_object_ptr_->connect_to(_to->schema_object_ptr_, _otype, _from_mul,
+                                      _to_mul), true));
+}
+
 void og_schema_object::disconnect()
 {
   schema_object_ptr_->disconnect();

@@ -62,14 +62,23 @@ enum parameter_basetype_enum
   select = 4
 };
 
-// 
-enum connection_direction
+// todo : integrate into search criteria
+enum connection_direction_enum
 {
   direction_none = 0,
   direction_to = 1,
   direction_from = 2,
   direction_both = 4
 };
+
+enum connection_validation_result_enum
+{
+  valid = 0,
+  invalid = 1,
+  not_found_relation = 2,
+  multiplicity_violation = 4
+};
+
 
 typedef boost::variant <
 boost::blank,

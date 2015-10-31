@@ -129,28 +129,20 @@ BOOST_AUTO_TEST_CASE( session_1002 )
     og::og_schema_object_ptr schm_obj2 = cleaned_session_.schema()->create_object(
                                            OTYPE2,
                                            ONAME2);
-    schm_obj1->connect_to(schm_obj2, RELTYPE);
+    og::og_schema_relation_ptr rel = schm_obj1->connect_to(schm_obj2, RELTYPE);
 
     og::og_session_object_ptr o1 = cleaned_session_.create_object(schm_obj1);
     og::og_session_object_ptr o2 = cleaned_session_.create_object(schm_obj2);
 
-    BOOST_REQUIRE(o1->validate_connect_to(o2));
-    BOOST_REQUIRE(o1->validate_connect_to(o2, RELTYPE));
-    BOOST_REQUIRE(!o2->validate_connect_to(o1));
-    BOOST_REQUIRE(!o2->validate_connect_to(o1, RELTYPE));
-    BOOST_REQUIRE(!o1->validate_connect_to(o1));
-    BOOST_REQUIRE(!o1->validate_connect_to(o1, RELTYPE));
-    BOOST_REQUIRE(!o2->validate_connect_to(o2));
-    BOOST_REQUIRE(!o2->validate_connect_to(o2, RELTYPE));
+	BOOST_REQUIRE((o1->validate_connect_to(o2, RELTYPE) & og::core::connection_validation_result_enum::valid) == og::core::connection_validation_result_enum::valid);
+    BOOST_REQUIRE((o2->validate_connect_to(o1, RELTYPE) & og::core::connection_validation_result_enum::invalid) == og::core::connection_validation_result_enum::invalid);
+    BOOST_REQUIRE((o1->validate_connect_to(o1, RELTYPE) & og::core::connection_validation_result_enum::invalid) == og::core::connection_validation_result_enum::invalid);
+    BOOST_REQUIRE((o2->validate_connect_to(o2, RELTYPE) & og::core::connection_validation_result_enum::invalid) == og::core::connection_validation_result_enum::invalid);
 
-    BOOST_REQUIRE(!o1->validate_connect_from(o2));
-    BOOST_REQUIRE(!o1->validate_connect_from(o2, RELTYPE));
-    BOOST_REQUIRE(o2->validate_connect_from(o1));
-    BOOST_REQUIRE(o2->validate_connect_from(o1, RELTYPE));
-    BOOST_REQUIRE(!o1->validate_connect_from(o1));
-    BOOST_REQUIRE(!o1->validate_connect_from(o1, RELTYPE));
-    BOOST_REQUIRE(!o2->validate_connect_from(o2));
-    BOOST_REQUIRE(!o2->validate_connect_from(o2, RELTYPE));
+    BOOST_REQUIRE((o1->validate_connect_from(o2, RELTYPE) & og::core::connection_validation_result_enum::invalid) == og::core::connection_validation_result_enum::invalid);
+    BOOST_REQUIRE((o2->validate_connect_from(o1, RELTYPE) & og::core::connection_validation_result_enum::valid) == og::core::connection_validation_result_enum::valid);
+    BOOST_REQUIRE((o1->validate_connect_from(o1, RELTYPE) & og::core::connection_validation_result_enum::invalid) == og::core::connection_validation_result_enum::invalid);
+    BOOST_REQUIRE((o2->validate_connect_from(o2, RELTYPE) & og::core::connection_validation_result_enum::invalid) == og::core::connection_validation_result_enum::invalid);
 
     o1->connect_to(o2, RELTYPE);
 
@@ -1069,7 +1061,7 @@ BOOST_AUTO_TEST_CASE( session_1111 )
   {
 
     og::og_session_object_ptr copied = o1->copy_object(
-                                         og::core::connection_direction::direction_to);
+                                         og::core::connection_direction_enum::direction_to);
     BOOST_REQUIRE_EQUAL(copied->get_schema_object_id(), o1->get_schema_object_id());
     BOOST_REQUIRE_EQUAL(copied->get_schema_object_type(),
                         o1->get_schema_object_type());
@@ -1122,7 +1114,7 @@ BOOST_AUTO_TEST_CASE( session_1111 )
 
   {
     og::og_session_object_ptr copied = o2->copy_object(
-                                         og::core::connection_direction::direction_from);
+                                         og::core::connection_direction_enum::direction_from);
     BOOST_REQUIRE_EQUAL(copied->get_schema_object_id(), o2->get_schema_object_id());
     BOOST_REQUIRE_EQUAL(copied->get_schema_object_type(),
                         o2->get_schema_object_type());

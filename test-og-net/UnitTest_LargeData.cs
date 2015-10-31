@@ -37,12 +37,12 @@ namespace test_og_net
 
             List<string> oname_list = new List<string>(); 
             oname_list.Add(ONAME);
-            List<OGSchemaObject> olist = new List<OGSchemaObject>();
-            cleaned_session_.schema().get_object_by_name(oname_list, olist);
+            List<OGSchemaObject> olist = 
+            cleaned_session_.schema().get_object_by_name(oname_list);
             Assert.AreEqual(olist.Count, 502);
-            olist.Clear();
 
-            cleaned_session_.schema().get_object_by_type(otype_list, olist);
+            olist =
+            cleaned_session_.schema().get_object_by_type(otype_list);
             Assert.AreEqual(olist.Count, 502);
 
             OGSchemaRelation rel_ptr = p1.connect_to(p2, RELTYPE);

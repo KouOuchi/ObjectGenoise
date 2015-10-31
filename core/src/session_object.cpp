@@ -53,8 +53,9 @@ void session_object::delete_object()
   session_->delete_object(id_, param_map);
 }
 
-session_object_ptr session_object::copy_object(og::core::connection_direction
-    _direction)
+session_object_ptr session_object::copy_object(
+  og::core::connection_direction_enum
+  _direction)
 {
   map<string, session_parameter_ptr>* param_map(get_parameters());
   session_object_ptr target = session_->copy_object(get_schema_object(),
@@ -68,7 +69,7 @@ session_object_ptr session_object::copy_object(og::core::connection_direction
   target->set_name(ss.str());
   target->sync();
 
-  if (_direction == og::core::connection_direction::direction_from)
+  if (_direction == og::core::connection_direction_enum::direction_from)
   {
     list<boost::tuple<session_object_ptr, session_relation_ptr>> from_objs;
     get_connected_from(&from_objs);
@@ -82,7 +83,7 @@ session_object_ptr session_object::copy_object(og::core::connection_direction
     }
   }
 
-  if (_direction == og::core::connection_direction::direction_to)
+  if (_direction == og::core::connection_direction_enum::direction_to)
   {
     list<boost::tuple<session_object_ptr, session_relation_ptr>> to_objs;
     get_connected_to(&to_objs);
@@ -217,42 +218,87 @@ void session_object::get_connected_object_to(list<string>& _rel_type_list,
   session_->get_connected_object_to(id_, _rel_type_list, _sesn_obj_list);
 }
 
-bool session_object::validate_connect_to(session_object_ptr _sesn_obj_ptr)
-{
-  list<string> rel_type_list;
-
-  return session_->validate_connect
-         (id_, _sesn_obj_ptr->get_id(), rel_type_list);
-}
-
-bool session_object::validate_connect_to(session_object_ptr _sesn_obj_ptr,
+connection_validation_result_enum session_object::validate_connect_to(session_object_ptr _sesn_obj_ptr,
     string _rel_type)
 {
   list<string> rel_type_list;
   rel_type_list.push_back(_rel_type);
+  list<schema_relation_ptr> schm_rel_list;
 
-  return session_->validate_connect
-         (id_, _sesn_obj_ptr->get_id(), rel_type_list);
+  session_->validate_connect
+  (id_, _sesn_obj_ptr->get_id(), rel_type_list, &schm_rel_list);
+
+  if (schm_rel_list.size() == 0)
+  {
+    return (connection_validation_result_enum)(connection_validation_result_enum::invalid |
+           connection_validation_result_enum::not_found_relation);
+  }
+  else if (schm_rel_list.size() == 1)
+  {
+    list<session_object_ptr> sesn_obj_list;
+
+    multiplicity from_mul = schm_rel_list.front()->get_from_multiplicity();
+
+    get_connected_object_to(rel_type_list, &sesn_obj_list);
+    int min = from_mul.get_min();
+    int max = from_mul.get_max();
+    if (max == -1 || sesn_obj_list.size() < max)
+    {
+      return connection_validation_result_enum::valid;
+    }
+    else
+    {
+      return (connection_validation_result_enum)(connection_validation_result_enum::invalid |
+             connection_validation_result_enum::multiplicity_violation);
+    }
+  }
+  else
+  {
+    BOOST_THROW_EXCEPTION(exception() <<
+                          exception_message("unexpected duplicated schema relation"));
+  }
 }
 
-bool session_object::validate_connect_from(session_object_ptr
-    _sesn_obj_ptr)
-{
-  list<string> rel_type_list;
-
-  return session_->validate_connect
-         (_sesn_obj_ptr->get_id(), id_, rel_type_list);
-}
-
-bool session_object::validate_connect_from(session_object_ptr
+connection_validation_result_enum session_object::validate_connect_from(session_object_ptr
     _sesn_obj_ptr,
     string _rel_type)
 {
   list<string> rel_type_list;
   rel_type_list.push_back(_rel_type);
+  list<schema_relation_ptr> schm_rel_list;
 
-  return session_->validate_connect
-         (_sesn_obj_ptr->get_id(), id_, rel_type_list);
+  session_->validate_connect
+  (_sesn_obj_ptr->get_id(), id_, rel_type_list, &schm_rel_list);
+
+  if (schm_rel_list.size() == 0)
+  {
+    return (connection_validation_result_enum)(connection_validation_result_enum::invalid |
+           connection_validation_result_enum::not_found_relation);
+  }
+  else if (schm_rel_list.size() == 1)
+  {
+    list<session_object_ptr> sesn_obj_list;
+
+    multiplicity from_mul = schm_rel_list.front()->get_from_multiplicity();
+
+    get_connected_object_from(rel_type_list, &sesn_obj_list);
+    int min = from_mul.get_min();
+    int max = from_mul.get_max();
+    if (max == -1 || sesn_obj_list.size() < max)
+    {
+      return connection_validation_result_enum::valid;
+    }
+    else
+    {
+      return (connection_validation_result_enum)(connection_validation_result_enum::invalid |
+             connection_validation_result_enum::multiplicity_violation);
+    }
+  }
+  else
+  {
+    BOOST_THROW_EXCEPTION(exception() <<
+                          exception_message("unexpected duplicated schema relation"));
+  }
 }
 
 void session_object::get_connectable_relation_type_to(list<string>*

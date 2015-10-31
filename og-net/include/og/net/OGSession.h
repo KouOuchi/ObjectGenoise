@@ -44,42 +44,32 @@ public:
   //void delete_object(String^ _id);
 
   /*Nullable*/OGSessionObject^ get_object(String^ _id);
-  void get_object(List<OGSessionObject^>^ _sesn_obj_list);
-  void get_object(List<String^>^ _oid_list,
-                  List<OGSessionObject^>^ _sesn_obj_list);
+  List<OGSessionObject^>^ get_object();
+  List<OGSessionObject^>^ get_object(List<String^>^ _oid_list);
 
-  void get_object_by_type(List<String^>^ _otype_list,
-                          List<OGSessionObject^>^ _sesn_obj_list);
+  List<OGSessionObject^>^ get_object_by_type(List<String^>^ _otype_list);
 
-  void get_object_by_name(List<String^>^ _oname_list,
-                          List<OGSessionObject^>^ _sesn_obj_list);
+  List<OGSessionObject^>^ get_object_by_name(List<String^>^ _oname_list);
 
-  void get_object_by_schema_object_name(List<String^>^ _schm_obj_oname_list,
-                                        List<OGSessionObject^>^ _sesn_obj_list);
+  List<OGSessionObject^>^ get_object_by_schema_object_name(List<String^>^ _schm_obj_oname_list);
 
-  void get_object_by_schema_object(List<OGSchemaObject^>^ _schm_obj_list,
-                                   List<OGSessionObject^>^ _sesn_obj_list);
+//  List<OGSessionObject^>^ get_object_by_schema_object(List<OGSchemaObject^>^ _schm_obj_list);
 
   ///////////////////////////////
   // relation
   ///////////////////////////////
-  void get_connected_object_from(String^ _to_id, List<String^>^ _rel_type_list,
-                                 List<OGSessionObject^>^ _sesn_obj_list);
-  void get_connected_object_to(String^ _from_id, List<String^>^ _rel_type_list,
-                               List<OGSessionObject^>^ _sesn_obj_list);
-  bool validate_connect(String^ _from_id, String^ _to_id,
-                        List<String^>^ _rel_type_list);
+  List<OGSessionObject^>^ get_connected_object_from(String^ _to_id, List<String^>^ _rel_type_list);
+  List<OGSessionObject^>^ get_connected_object_to(String^ _from_id, List<String^>^ _rel_type_list);
+
+  //bool validate_connect(String^ _from_id, String^ _to_id,
+  //                      List<String^>^ _rel_type_list);
 
   /*Nullable*/OGSessionRelation^ get_relation(String^ _rel_id);
-  void get_relation(List<OGSessionRelation^>^ _sesn_rel_list);
-  void get_relation(List<String^>^ _rel_id_list,
-                    List<OGSessionRelation^>^ _sesn_rel_list);
-  void get_relation(String^ _from_id, String^ _to_id,
-                    List<OGSessionRelation^>^ _sesn_rel_list);
-  void get_relation_by_type(List<String^>^ _rel_type_list,
-                            List<OGSessionRelation^>^ _sesn_rel_list);
-  void get_relation_by_name(List<String^>^ _rel_name_list,
-                            List<OGSessionRelation^>^ _sesn_rel_list);
+  List<OGSessionRelation^>^ get_relation();
+  List<OGSessionRelation^>^ get_relation(List<String^>^ _rel_id_list);
+  List<OGSessionRelation^>^ get_relation(String^ _from_id, String^ _to_id);
+  List<OGSessionRelation^>^ get_relation_by_type(List<String^>^ _rel_type_list);
+  List<OGSessionRelation^>^ get_relation_by_name(List<String^>^ _rel_name_list);
 
   void disconnect(String^ _rel_id);
   // relation ends.

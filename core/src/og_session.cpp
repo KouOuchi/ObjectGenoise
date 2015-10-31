@@ -164,11 +164,6 @@ void og_session::get_connected_object_to(string _from_id,
   <list<og::core::session_object_ptr>&, list<og_session_object_ptr>*>
   (objs, _sesn_obj_list);
 }
-bool og_session::validate_connect(string _from_id, string _to_id,
-                                  list<string> _rel_type_list)
-{
-  return session_->validate_connect(_from_id, _to_id, _rel_type_list);
-}
 
 boost::optional<og_session_relation_ptr> og_session::get_relation(
   string _rel_id)

@@ -12,6 +12,7 @@
 #include "og/core/schema_object.h"
 #include "og/core/schema_relation.h"
 #include "og/core/schema_parameter.h"
+#include "og/core/multiplicity.h"
 
 #include "og/core/session_object.h"
 #include "og/core/session_relation.h"
@@ -72,6 +73,11 @@ struct type_conversion<og::core::schema_relation>
     _schm_rel.set_revision( v.get<std::string>("revision") );
     _schm_rel.set_create_date( v.get<std::string>("create_date") );
     _schm_rel.set_update_date( v.get<std::string>("update_date") );
+
+	_schm_rel.set_from_multiplicity( og::core::multiplicity(v.get<int>("from_multiplicity_min"),
+                                  v.get<int>("from_multiplicity_max")));
+    _schm_rel.set_to_multiplicity( og::core::multiplicity(v.get<int>("to_multiplicity_min"),
+                                  v.get<int>("to_multiplicity_max")));
   }
 
   static void to_base(/*const*/ og::core::schema_relation & _schm_rel, values & v,
@@ -86,6 +92,11 @@ struct type_conversion<og::core::schema_relation>
     v.set("revision", _schm_rel.get_revision());
     v.set("create_date", _schm_rel.get_create_date());
     v.set("update_date", _schm_rel.get_update_date());
+
+	v.set("from_multiplicity_min", _schm_rel.get_from_multiplicity().get_min());
+	v.set("from_multiplicity_max", _schm_rel.get_from_multiplicity().get_max());
+	v.set("to_multiplicity_min", _schm_rel.get_to_multiplicity().get_min());
+	v.set("to_multiplicity_max", _schm_rel.get_to_multiplicity().get_max());
 
     ind = i_ok;
   }
@@ -109,7 +120,7 @@ struct type_conversion<og::core::schema_parameter>
     _schm_par.set_create_date( v.get<std::string>("create_date") );
     _schm_par.set_update_date( v.get<std::string>("update_date") );
 
-	// not initialized
+    // not initialized
     if (_schm_par.basetype_variant_.which() == (int)
         og::core::parameter_basetype_enum::blank)
     {
@@ -119,7 +130,8 @@ struct type_conversion<og::core::schema_parameter>
     }
   }
 
-  static void to_base(/*const*/ og::core::schema_parameter & _schm_par, values & v,
+  static void to_base(/*const*/ og::core::schema_parameter & _schm_par,
+                                values & v,
                                 indicator & ind)
   {
     v.set("id_", _schm_par.get_id());
@@ -267,7 +279,8 @@ struct type_conversion<og::core::schema_relation_parameter>
 //    _schm_rel_prm.comment_ = v.get<std::string>("comment");
   }
 
-  static void to_base(/*const*/ og::core::schema_relation_parameter & _schm_obj_prm,
+  static void to_base(/*const*/ og::core::schema_relation_parameter &
+                                _schm_obj_prm,
                                 values & v, indicator & ind)
   {
     v.set("schema_relation_id", _schm_obj_prm.schema_relation_id_);
@@ -332,7 +345,8 @@ struct type_conversion<og::core::session_relation>
     _schm_rel.set_update_date( v.get<std::string>("update_date") );
   }
 
-  static void to_base(/*const*/ og::core::session_relation & _sesn_rel, values & v,
+  static void to_base(/*const*/ og::core::session_relation & _sesn_rel,
+                                values & v,
                                 indicator & ind)
   {
     v.set("id_", _sesn_rel.get_id());

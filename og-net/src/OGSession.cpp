@@ -93,18 +93,19 @@ OGSessionObject^ OGSession::create_object(OGSchemaObject^ _schm_obj)
              OGSharedPtr<og::og_session_object>(o.get()));
   }
 }
-void OGSession::get_object(List<OGSessionObject^>^ _sesn_obj_list)
+List<OGSessionObject^>^ OGSession::get_object()
 {
   std::list<og::og_session_object_ptr> objs;
   og_session_->get_object(&objs);
 
+  List<OGSessionObject^>^ sesn_obj_list = gcnew List<OGSessionObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_session_object_ptr>, List<OGSessionObject^>>
-      (&objs, _sesn_obj_list);
+      (&objs, sesn_obj_list);
 
+  return  sesn_obj_list;
 }
-void OGSession::get_object(List<String^>^ _oid_list,
-                           List<OGSessionObject^>^ _sesn_obj_list)
+List<OGSessionObject^>^ OGSession::get_object(List<String^>^ _oid_list)
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -113,12 +114,15 @@ void OGSession::get_object(List<String^>^ _oid_list,
   std::list<og::og_session_object_ptr> objs;
   og_session_->get_object(strl, &objs);
 
+  List<OGSessionObject^>^ sesn_obj_list = gcnew List<OGSessionObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_session_object_ptr>, List<OGSessionObject^>>
-      (&objs, _sesn_obj_list);
+      (&objs, sesn_obj_list);
+
+  return  sesn_obj_list;
 }
-void OGSession::get_object_by_type(List<String^>^ _otype_list,
-                                   List<OGSessionObject^>^ _sesn_obj_list)
+List<OGSessionObject^>^ OGSession::get_object_by_type(List<String^>^
+    _otype_list)
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -127,13 +131,16 @@ void OGSession::get_object_by_type(List<String^>^ _otype_list,
   std::list<og::og_session_object_ptr> objs;
   og_session_->get_object_by_type(strl, &objs);
 
+  List<OGSessionObject^>^ sesn_obj_list = gcnew List<OGSessionObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_session_object_ptr>, List<OGSessionObject^>>
-      (&objs, _sesn_obj_list);
+      (&objs, sesn_obj_list);
+
+  return sesn_obj_list;
 }
 
-void OGSession::get_object_by_name(List<String^>^ _oname_list,
-                                   List<OGSessionObject^>^ _sesn_obj_list)
+List<OGSessionObject^>^ OGSession::get_object_by_name(List<String^>^
+    _oname_list)
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -142,14 +149,17 @@ void OGSession::get_object_by_name(List<String^>^ _oname_list,
   std::list<og::og_session_object_ptr> objs;
   og_session_->get_object_by_type(strl, &objs);
 
+  List<OGSessionObject^>^ sesn_obj_list = gcnew List<OGSessionObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_session_object_ptr>, List<OGSessionObject^>>
-      (&objs, _sesn_obj_list);
+      (&objs, sesn_obj_list);
+
+  return sesn_obj_list;
 }
 
-void OGSession::get_object_by_schema_object_name(List<String^>^
-    _schm_obj_oname_list,
-    List<OGSessionObject^>^ _sesn_obj_list)
+List<OGSessionObject^>^ OGSession::get_object_by_schema_object_name(
+  List<String^>^
+  _schm_obj_oname_list)
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -158,20 +168,23 @@ void OGSession::get_object_by_schema_object_name(List<String^>^
   std::list<og::og_session_object_ptr> objs;
   og_session_->get_object_by_schema_object_name(strl, &objs);
 
+  List<OGSessionObject^>^ sesn_obj_list = gcnew List<OGSessionObject^>();
+
   OGConverter::convert_std_to_clr
   <std::list<og::og_session_object_ptr>, List<OGSessionObject^>>
-      (&objs, _sesn_obj_list);
+      (&objs, sesn_obj_list);
+
+  return sesn_obj_list;
 }
 
-void OGSession::get_object_by_schema_object(List<OGSchemaObject^>^
-    _schm_obj_list,
-    List<OGSessionObject^>^ _sesn_obj_list)
-{
-}
+//List<OGSessionObject^>^ OGSession::get_object_by_schema_object(List<OGSchemaObject^>^
+//    _schm_obj_list)
+//{
+//}
 
-void OGSession::get_connected_object_from(String^ _to_id,
-    List<String^>^ _rel_type_list,
-    List<OGSessionObject^>^ _sesn_obj_list)
+List<OGSessionObject^>^ OGSession::get_connected_object_from(String^ _to_id,
+    List<String^>^ _rel_type_list
+                                                            )
 {
   std::string str;
   OGConverter::convert_clr_to_std<String, std::string>(_to_id, &str);
@@ -183,13 +196,15 @@ void OGSession::get_connected_object_from(String^ _to_id,
   std::list<og::og_session_object_ptr> objs;
   og_session_->get_connected_object_from(str, strl, &objs);
 
+  List<OGSessionObject^>^ sesn_obj_list = gcnew List<OGSessionObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_session_object_ptr>, List<OGSessionObject^>>
-      (&objs, _sesn_obj_list);
+      (&objs, sesn_obj_list);
+
+  return sesn_obj_list;
 }
-void OGSession::get_connected_object_to(String^ _from_id,
-                                        List<String^>^ _rel_type_list,
-                                        List<OGSessionObject^>^ _sesn_obj_list)
+List<OGSessionObject^>^ OGSession::get_connected_object_to(String^ _from_id,
+    List<String^>^ _rel_type_list)
 {
   std::string str;
   OGConverter::convert_clr_to_std<String, std::string>(_from_id, &str);
@@ -201,28 +216,31 @@ void OGSession::get_connected_object_to(String^ _from_id,
   std::list<og::og_session_object_ptr> objs;
   og_session_->get_connected_object_to(str, strl, &objs);
 
+  List<OGSessionObject^>^ sesn_obj_list = gcnew List<OGSessionObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_session_object_ptr>, List<OGSessionObject^>>
-      (&objs, _sesn_obj_list);
+      (&objs, sesn_obj_list);
+
+  return sesn_obj_list;
 }
 
-bool OGSession::validate_connect(String^ _from_id, String^ _to_id,
-                                 List<String^>^ _rel_type_list)
-{
-  std::string str1;
-  OGConverter::convert_clr_to_std<String, std::string>
-  (_from_id, &str1);
-
-  std::string str2;
-  OGConverter::convert_clr_to_std<String, std::string>
-  (_to_id, &str2);
-
-  std::list<std::string> strl;
-  OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
-      (_rel_type_list, &strl);
-
-  return og_session_->session_->validate_connect(str1, str2, strl);
-}
+//bool OGSession::validate_connect(String^ _from_id, String^ _to_id,
+//                                 List<String^>^ _rel_type_list)
+//{
+//  std::string str1;
+//  OGConverter::convert_clr_to_std<String, std::string>
+//  (_from_id, &str1);
+//
+//  std::string str2;
+//  OGConverter::convert_clr_to_std<String, std::string>
+//  (_to_id, &str2);
+//
+//  std::list<std::string> strl;
+//  OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
+//      (_rel_type_list, &strl);
+//
+//  return og_session_->session_->validate_connect(str1, str2, strl);
+//}
 
 /*Nullable*/OGSessionRelation^ OGSession::get_relation(String^ _rel_id)
 {
@@ -242,18 +260,20 @@ bool OGSession::validate_connect(String^ _from_id, String^ _to_id,
   }
 }
 
-void OGSession::get_relation(List<OGSessionRelation^>^ _sesn_rel_list)
+List<OGSessionRelation^>^ OGSession::get_relation()
 {
   std::list<og::og_session_relation_ptr> rels;
   og_session_->get_relation(&rels);
 
+  List<OGSessionRelation^>^ sesn_rel_list = gcnew List<OGSessionRelation^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_session_relation_ptr>, List<OGSessionRelation^>>
-      (&rels, _sesn_rel_list);
+      (&rels, sesn_rel_list);
+
+  return sesn_rel_list;
 }
 
-void OGSession::get_relation(List<String^>^ _rel_id_list,
-                             List<OGSessionRelation^>^ _sesn_rel_list)
+List<OGSessionRelation^>^ OGSession::get_relation(List<String^>^ _rel_id_list)
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -262,12 +282,15 @@ void OGSession::get_relation(List<String^>^ _rel_id_list,
   std::list<og::og_session_relation_ptr> rels;
   og_session_->get_relation(strl, &rels);
 
+  List<OGSessionRelation^>^ sesn_rel_list = gcnew List<OGSessionRelation^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_session_relation_ptr>, List<OGSessionRelation^>>
-      (&rels, _sesn_rel_list);
+      (&rels, sesn_rel_list);
+
+  return sesn_rel_list;
 }
-void OGSession::get_relation(String^ _from_id, String^ _to_id,
-                             List<OGSessionRelation^>^ _sesn_rel_list)
+List<OGSessionRelation^>^ OGSession::get_relation(String^ _from_id,
+    String^ _to_id)
 {
   std::string str1;
   OGConverter::convert_clr_to_std<String, std::string>
@@ -280,12 +303,15 @@ void OGSession::get_relation(String^ _from_id, String^ _to_id,
   std::list<og::og_session_relation_ptr> rels;
   og_session_->get_relation(str1, str2, &rels);
 
+  List<OGSessionRelation^>^ sesn_rel_list = gcnew List<OGSessionRelation^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_session_relation_ptr>, List<OGSessionRelation^>>
-      (&rels, _sesn_rel_list);
+      (&rels, sesn_rel_list);
+
+  return sesn_rel_list;
 }
-void OGSession::get_relation_by_type(List<String^>^ _rel_type_list,
-                                     List<OGSessionRelation^>^ _sesn_rel_list)
+List<OGSessionRelation^>^ OGSession::get_relation_by_type(
+  List<String^>^ _rel_type_list)
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -294,12 +320,16 @@ void OGSession::get_relation_by_type(List<String^>^ _rel_type_list,
   std::list<og::og_session_relation_ptr> rels;
   og_session_->get_relation_by_type(strl, &rels);
 
+  List<OGSessionRelation^>^ sesn_rel_list = gcnew List<OGSessionRelation^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_session_relation_ptr>, List<OGSessionRelation^>>
-      (&rels, _sesn_rel_list);
+      (&rels, sesn_rel_list);
+
+  return sesn_rel_list;
 }
-void OGSession::get_relation_by_name(List<String^>^ _rel_name_list,
-                                     List<OGSessionRelation^>^ _sesn_rel_list)
+
+List<OGSessionRelation^>^ OGSession::get_relation_by_name(
+  List<String^>^ _rel_name_list)
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -308,9 +338,12 @@ void OGSession::get_relation_by_name(List<String^>^ _rel_name_list,
   std::list<og::og_session_relation_ptr> rels;
   og_session_->get_relation_by_name(strl, &rels);
 
+  List<OGSessionRelation^>^ sesn_rel_list = gcnew List<OGSessionRelation^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_session_relation_ptr>, List<OGSessionRelation^>>
-      (&rels, _sesn_rel_list);
+      (&rels, sesn_rel_list);
+
+  return sesn_rel_list;
 }
 
 void OGSession::disconnect(String^ _rel_id)

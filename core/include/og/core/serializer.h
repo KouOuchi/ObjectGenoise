@@ -726,9 +726,9 @@ struct serializer<schema_relation_ptr>
       multiplicity& from_m(_schm_rel->get_from_multiplicity());
       multiplicity& to_m(_schm_rel->get_to_multiplicity());
 
-      from_m.set_multiplicity_(from_min_multiplicity.get(),
+      from_m.set_multiplicity(from_min_multiplicity.get(),
                                from_max_multiplicity.get());
-      to_m.set_multiplicity_(to_min_multiplicity.get(), to_max_multiplicity.get());
+      to_m.set_multiplicity(to_min_multiplicity.get(), to_max_multiplicity.get());
 
       BOOST_FOREACH(const ptree::value_type & child,
                     _pt.second.get_child("parameters"))

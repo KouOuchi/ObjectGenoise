@@ -41,8 +41,8 @@ namespace test_og_net
             List<string> type_list = new List<string>();
             type_list.Add(OTYPE);
 
-            List<OGSchemaObject> soref_list1 = new List<OGSchemaObject>();
-            cleaned_session_.schema().get_object_by_type(type_list, soref_list1);
+            List<OGSchemaObject> soref_list1 = 
+            cleaned_session_.schema().get_object_by_type(type_list);
 
             foreach (OGSchemaObject so in soref_list1)
             {
@@ -99,13 +99,13 @@ namespace test_og_net
                 cleaned_session_.schema().create_object(OTYPE1, ONAME);
                 cleaned_session_.schema().create_object(OTYPE2, ONAME);
 
-                List<OGSchemaObject> obj_list1 = new List<OGSchemaObject>();
-                cleaned_session_.schema().get_object_by_type(otype_list, obj_list1);
+                List<OGSchemaObject> obj_list1 = 
+                cleaned_session_.schema().get_object_by_type(otype_list);
 
                 Assert.AreEqual(obj_list1.Count, 2);
 
-                List<string> types = new List<string>();
-                cleaned_session_.schema().get_object_type(types);
+                List<string> types = 
+                cleaned_session_.schema().get_object_type();
                 Assert.IsTrue(types.Contains(OTYPE1));
                 Assert.IsTrue(types.Contains(OTYPE2));
             }
@@ -113,8 +113,8 @@ namespace test_og_net
             {
                 OGSession ses2 = new OGSession();
                 ses2.open(TestInitializer.DBPATH);
-                List<OGSchemaObject> obj_list1 = new List<OGSchemaObject>();
-                ses2.schema().get_object_by_type(otype_list, obj_list1);
+                List<OGSchemaObject> obj_list1 = 
+                ses2.schema().get_object_by_type(otype_list);
 
                 Assert.IsTrue(obj_list1.Count == 2);
 
@@ -141,12 +141,12 @@ namespace test_og_net
             oname_list.Add(ONAME2);
             {
                 // get_object_id
-                List<OGSchemaObject> obj_list2 = new List<OGSchemaObject>();
 
                 cleaned_session_.schema().create_object(OTYPE1, ONAME1);
                 cleaned_session_.schema().create_object(OTYPE2, ONAME2);
 
-                cleaned_session_.schema().get_object_by_name(oname_list, obj_list2);
+                List<OGSchemaObject> obj_list2 =
+                cleaned_session_.schema().get_object_by_name(oname_list);
 
                 Assert.AreEqual(obj_list2.Count, 2);
             }
@@ -154,8 +154,8 @@ namespace test_og_net
             {
                 OGSession ses2 = new OGSession();
                 ses2.open(TestInitializer.DBPATH);
-                List<OGSchemaObject> obj_list2 = new List<OGSchemaObject>();
-                ses2.schema().get_object_by_name(oname_list, obj_list2);
+                List<OGSchemaObject> obj_list2 = 
+                ses2.schema().get_object_by_name(oname_list);
 
                 Assert.IsTrue(obj_list2.Count == 2);
 
@@ -229,14 +229,14 @@ namespace test_og_net
                 rel_ptr.set_name(RELNAME);
                 rel_ptr.revision_up();
 
-                List<string> rels = new List<string>();
-                cleaned_session_.schema().get_relation_type(rels);
+                List<string> rels = 
+                cleaned_session_.schema().get_relation_type();
                 Assert.AreEqual(rels.Count, 1);
             }
 
             {
-                List<OGSchemaRelation> rel_list = new List<OGSchemaRelation>();
-                cleaned_session_.schema().get_relation_by_type(rel_type_list, rel_list);
+                List<OGSchemaRelation> rel_list = 
+                cleaned_session_.schema().get_relation_by_type(rel_type_list);
                 Assert.IsTrue(rel_list.Count == 1);
 
                 foreach (OGSchemaRelation rp in rel_list)
@@ -255,10 +255,10 @@ namespace test_og_net
                 OGSchemaObject o1 = cleaned_session_.schema().get_object(from_id);
                 OGSchemaObject o2 = cleaned_session_.schema().get_object(to_id);
 
-                List<OGSchemaObject> obj_list1 = new List<OGSchemaObject>();
+                List<OGSchemaObject> obj_list1 = o1.get_connected_object();
 
                 // get composite
-                o1.get_connected_object(obj_list1);
+                
                 Assert.IsTrue(obj_list1.Count == 1);
                 foreach (OGSchemaObject o in obj_list1)
                 {
@@ -266,8 +266,7 @@ namespace test_og_net
                 }
 
                 // get composite
-                obj_list1.Clear();
-                o1.get_connected_object_to(obj_list1);
+                obj_list1 = o1.get_connected_object_to();
                 Assert.IsTrue(obj_list1.Count == 1);
                 foreach (OGSchemaObject o in obj_list1)
                 {
@@ -275,8 +274,7 @@ namespace test_og_net
                 }
 
                 // get composite
-                obj_list1.Clear();
-                o2.get_connected_object_from(obj_list1);
+                obj_list1 = o2.get_connected_object_from();
 
                 Assert.IsTrue(obj_list1.Count == 1);
 
@@ -286,8 +284,7 @@ namespace test_og_net
                 }
 
                 // get composite
-                obj_list1.Clear();
-                o1.get_connected_object(rel_type_list, obj_list1);
+                obj_list1 = o1.get_connected_object(rel_type_list);
 
                 Assert.IsTrue(obj_list1.Count == 1);
 
@@ -296,8 +293,7 @@ namespace test_og_net
                     Assert.IsTrue(o.get_id() == o2.get_id());
                 }
 
-                obj_list1.Clear();
-                o1.get_connected_object_to(rel_type_list, obj_list1);
+                obj_list1 = o1.get_connected_object_to(rel_type_list);
                 Assert.IsTrue(obj_list1.Count == 1);
                 foreach (OGSchemaObject o in obj_list1)
                 {
@@ -305,8 +301,8 @@ namespace test_og_net
                 }
 
                 // get composite
-                obj_list1.Clear();
-                o2.get_connected_object_from(rel_type_list, obj_list1);
+                obj_list1 =
+                o2.get_connected_object_from(rel_type_list);
                 Assert.IsTrue(obj_list1.Count == 1);
                 foreach (OGSchemaObject o in obj_list1)
                 {
@@ -314,23 +310,23 @@ namespace test_og_net
                 }
 
                 // get composite but get nobody
-                obj_list1.Clear();
-                o1.get_connected_object_from(obj_list1);
+                obj_list1 =
+                o1.get_connected_object_from();
                 Assert.IsTrue(obj_list1.Count == 0);
 
                 // get composite but get nobody
-                obj_list1.Clear();
-                o2.get_connected_object_to(obj_list1);
+                obj_list1 =
+                o2.get_connected_object_to();
                 Assert.IsTrue(obj_list1.Count == 0);
 
                 // get composite but get nobody
-                obj_list1.Clear();
-                o1.get_connected_object_from(rel_type_list, obj_list1);
+                obj_list1 =
+                o1.get_connected_object_from(rel_type_list);
                 Assert.IsTrue(obj_list1.Count == 0);
 
                 // get composite but get nobody
-                obj_list1.Clear();
-                o2.get_connected_object_to(rel_type_list, obj_list1);
+                obj_list1 =
+                o2.get_connected_object_to(rel_type_list);
                 Assert.IsTrue(obj_list1.Count == 0);
             }
         }
@@ -361,8 +357,8 @@ namespace test_og_net
             p2.delete_object();
 
             // auto disconnect
-            List<OGSchemaObject> obj_list = new List<OGSchemaObject>();
-            p1.get_connected_object_to(rel_type_list, obj_list);
+            List<OGSchemaObject> obj_list = 
+            p1.get_connected_object_to(rel_type_list);
 
             Assert.IsTrue(obj_list.Count == 0);
         }
@@ -394,37 +390,36 @@ namespace test_og_net
             OGSchemaRelation rel_ptr = p1.connect_to(p2, RELTYPE);
             OGSchemaRelation rel_ptr2 = p3.connect_to(p4, RELTYPE2);
 
-            List<OGSchemaRelation> rel_list2 = new List<OGSchemaRelation>();
+            List<OGSchemaRelation> rel_list2 =
             cleaned_session_.schema().get_connected_relation_to(
               p1.get_id(),
-              rel_type_list, rel_list2);
+              rel_type_list);
 
             Assert.IsTrue(rel_list2.Count == 1);
             Assert.IsTrue(rel_list2[0].get_id() == rel_ptr.get_id());
 
-            rel_list2.Clear();
+            rel_list2 =
             cleaned_session_.schema().get_connected_relation_from(
               p2.get_id(),
-              rel_type_list,
-              rel_list2);
+              rel_type_list);
+
 
             Assert.IsTrue(rel_list2.Count == 1);
             Assert.IsTrue(rel_list2[0].get_id() == rel_ptr.get_id());
 
-            rel_list2.Clear();
+            rel_list2 =
             cleaned_session_.schema().get_connected_relation_to(
               p2.get_id(),
-              rel_type_list,
-              rel_list2);
+              rel_type_list);
+
 
             Assert.IsTrue(rel_list2.Count == 0);
 
 
-            rel_list2.Clear();
+            rel_list2 =
             cleaned_session_.schema().get_connected_relation_from(
               p1.get_id(),
-              rel_type_list,
-              rel_list2);
+              rel_type_list);
 
             Assert.IsTrue(rel_list2.Count == 0);
         }

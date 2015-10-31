@@ -35,36 +35,30 @@ public:
   ///////////////////////////////
   OGSchemaObject^ create_object(String^ _otype, String^ _oname);
 
-  void get_object(List<String^>^ _oid_list,
-                  List<OGSchemaObject^>^ _schm_obj_list);
-  void get_object(List<OGSchemaObject^>^ _schm_obj_list);
+  List<OGSchemaObject^>^ get_object(List<String^>^ _oid_list);
+  List<OGSchemaObject^>^ get_object();
   void delete_object(String^ _oid);
   /*Nullable*/OGSchemaObject^ get_object(String^ _oid);
-  void get_object_by_type(List<String^>^ _otype_list,
-                          List<OGSchemaObject^>^ _schm_obj_list);
-  void get_object_by_name(List<String^>^ _name_list,
-                          List<OGSchemaObject^>^ _schm_obj_list);
-  void get_object_type(List<String^>^ _type_list);
+  List<OGSchemaObject^>^ get_object_by_type(List<String^>^ _otype_list);
+  List<OGSchemaObject^>^ get_object_by_name(List<String^>^ _name_list);
 
-  void get_relation_by_type(List<String^>^ _otype_list,
-                            List<OGSchemaRelation^>^ _schm_rel_list);
-  void get_relation(List<String^>^ _relid_list,
-                    List<OGSchemaRelation^>^ _schm_rel_list);
-  void get_relation(List<OGSchemaRelation^>^ _schm_rel_list);
+  List<String^>^ get_object_type();
+
+  List<OGSchemaRelation^>^ get_relation_by_type(List<String^>^ _otype_list);
+
+  List<OGSchemaRelation^>^ get_relation(List<String^>^ _relid_list);
+  List<OGSchemaRelation^>^ get_relation();
   /*Nullable*/OGSchemaRelation^ get_relation(String^ _relid);
-  void get_relation_type(List<String^>^ _rel_type_list);
+  List<String^>^ get_relation_type();
 
-  void get_connected_object_to(String^ _from_o_id, List<String^>^ _rel_type_list,
-                               List<OGSchemaObject^>^ _schm_obj_list);
-  void get_connected_object_from(String^ _to_o_id, List<String^>^ _rel_type_list,
-                                 List<OGSchemaObject^>^ _schm_obj_list);
+  List<OGSchemaObject^>^ get_connected_object_to(String^ _from_o_id, List<String^>^ _rel_type_list);
 
-  void get_connected_relation_to(String^ _from_o_id,
-                                 List<String^>^ _rel_type_list,
-                                 List<OGSchemaRelation^>^ _schm_rel_list);
-  void get_connected_relation_from(String^ _to_o_id,
-                                   List<String^>^ _rel_type_list,
-                                   List<OGSchemaRelation^>^ _schm_rel_list);
+  List<OGSchemaObject^>^ get_connected_object_from(String^ _to_o_id, List<String^>^ _rel_type_list);
+
+  List<OGSchemaRelation^>^ get_connected_relation_to(String^ _from_o_id,
+	  List<String^>^ _rel_type_list);
+  List<OGSchemaRelation^>^ get_connected_relation_from(String^ _to_o_id,
+	  List<String^>^ _rel_type_list);
 
   bool validate_connect_by_type(String^ _otype_from, String^ _otype_to);
   bool validate_connect_by_type_id(String^ _otype, String^ _oid_from,

@@ -73,8 +73,8 @@ OGSchemaObject^ OGSchema::create_object(String^ _otype, String^ _oname)
                               (og_schema_->create_object(str1, str2)));
 }
 
-void OGSchema::get_object(List<String^>^ _oid_list,
-                          List<OGSchemaObject^>^ _schm_obj_list)
+List<OGSchemaObject^>^ OGSchema::get_object(List<String^>^ _oid_list
+                                           )
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -83,18 +83,24 @@ void OGSchema::get_object(List<String^>^ _oid_list,
   std::list<og::og_schema_object_ptr> objs;
   og_schema_->get_object(strl, &objs);
 
+  List<OGSchemaObject^>^ schm_obj_list = gcnew List<OGSchemaObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_object_ptr>, List<OGSchemaObject^>>
-      (&objs, _schm_obj_list);
+      (&objs, schm_obj_list);
+
+  return schm_obj_list;
 }
-void OGSchema::get_object(List<OGSchemaObject^>^ _schm_obj_list)
+List<OGSchemaObject^>^ OGSchema::get_object()
 {
   std::list<og::og_schema_object_ptr> objs;
   og_schema_->get_object(&objs);
 
+  List<OGSchemaObject^>^ schm_obj_list = gcnew List<OGSchemaObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_object_ptr>, List<OGSchemaObject^>>
-      (&objs, _schm_obj_list);
+      (&objs, schm_obj_list);
+
+  return schm_obj_list;
 }
 void OGSchema::delete_object(String^ _oid)
 {
@@ -119,8 +125,8 @@ void OGSchema::delete_object(String^ _oid)
     return gcnew OGSchemaObject(OGSharedPtr<og::og_schema_object>(o_ptr.get()));
   }
 }
-void OGSchema::get_object_by_type(List<String^>^ _otype_list,
-                                  List<OGSchemaObject^>^ _schm_obj_list)
+List<OGSchemaObject^>^ OGSchema::get_object_by_type(List<String^>^ _otype_list
+                                  )
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -129,12 +135,14 @@ void OGSchema::get_object_by_type(List<String^>^ _otype_list,
   std::list<og::og_schema_object_ptr> objs;
   og_schema_->get_object_by_type(strl, &objs);
 
+  List<OGSchemaObject^>^ schm_obj_list = gcnew List<OGSchemaObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_object_ptr>, List<OGSchemaObject^>>
-      (&objs, _schm_obj_list);
+      (&objs, schm_obj_list);
+
+  return schm_obj_list;
 }
-void OGSchema::get_object_by_name(List<String^>^ _name_list,
-                                  List<OGSchemaObject^>^ _schm_obj_list)
+List<OGSchemaObject^>^ OGSchema::get_object_by_name(List<String^>^ _name_list)
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -143,23 +151,29 @@ void OGSchema::get_object_by_name(List<String^>^ _name_list,
   std::list<og::og_schema_object_ptr> objs;
   og_schema_->get_object_by_name(strl, &objs);
 
+  List<OGSchemaObject^>^ schm_obj_list = gcnew List<OGSchemaObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_object_ptr>, List<OGSchemaObject^>>
-      (&objs, _schm_obj_list);
+      (&objs, schm_obj_list);
+
+  return schm_obj_list;
 }
 
-void OGSchema::get_object_type(List<String^>^ _type_list)
+List<String^>^ OGSchema::get_object_type()
 {
   std::list<std::string> strl;
   og_schema_->get_object_type(&strl);
 
+  List<String^>^ type_list = gcnew List<String^>();
   OGConverter::convert_std_to_clr
   <std::list<std::string>, List<String^>>
-                                       (&strl, _type_list);
+                                       (&strl, type_list);
+
+  return type_list;
 }
 
-void OGSchema::get_relation(List<String^>^ _relid_list,
-                            List<OGSchemaRelation^>^ _schm_rel_list)
+List<OGSchemaRelation^>^ OGSchema::get_relation(List<String^>^ _relid_list
+                                               )
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -168,19 +182,25 @@ void OGSchema::get_relation(List<String^>^ _relid_list,
   std::list<og::og_schema_relation_ptr> rels;
   og_schema_->get_relation(strl, &rels);
 
+  List<OGSchemaRelation^>^ schm_rel_list = gcnew List<OGSchemaRelation^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_relation_ptr>, List<OGSchemaRelation^>>
-      (&rels, _schm_rel_list);
+      (&rels, schm_rel_list);
+
+  return  schm_rel_list;
 }
 
-void OGSchema::get_relation(List<OGSchemaRelation^>^ _schm_rel_list)
+List<OGSchemaRelation^>^ OGSchema::get_relation()
 {
   std::list<og::og_schema_relation_ptr> rels;
   og_schema_->get_relation(&rels);
 
+  List<OGSchemaRelation^>^ schm_rel_list = gcnew List<OGSchemaRelation^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_relation_ptr>, List<OGSchemaRelation^>>
-      (&rels, _schm_rel_list);
+      (&rels, schm_rel_list);
+
+  return schm_rel_list;
 }
 /*Nullable*/OGSchemaRelation^ OGSchema::get_relation(String^ _relid)
 {
@@ -200,18 +220,20 @@ void OGSchema::get_relation(List<OGSchemaRelation^>^ _schm_rel_list)
                                   (rel_ptr.get()));
   }
 }
-void OGSchema::get_relation_type(List<String^>^ _rel_type_list)
+List<String^>^ OGSchema::get_relation_type()
 {
   std::list<std::string> strl;
   og_schema_->get_relation_type(&strl);
 
+  List<String^>^ rel_type_list = gcnew List<String^>();
   OGConverter::convert_std_to_clr
   <std::list<std::string>, List<String^>>
-                                       (&strl, _rel_type_list);
+                                       (&strl, rel_type_list);
+  return rel_type_list;
 }
 
-void OGSchema::get_relation_by_type(List<String^>^ _rel_type_list,
-                                    List<OGSchemaRelation^>^ _schm_rel_list)
+List<OGSchemaRelation^>^ OGSchema::get_relation_by_type(
+  List<String^>^ _rel_type_list)
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -220,14 +242,16 @@ void OGSchema::get_relation_by_type(List<String^>^ _rel_type_list,
   std::list<og::og_schema_relation_ptr> rels;
   og_schema_->get_relation_by_type(strl, &rels);
 
+  List<OGSchemaRelation^>^ schm_rel_list = gcnew List<OGSchemaRelation^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_relation_ptr>, List<OGSchemaRelation^>>
-      (&rels, _schm_rel_list);
+      (&rels, schm_rel_list);
+
+  return schm_rel_list;
 }
 
-void OGSchema::get_connected_object_to(String^ _from_o_id,
-                                       List<String^>^ _rel_type_list,
-                                       List<OGSchemaObject^>^ _schm_obj_list)
+List<OGSchemaObject^>^ OGSchema::get_connected_object_to(String^ _from_o_id,
+    List<String^>^ _rel_type_list)
 {
   std::string str;
   OGConverter::convert_clr_to_std<String, std::string>(_from_o_id, &str);
@@ -239,13 +263,15 @@ void OGSchema::get_connected_object_to(String^ _from_o_id,
   std::list<og::og_schema_object_ptr> objs;
   og_schema_->get_connected_object_to(str, strl, &objs);
 
+  List<OGSchemaObject^>^ schm_obj_list = gcnew List<OGSchemaObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_object_ptr>, List<OGSchemaObject^>>
-      (&objs, _schm_obj_list);
+      (&objs, schm_obj_list);
+  return schm_obj_list;
 }
-void OGSchema::get_connected_object_from(String^ _to_o_id,
-    List<String^>^ _rel_type_list,
-    List<OGSchemaObject^>^ _schm_obj_list)
+List<OGSchemaObject^>^ OGSchema::get_connected_object_from(String^ _to_o_id,
+    List<String^>^ _rel_type_list
+                                                          )
 {
   std::string str;
   OGConverter::convert_clr_to_std<String, std::string>(_to_o_id, &str);
@@ -257,14 +283,16 @@ void OGSchema::get_connected_object_from(String^ _to_o_id,
   std::list<og::og_schema_object_ptr> objs;
   og_schema_->get_connected_object_from(str, strl, &objs);
 
+  List<OGSchemaObject^>^ schm_obj_list = gcnew List<OGSchemaObject^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_object_ptr>, List<OGSchemaObject^>>
-      (&objs, _schm_obj_list);
+      (&objs, schm_obj_list);
+
+  return schm_obj_list;
 }
 
-void OGSchema::get_connected_relation_to(String^ _from_o_id,
-    List<String^>^ _rel_type_list,
-    List<OGSchemaRelation^>^ _schm_rel_list)
+List<OGSchemaRelation^>^ OGSchema::get_connected_relation_to(String^ _from_o_id,
+    List<String^>^ _rel_type_list)
 {
   std::string str;
   OGConverter::convert_clr_to_std<String, std::string>(_from_o_id, &str);
@@ -276,13 +304,16 @@ void OGSchema::get_connected_relation_to(String^ _from_o_id,
   std::list<og::og_schema_relation_ptr> rels;
   og_schema_->get_connected_relation_to(str, strl, &rels);
 
+  List<OGSchemaRelation^>^ schm_rel_list = gcnew List<OGSchemaRelation^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_relation_ptr>, List<OGSchemaRelation^>>
-      (&rels, _schm_rel_list);
+      (&rels, schm_rel_list);
+
+  return schm_rel_list;
 }
-void OGSchema::get_connected_relation_from(String^ _to_o_id,
-    List<String^>^ _rel_type_list,
-    List<OGSchemaRelation^>^ _schm_rel_list)
+List<OGSchemaRelation^>^ OGSchema::get_connected_relation_from(String^ _to_o_id,
+    List<String^>^ _rel_type_list
+                                                              )
 {
   std::string str;
   OGConverter::convert_clr_to_std<String, std::string>(_to_o_id, &str);
@@ -294,9 +325,12 @@ void OGSchema::get_connected_relation_from(String^ _to_o_id,
   std::list<og::og_schema_relation_ptr> rels;
   og_schema_->get_connected_relation_from(str, strl, &rels);
 
+  List<OGSchemaRelation^>^ schm_rel_list = gcnew List<OGSchemaRelation^>();
   OGConverter::convert_std_to_clr
   <std::list<og::og_schema_relation_ptr>, List<OGSchemaRelation^>>
-      (&rels, _schm_rel_list);
+      (&rels, schm_rel_list);
+
+  return schm_rel_list;
 }
 
 bool OGSchema::validate_connect_by_type(String^ _otype_from, String^ _otype_to)

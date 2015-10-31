@@ -48,7 +48,7 @@ public:
   og::core::multiplicity& get_from_multiplicity(){}
   og::core::multiplicity& get_to_multiplicity(){}
   void set_from_multiplicity(og::core::multiplicity& _mul){}
-  void set_get_to_multiplicity(og::core::multiplicity& _mul){}
+  void set_to_multiplicity(og::core::multiplicity& _mul){}
   // multiplicity ends.
 
   ///////////////////////////////

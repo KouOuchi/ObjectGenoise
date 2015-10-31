@@ -54,17 +54,14 @@ public:
 //  OGSchemaObject^ copy_object(void);
   void delete_object();
 
-  void get_connected_object(List<OGSchemaObject^>^ _schm_object_List);
-  void get_connected_object(List<String^>^ _rel_type_List,
-                            List<OGSchemaObject^>^ _schm_object_List);
+  List<OGSchemaObject^>^ get_connected_object();
+  List<OGSchemaObject^>^ get_connected_object(List<String^>^ _rel_type_List);
 
-  void get_connected_object_to(List<OGSchemaObject^>^ _schm_object_List);
-  void get_connected_object_to(List<String^>^ _rel_type_List,
-                               List<OGSchemaObject^>^ _schm_object_List);
+  List<OGSchemaObject^>^ get_connected_object_to();
+  List<OGSchemaObject^>^ get_connected_object_to(List<String^>^ _rel_type_List);
 
-  void get_connected_object_from(List<OGSchemaObject^>^ _schm_object_List);
-  void get_connected_object_from(List<String^>^ _rel_type_List,
-                                 List<OGSchemaObject^>^ _schm_object_List);
+  List<OGSchemaObject^>^ get_connected_object_from();
+  List<OGSchemaObject^>^ get_connected_object_from(List<String^>^ _rel_type_List);
 
   ///////////////////////////////
   // parameters

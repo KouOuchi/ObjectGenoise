@@ -651,7 +651,7 @@ session_relation_ptr session::connect(string _from_id, string _to_id,
 }
 
 void session::get_connected_object_from(string _to_id,
-                                        list<string> _rel_type_list,
+                                        list<string>& _rel_type_list,
                                         list<session_object_ptr>* _sesn_obj_list)
 {
   list<string> id_list;
@@ -671,7 +671,7 @@ void session::get_connected_object_from(string _to_id,
   get_object(id_list, _sesn_obj_list);
 }
 void session::get_connected_object_to(string _from_id,
-                                      list<string> _rel_type_list,
+                                      list<string>& _rel_type_list,
                                       list<session_object_ptr>* _sesn_obj_list)
 {
   list<string> id_list;
@@ -690,8 +690,12 @@ void session::get_connected_object_to(string _from_id,
 
   get_object(id_list, _sesn_obj_list);
 }
-bool session::validate_connect(string _from_id, string _to_id,
-                               list<string> _rel_type_list)
+
+void session::validate_connect(string _from_id,
+                               string _to_id,
+                               list<string>& _rel_type_list,
+                               list<schema_relation_ptr>* _schm_rel_list
+                              )
 {
   list<string> id_list;
 
@@ -708,7 +712,11 @@ bool session::validate_connect(string _from_id, string _to_id,
     , soci::use(_to_id, "to_id")
     , &id_list);
 
-  return id_list.size() >= 1;
+  for (list<string>::iterator it = id_list.begin(); it != id_list.end(); it++)
+  {
+    optional<schema_relation_ptr> schm_rel = schema_->get_relation(*it);
+    _schm_rel_list->push_back(schm_rel.get());
+  }
 }
 
 optional<session_relation_ptr> session::get_relation(string _rel_id)
@@ -1800,7 +1808,7 @@ void session::insert_relation_parameter_with_arg(session_relation_ptr
                                          boost::get<1>(_sesn_rel_param)))));
 }
 
-void session::get_connected_from(string _to_id, list<string> _rel_type_list,
+void session::get_connected_from(string _to_id, list<string>& _rel_type_list,
                                  list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_objrel_list)
 {
   list<string> id_list;
@@ -1821,7 +1829,7 @@ void session::get_connected_from(string _to_id, list<string> _rel_type_list,
   get_object_relation(id_list, rel_list, _sesn_objrel_list);
 }
 
-void session::get_connected_to(string _from_id, list<string> _rel_type_list,
+void session::get_connected_to(string _from_id, list<string>& _rel_type_list,
                                list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_objrel_list)
 {
   list<string> id_list;

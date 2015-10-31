@@ -8,35 +8,43 @@ class multiplicity
 {
 public:
   multiplicity()
-    : max_multiplicity_(1), min_multiplicity_(0)
+    : max_multiplicity_(-1), min_multiplicity_(0)
   {}
 
-  multiplicity(unsigned int _max, unsigned int _min)
+  multiplicity(int _min, int _max)
     : max_multiplicity_(_max), min_multiplicity_(_min)
   {}
+
+  multiplicity(const multiplicity& _mul)
+  {
+    min_multiplicity_ = _mul.get_min();
+    max_multiplicity_ = _mul.get_max();
+  }
 
   virtual ~multiplicity()
   {}
 
-  void set_multiplicity_(unsigned int _min, unsigned int _max)
+  bool set_multiplicity(int _min, int _max)
   {
     // check
-    if (_max < _min)
+    if (_max != -1 && _max < _min)
     {
-      throw og::core::exception() <<
-                            exception_message("unexpected value, _min or _max");
+		OG_LOG << "unexpected value, _min or _max";
+		return false;
     }
     // check
-    if (_max < 1)
+    if (_max != -1 &&_max < 1)
     {
-      throw og::core::exception() <<
-                            exception_message("unexpected value, _max");
+		OG_LOG << "unexpected value, _max";
+		return false;
+
     }
     min_multiplicity_ = _min;
     max_multiplicity_ = _max;
+	return true;
   }
-  int get_max() { return max_multiplicity_; }
-  int get_min() { return min_multiplicity_; }
+  int get_max() const { return max_multiplicity_; }
+  int get_min() const { return min_multiplicity_; }
 
   static int UNLIMITED() { return -1; }
 

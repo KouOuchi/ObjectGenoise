@@ -21,6 +21,15 @@ public enum class OGConnectionDirection
   Direction_Both = 4
 };
 
+[Flags]
+public enum class OGConnectionValidationResult
+{
+  Valid = 0,
+  Invalid = 1,
+  Not_found_relation = 2,
+  Multiplicity_violation = 4
+};
+
 using namespace System;
 using namespace System::Text;
 using namespace System::Collections::Generic;
@@ -63,26 +72,22 @@ public:
   OGSessionObject^ copy_object();
   OGSessionObject^ copy_object(OGConnectionDirection _dir);
 
-  void get_connected_object(List<OGSessionObject^>^ _sesn_obj_List);
-  void get_connected_object(List<String^>^ _rel_type_List,
-                            List<OGSessionObject^>^ _sesn_obj_List);
-  void get_connected_object_from(List<OGSessionObject^>^ _sesn_obj_List);
-  void get_connected_object_from(List<String^>^ _rel_type_List,
-                                 List<OGSessionObject^>^ _sesn_obj_List);
-  void get_connected_object_to(List<OGSessionObject^>^ _sesn_obj_List);
-  void get_connected_object_to(List<String^>^ _rel_type_List,
-                               List<OGSessionObject^>^ _sesn_obj_List);
-  bool validate_connect_to(OGSessionObject^ _sesn_obj_ptr);
-  bool validate_connect_to(OGSessionObject^ _sesn_obj_ptr, String^ _rel_type);
-  bool validate_connect_from(OGSessionObject^ _sesn_obj_ptr);
-  bool validate_connect_from(OGSessionObject^ _sesn_obj_ptr,
+  List<OGSessionObject^>^ get_connected_object();
+  List<OGSessionObject^>^ get_connected_object(List<String^>^ _rel_type_List);
+  List<OGSessionObject^>^ get_connected_object_from();
+  List<OGSessionObject^>^ get_connected_object_from(List<String^>^ _rel_type_List);
+  List<OGSessionObject^>^ get_connected_object_to();
+  List<OGSessionObject^>^ get_connected_object_to(List<String^>^ _rel_type_List);
+  //bool validate_connect_to(OGSessionObject^ _sesn_obj_ptr);
+  OGConnectionValidationResult validate_connect_to(OGSessionObject^ _sesn_obj_ptr, String^ _rel_type);
+  //bool validate_connect_from(OGSessionObject^ _sesn_obj_ptr);
+  OGConnectionValidationResult validate_connect_from(OGSessionObject^ _sesn_obj_ptr,
                              String^ _rel_type);
-  void get_connectable_relation_type_to(List<String^>^ _rel_type_List);
-  void get_connectable_relation_type_from(List<String^>^ _rel_type_List);
-  void get_connectable_to(Dictionary<String^, List<OGSchemaObject^>^>^
-                          _rel_type_map);
-  void get_connectable_from(Dictionary<String^, List<OGSchemaObject^>^>^
-                            _rel_type_map);
+
+  List<String^>^ get_connectable_relation_type_to();
+  List<String^>^ get_connectable_relation_type_from();
+  Dictionary<String^, List<OGSchemaObject^>^>^ get_connectable_to();
+  Dictionary<String^, List<OGSchemaObject^>^>^ get_connectable_from();
 
   ///////////////////////////////
   // parameters
