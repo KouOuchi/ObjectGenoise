@@ -28,6 +28,7 @@
     <ClCompile Include="src\unittest_transaction.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\og_session_object_comparer.h" />
     <ClInclude Include="include\fixtures.h" />
     <ClInclude Include="include\utility.h" />
   </ItemGroup>

@@ -926,9 +926,9 @@ schema::get_object_parameter_basetype_enum_by_param_name(
   int param_name;
 
   *session_->soci_session_
-      << "SELECT schema_parameter.parameter_name INNER JOIN "
-      "schema_parameter ON schema_object_parameter.pid = schema_parameter.id_ "
-      "WHERE schema_object_parameter.schema_object_id = :_o_id"
+      << "SELECT schema_parameter.basetype_name FROM "
+      "schema_parameter, schema_object_parameter WHERE schema_object_parameter.pid = schema_parameter.id_ AND "
+      "schema_object_parameter.schema_object_id = :_o_id AND "
       "schema_object_parameter.param_name = :_param_name"
       , soci::use(_o_id)
       , soci::use(_param_name)
@@ -944,10 +944,10 @@ schema::get_relation_parameter_basetype_enum_by_param_name(
   int param_name;
 
   *session_->soci_session_
-      << "SELECT schema_parameter.parameter_name INNER JOIN "
-      "schema_parameter ON schema_relation_parameter.pid = schema_parameter.id_ "
-      "WHERE schema_relatoin_parameter.schema_relation_id = :_rel_id"
-      "schema_object_parameter.param_name = :_param_name"
+      << "SELECT schema_parameter.basetype_name FROM "
+      "schema_parameter, schema_relation_parameter WHERE schema_relation_parameter.pid = schema_parameter.id_ AND "
+      "schema_relation_parameter.schema_relation_id = :_rel_id AND "
+      "schema_relation_parameter.param_name = :_param_name"
       , soci::use(_rel_id)
       , soci::use(_param_name)
       , soci::into(param_name);

@@ -44,5 +44,8 @@
     <ClInclude Include="include\utility.h">
       <Filter>header</Filter>
     </ClInclude>
+    <ClInclude Include="include\og_session_object_comparer.h">
+      <Filter>header</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

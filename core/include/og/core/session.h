@@ -46,11 +46,16 @@ public:
   ///////////////////////////////
   session_object_ptr create_object(schema_object_ptr _schm_obj);
   void delete_object(string _id,
-                                map<string, session_parameter_ptr>* _param_map);
+                     map<string, session_parameter_ptr>* _param_map);
   session_object_ptr copy_object(schema_object_ptr _schm_obj,
-                                map<string, session_parameter_ptr>* _param_map);
-  void delete_object_parameter_definition(string _param_name, schema_parameter_ptr _param);
-  void delete_relatoin_parameter_definition(string _param_name, schema_parameter_ptr _param);
+                                 map<string, session_parameter_ptr>* _param_map);
+  void copy_relation(session_relation_ptr _sesn_rel,
+                     map<string, session_parameter_ptr>* _param_map);
+
+  void delete_object_parameter_definition(string _param_name,
+                                          schema_parameter_ptr _param);
+  void delete_relatoin_parameter_definition(string _param_name,
+      schema_parameter_ptr _param);
 
   optional<session_object_ptr> get_object(string _id);
   void get_object(list<session_object_ptr>* _sesn_obj_list);
@@ -58,7 +63,8 @@ public:
                   list<session_object_ptr>* _sesn_obj_list);
 
   void get_object_relation(list<string>& _oid_list, list<string>& _rel_list,
-	  list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_objrel_list);
+                           list<boost::tuple<session_object_ptr, session_relation_ptr>>*
+                           _sesn_objrel_list);
 
   void get_object_by_type(list<string>& _otype_list,
                           list<session_object_ptr>* _sesn_obj_list);
@@ -87,13 +93,15 @@ public:
                                list<session_object_ptr>* _sesn_obj_list);
 
   void get_connected_from(string _to_id, list<string>& _rel_type_list,
-                                 list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_objrel_list);
+                          list<boost::tuple<session_object_ptr, session_relation_ptr>>*
+                          _sesn_objrel_list);
   void get_connected_to(string _from_id, list<string>& _rel_type_list,
-                               list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_objrel_list);
+                        list<boost::tuple<session_object_ptr, session_relation_ptr>>*
+                        _sesn_objrel_list);
 
   OG_COREAPI void validate_connect(string _from_id, string _to_id,
                                    list<string>& _rel_type_list,
-								   list<schema_relation_ptr>* _schm_rel_list);
+                                   list<schema_relation_ptr>* _schm_rel_list);
 
   optional<session_relation_ptr> get_relation(string _rel_id);
   void get_relation(list<session_relation_ptr>* _sesn_rel_list);
@@ -203,12 +211,18 @@ private:
   void get_sequence(string* _id);
 
   void insert_object(session_object_ptr _sesn_obj);
-  void insert_object_parameter_by_default(session_object_ptr _sesn_obj, boost::tuple<string, schema_parameter_ptr>& _sesn_obj_param);
-  void insert_object_parameter_with_arg(session_object_ptr _sesn_obj, boost::tuple<string, schema_parameter_ptr>& _sesn_obj_param, list<parameter_value_variant>& _arg);
+  void insert_object_parameter_by_default(session_object_ptr _sesn_obj,
+                                          boost::tuple<string, schema_parameter_ptr>& _sesn_obj_param);
+  void insert_object_parameter_with_arg(session_object_ptr _sesn_obj,
+                                        boost::tuple<string, schema_parameter_ptr>& _sesn_obj_param,
+                                        list<parameter_value_variant>& _arg);
 
   void insert_relation(session_relation_ptr _sesn_obj);
-  void insert_relation_parameter_by_default(session_relation_ptr _sesn_rel, boost::tuple<string, schema_parameter_ptr>& _sesn_rel_param);
-  void insert_relation_parameter_with_arg(session_relation_ptr _sesn_rel, boost::tuple<string, schema_parameter_ptr>& _sesn_rel_param, list<parameter_value_variant>& _arg);
+  void insert_relation_parameter_by_default(session_relation_ptr _sesn_rel,
+      boost::tuple<string, schema_parameter_ptr>& _sesn_rel_param);
+  void insert_relation_parameter_with_arg(session_relation_ptr _sesn_rel,
+                                          boost::tuple<string, schema_parameter_ptr>& _sesn_rel_param,
+                                          list<parameter_value_variant>& _arg);
 
   ///////////////////////////////
   // parameters
@@ -222,7 +236,7 @@ private:
 
   // worker method
   void import_parameter(const ptree& _param_elm,
-                                  map<string, list<parameter_value_variant>>* _params);
+                        map<string, list<parameter_value_variant>>* _params);
 
 };
 

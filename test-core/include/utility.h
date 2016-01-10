@@ -47,6 +47,7 @@ struct CrtCheckMemory
     }
   }
 };
+
 }//namespace core
 }//namespace og
 

@@ -1,5 +1,6 @@
 #include "fixtures.h"
 #include "utility.h"
+#include "og_session_object_comparer.h"
 
 #ifdef TEST_OG_SESSION
 BOOST_FIXTURE_TEST_SUITE(session, fixture_clean_session);
@@ -134,15 +135,31 @@ BOOST_AUTO_TEST_CASE( session_1002 )
     og::og_session_object_ptr o1 = cleaned_session_.create_object(schm_obj1);
     og::og_session_object_ptr o2 = cleaned_session_.create_object(schm_obj2);
 
-	BOOST_REQUIRE((o1->validate_connect_to(o2, RELTYPE) & og::core::connection_validation_result_enum::valid) == og::core::connection_validation_result_enum::valid);
-    BOOST_REQUIRE((o2->validate_connect_to(o1, RELTYPE) & og::core::connection_validation_result_enum::invalid) == og::core::connection_validation_result_enum::invalid);
-    BOOST_REQUIRE((o1->validate_connect_to(o1, RELTYPE) & og::core::connection_validation_result_enum::invalid) == og::core::connection_validation_result_enum::invalid);
-    BOOST_REQUIRE((o2->validate_connect_to(o2, RELTYPE) & og::core::connection_validation_result_enum::invalid) == og::core::connection_validation_result_enum::invalid);
+    BOOST_REQUIRE((o1->validate_connect_to(o2,
+                                           RELTYPE) & og::core::connection_validation_result_enum::valid) ==
+                  og::core::connection_validation_result_enum::valid);
+    BOOST_REQUIRE((o2->validate_connect_to(o1,
+                                           RELTYPE) & og::core::connection_validation_result_enum::invalid) ==
+                  og::core::connection_validation_result_enum::invalid);
+    BOOST_REQUIRE((o1->validate_connect_to(o1,
+                                           RELTYPE) & og::core::connection_validation_result_enum::invalid) ==
+                  og::core::connection_validation_result_enum::invalid);
+    BOOST_REQUIRE((o2->validate_connect_to(o2,
+                                           RELTYPE) & og::core::connection_validation_result_enum::invalid) ==
+                  og::core::connection_validation_result_enum::invalid);
 
-    BOOST_REQUIRE((o1->validate_connect_from(o2, RELTYPE) & og::core::connection_validation_result_enum::invalid) == og::core::connection_validation_result_enum::invalid);
-    BOOST_REQUIRE((o2->validate_connect_from(o1, RELTYPE) & og::core::connection_validation_result_enum::valid) == og::core::connection_validation_result_enum::valid);
-    BOOST_REQUIRE((o1->validate_connect_from(o1, RELTYPE) & og::core::connection_validation_result_enum::invalid) == og::core::connection_validation_result_enum::invalid);
-    BOOST_REQUIRE((o2->validate_connect_from(o2, RELTYPE) & og::core::connection_validation_result_enum::invalid) == og::core::connection_validation_result_enum::invalid);
+    BOOST_REQUIRE((o1->validate_connect_from(o2,
+                   RELTYPE) & og::core::connection_validation_result_enum::invalid) ==
+                  og::core::connection_validation_result_enum::invalid);
+    BOOST_REQUIRE((o2->validate_connect_from(o1,
+                   RELTYPE) & og::core::connection_validation_result_enum::valid) ==
+                  og::core::connection_validation_result_enum::valid);
+    BOOST_REQUIRE((o1->validate_connect_from(o1,
+                   RELTYPE) & og::core::connection_validation_result_enum::invalid) ==
+                  og::core::connection_validation_result_enum::invalid);
+    BOOST_REQUIRE((o2->validate_connect_from(o2,
+                   RELTYPE) & og::core::connection_validation_result_enum::invalid) ==
+                  og::core::connection_validation_result_enum::invalid);
 
     o1->connect_to(o2, RELTYPE);
 
@@ -775,8 +792,6 @@ BOOST_AUTO_TEST_CASE(session_1007)
   }
 }
 
-
-
 // parameter test text
 BOOST_AUTO_TEST_CASE(session_1008)
 {
@@ -1038,57 +1053,126 @@ BOOST_AUTO_TEST_CASE( session_1111 )
                                          OTYPE2,
                                          ONAME2);
 
-  schm_obj1->connect_to(schm_obj2, RELTYPE1);
+  og::og_text text_type1;
+  text_type1.default_value_ = std::string("foo");
+  text_type1.warn_max_ = 10;
+  text_type1.system_max_ = 10;
+  text_type1.warn_min_ = 1;
+  text_type1.system_min_ = 1;
+
+  og::og_schema_parameter_ptr text_param1 =
+    cleaned_session_.schema()->create_parameter("foo_type", "foo",
+        &text_type1, 3, 2, 4);
+
+  og::og_integer int_type1;
+  int_type1.default_value_ = 1;
+  int_type1.warn_max_ = 3;
+  int_type1.system_max_ = 3;
+  int_type1.warn_min_ = 1;
+  int_type1.system_min_ = 1;
+
+  og::og_schema_parameter_ptr int_param1 =
+    cleaned_session_.schema()->create_parameter("bar_type", "bar",
+        &int_type1, 3, 2, 4);
+
+  og::og_real real_type1;
+  real_type1.default_value_ = 1.141;
+  real_type1.warn_max_ = 3;
+  real_type1.system_max_ = 3;
+  real_type1.warn_min_ = 1;
+  real_type1.system_min_ = 1;
+
+  og::og_schema_parameter_ptr real_param1 =
+    cleaned_session_.schema()->create_parameter("hoge_type", "hoge",
+        &real_type1, 1, 2, 3);
+
+  schm_obj1->add_parameter_definition("foo1", text_param1);
+  schm_obj1->add_parameter_definition("bar1", int_param1);
+  schm_obj1->add_parameter_definition("hoge1", real_param1);
+
+  schm_obj2->add_parameter_definition("foo2", text_param1);
+  schm_obj2->add_parameter_definition("bar2", int_param1);
+  schm_obj2->add_parameter_definition("hoge2", real_param1);
+
+  og::og_schema_relation_ptr schm_rel = schm_obj1->connect_to(schm_obj2,
+                                        RELTYPE1);
+
+  schm_rel->add_parameter_definition("foo3", text_param1);
+  schm_rel->add_parameter_definition("bar3", int_param1);
+  schm_rel->add_parameter_definition("hoge3", real_param1);
+
+
 
   og::og_session_object_ptr o1 = cleaned_session_.create_object(schm_obj1);
   og::og_session_object_ptr o2 = cleaned_session_.create_object(schm_obj2);
-  o1->set_instance_name("abc");
-  o2->set_instance_name("xyz");
+  o1->set_instance_name("a");
+  o1->set_parameter_value<string>("foo1", "foox1");
+  o1->set_parameter_value<int>("bar1", 4);
+  o1->set_parameter_value<double>("hoge1", 4.1);
+
+  o2->set_instance_name("b");
+  o2->set_parameter_value<string>("foo2", "foox2");
+  o2->set_parameter_value<int>("bar2", 5);
+  o2->set_parameter_value<double>("hoge2", 4.2);
 
   og::og_session_relation_ptr r1 = o1->connect_to(o2, RELTYPE1);
-  og::og_session_relation_ptr r2 = o1->connect_to(o2, RELTYPE1);
+  r1->set_instance_name("c");
+  r1->set_parameter_value<string>("foo3", "foox3");
+  r1->set_parameter_value<int>("bar3", 6);
+  r1->set_parameter_value<double>("hoge3", 4.3);
 
   // basic copy
   {
-    og::og_session_object_ptr copied = o1->copy_object();
+    og::og_session_object_ptr copied = o1.get()->copy_object();
 
-    BOOST_REQUIRE_EQUAL(copied->get_schema_object_id(), o1->get_schema_object_id());
-    BOOST_REQUIRE_EQUAL(copied->get_schema_object_type(),
-                        o1->get_schema_object_type());
+	string t;
+    copied->get_parameter_value<string>("foo1", &t);
+    OG_LOG << t;
+
+    BOOST_REQUIRE(
+      og::core::og_session_object_comparer::compare(&cleaned_session_, o1, copied));
   }
 
-  // recurive copy
+  // recurive copy (copy direction 'to')
   {
-
     og::og_session_object_ptr copied = o1->copy_object(
                                          og::core::connection_direction_enum::direction_to);
-    BOOST_REQUIRE_EQUAL(copied->get_schema_object_id(), o1->get_schema_object_id());
-    BOOST_REQUIRE_EQUAL(copied->get_schema_object_type(),
-                        o1->get_schema_object_type());
+    BOOST_REQUIRE(
+      og::core::og_session_object_comparer::compare(&cleaned_session_, o1, copied));
 
-    BOOST_REQUIRE_EQUAL("copy of abc", copied->get_instance_name());
-
+    // childs : 1 object
     {
       list<og::og_session_object_ptr> childs;
       copied->get_connected_object_to(&childs);
 
-      BOOST_REQUIRE_EQUAL(2, childs.size());
-      BOOST_REQUIRE_EQUAL("copy of xyz", childs.front()->get_instance_name());
-      BOOST_REQUIRE_EQUAL("copy of xyz", childs.back()->get_instance_name());
-
+      BOOST_REQUIRE_EQUAL(1, childs.size());
+      BOOST_REQUIRE(
+        og::core::og_session_object_comparer::compare(&cleaned_session_, o2,
+            childs.front()));
     }
+
+    // childs of copied : 1 (with relation)
     {
-      list<og::og_session_object_ptr> childs;
-      copied->get_connected_object_from(&childs);
+      list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
+          childs;
+      copied->get_connected_to(&childs);
 
-      BOOST_REQUIRE_EQUAL(0, childs.size());
+      BOOST_REQUIRE_EQUAL(1, childs.size());
+      BOOST_REQUIRE(
+        og::core::og_session_object_comparer::compare(&cleaned_session_, o2,
+            childs.front().get<0>()));
+      BOOST_REQUIRE(
+        og::core::og_session_relation_comparer::compare(&cleaned_session_, r1,
+            childs.front().get<1>()));
     }
+
+    // parents of copied : 0
     {
-      list<og::og_session_object_ptr> childs;
-      copied->get_connected_object(&childs);
-
-      BOOST_REQUIRE_EQUAL(2, childs.size());
+      list<og::og_session_object_ptr> parents;
+      copied->get_connected_object_from(&parents);
+      BOOST_REQUIRE_EQUAL(0, parents.size());
     }
+    // parents of copied : 0 (with relation)
     {
       list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
           childs;
@@ -1096,67 +1180,103 @@ BOOST_AUTO_TEST_CASE( session_1111 )
 
       BOOST_REQUIRE_EQUAL(0, childs.size());
     }
-    {
-      list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
-          childs;
-      copied->get_connected_to(&childs);
 
-      BOOST_REQUIRE_EQUAL(2, childs.size());
+    // childs of copied : 1 object
+    {
+      list<og::og_session_object_ptr> childs;
+      copied->get_connected_object(&childs);
+
+      BOOST_REQUIRE_EQUAL(1, childs.size());
+      BOOST_REQUIRE(
+        og::core::og_session_object_comparer::compare(&cleaned_session_, o2,
+            childs.front()));
     }
+    // childs of copied : 1 (with relation)
     {
       list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
           childs;
       copied->get_connected(&childs);
 
-      BOOST_REQUIRE_EQUAL(2, childs.size());
+      BOOST_REQUIRE_EQUAL(1, childs.size());
+      BOOST_REQUIRE(
+        og::core::og_session_object_comparer::compare(&cleaned_session_, o2,
+            childs.front().get<0>()));
+      BOOST_REQUIRE(
+        og::core::og_session_relation_comparer::compare(&cleaned_session_, r1,
+            childs.front().get<1>()));
     }
   }
 
   {
     og::og_session_object_ptr copied = o2->copy_object(
                                          og::core::connection_direction_enum::direction_from);
-    BOOST_REQUIRE_EQUAL(copied->get_schema_object_id(), o2->get_schema_object_id());
-    BOOST_REQUIRE_EQUAL(copied->get_schema_object_type(),
-                        o2->get_schema_object_type());
+    BOOST_REQUIRE(
+      og::core::og_session_object_comparer::compare(&cleaned_session_, o2, copied));
 
+    // childs : 0 object
     {
       list<og::og_session_object_ptr> childs;
       copied->get_connected_object_to(&childs);
 
       BOOST_REQUIRE_EQUAL(0, childs.size());
     }
+    // childs of copied : 0 (with relation)
     {
-      list<og::og_session_object_ptr> childs;
-      copied->get_connected_object_from(&childs);
-
-      BOOST_REQUIRE_EQUAL(2, childs.size());
-    }
-    {
-      list<og::og_session_object_ptr> childs;
-      copied->get_connected_object(&childs);
-
-      BOOST_REQUIRE_EQUAL(2, childs.size());
-    }
-    {
-      list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
-          childs;
-      copied->get_connected_from(&childs);
-
-      BOOST_REQUIRE_EQUAL(2, childs.size());
-    }
-    {
-      list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
+      list<boost::tuple<og::og_session_object_ptr, og::og_session_relation_ptr>>
           childs;
       copied->get_connected_to(&childs);
 
       BOOST_REQUIRE_EQUAL(0, childs.size());
     }
+
+    // parents of copied : 1 object
     {
-      list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
+      list<og::og_session_object_ptr> parents;
+      copied->get_connected_object_from(&parents);
+
+      BOOST_REQUIRE_EQUAL(1, parents.size());
+      BOOST_REQUIRE(
+        og::core::og_session_object_comparer::compare(&cleaned_session_, o1,
+            parents.front()));
+    }
+    // parents of copied : 1 (with relation)
+    {
+      list<boost::tuple<og::og_session_object_ptr, og::og_session_relation_ptr>>
+          parents;
+      copied->get_connected_from(&parents);
+
+      BOOST_REQUIRE_EQUAL(1, parents.size());
+      BOOST_REQUIRE(
+        og::core::og_session_object_comparer::compare(&cleaned_session_, o1,
+            parents.front().get<0>()));
+      BOOST_REQUIRE(
+        og::core::og_session_relation_comparer::compare(&cleaned_session_, r1,
+            parents.front().get<1>()));
+    }
+
+    // parents of copied : 1 object
+    {
+      list<og::og_session_object_ptr> parents;
+      copied->get_connected_object(&parents);
+
+      BOOST_REQUIRE_EQUAL(1, parents.size());
+      BOOST_REQUIRE(
+        og::core::og_session_object_comparer::compare(&cleaned_session_, o1,
+            parents.front()));
+    }
+    // childs of copied : 1 (with relation)
+    {
+      list<boost::tuple<og::og_session_object_ptr, og::og_session_relation_ptr>>
           childs;
       copied->get_connected(&childs);
 
-      BOOST_REQUIRE_EQUAL(2, childs.size());
+      BOOST_REQUIRE_EQUAL(1, childs.size());
+      BOOST_REQUIRE(
+        og::core::og_session_object_comparer::compare(&cleaned_session_, o1,
+            childs.front().get<0>()));
+      BOOST_REQUIRE(
+        og::core::og_session_relation_comparer::compare(&cleaned_session_, r1,
+            childs.front().get<1>()));
     }
   }
 }

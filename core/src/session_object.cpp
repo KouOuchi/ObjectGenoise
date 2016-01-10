@@ -79,7 +79,13 @@ session_object_ptr session_object::copy_object(
     {
       session_object_ptr parent_of_target = boost::get<0>(*it)->copy_object(
                                               _direction);
-      target->connect_from(parent_of_target, boost::get<1>(*it)->get_type());
+      session_relation_ptr sesn_rel =
+        target->connect_from(parent_of_target, boost::get<1>(*it)->get_type());
+
+	  // assign copied parameter
+      map<string, session_parameter_ptr>* _source_param_map =
+        boost::get<1>(*it)->get_parameters();
+	  session_->copy_relation(sesn_rel, _source_param_map);
     }
   }
 
@@ -93,7 +99,13 @@ session_object_ptr session_object::copy_object(
     {
       session_object_ptr child_of_target = boost::get<0>(*it)->copy_object(
                                              _direction);
-      target->connect_to(child_of_target, boost::get<1>(*it)->get_type());
+      session_relation_ptr sesn_rel =
+        target->connect_to(child_of_target, boost::get<1>(*it)->get_type());
+
+      // assign copied parameter
+      map<string, session_parameter_ptr>* _source_param_map =
+        boost::get<1>(*it)->get_parameters();
+	  session_->copy_relation(sesn_rel, _source_param_map);
     }
   }
 
@@ -218,8 +230,9 @@ void session_object::get_connected_object_to(list<string>& _rel_type_list,
   session_->get_connected_object_to(id_, _rel_type_list, _sesn_obj_list);
 }
 
-connection_validation_result_enum session_object::validate_connect_to(session_object_ptr _sesn_obj_ptr,
-    string _rel_type)
+connection_validation_result_enum session_object::validate_connect_to(
+  session_object_ptr _sesn_obj_ptr,
+  string _rel_type)
 {
   list<string> rel_type_list;
   rel_type_list.push_back(_rel_type);
@@ -230,8 +243,9 @@ connection_validation_result_enum session_object::validate_connect_to(session_ob
 
   if (schm_rel_list.size() == 0)
   {
-    return (connection_validation_result_enum)(connection_validation_result_enum::invalid |
-           connection_validation_result_enum::not_found_relation);
+    return (connection_validation_result_enum)(
+             connection_validation_result_enum::invalid |
+             connection_validation_result_enum::not_found_relation);
   }
   else if (schm_rel_list.size() == 1)
   {
@@ -248,8 +262,9 @@ connection_validation_result_enum session_object::validate_connect_to(session_ob
     }
     else
     {
-      return (connection_validation_result_enum)(connection_validation_result_enum::invalid |
-             connection_validation_result_enum::multiplicity_violation);
+      return (connection_validation_result_enum)(
+               connection_validation_result_enum::invalid |
+               connection_validation_result_enum::multiplicity_violation);
     }
   }
   else
@@ -259,9 +274,10 @@ connection_validation_result_enum session_object::validate_connect_to(session_ob
   }
 }
 
-connection_validation_result_enum session_object::validate_connect_from(session_object_ptr
-    _sesn_obj_ptr,
-    string _rel_type)
+connection_validation_result_enum session_object::validate_connect_from(
+  session_object_ptr
+  _sesn_obj_ptr,
+  string _rel_type)
 {
   list<string> rel_type_list;
   rel_type_list.push_back(_rel_type);
@@ -272,8 +288,9 @@ connection_validation_result_enum session_object::validate_connect_from(session_
 
   if (schm_rel_list.size() == 0)
   {
-    return (connection_validation_result_enum)(connection_validation_result_enum::invalid |
-           connection_validation_result_enum::not_found_relation);
+    return (connection_validation_result_enum)(
+             connection_validation_result_enum::invalid |
+             connection_validation_result_enum::not_found_relation);
   }
   else if (schm_rel_list.size() == 1)
   {
@@ -290,8 +307,9 @@ connection_validation_result_enum session_object::validate_connect_from(session_
     }
     else
     {
-      return (connection_validation_result_enum)(connection_validation_result_enum::invalid |
-             connection_validation_result_enum::multiplicity_violation);
+      return (connection_validation_result_enum)(
+               connection_validation_result_enum::invalid |
+               connection_validation_result_enum::multiplicity_violation);
     }
   }
   else

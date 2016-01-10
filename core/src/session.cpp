@@ -208,20 +208,6 @@ bool session::import_object(session_object_ptr _sesn_obj,
   //insert record
   insert_object(_sesn_obj);
 
-  // check revision up or not
-  //int schema_rev = boost::lexical_cast<int>
-  //                 (_sesn_obj->get_schema_object()->get_revision());
-  //int session_rev = boost::lexical_cast<int>
-  //                  (_sesn_obj->get_revision());
-
-  //if (schema_rev > session_rev)
-  //{
-  //}
-  //else
-  //{
-
-  //}
-
   // declare and get current parameters
   list<boost::tuple<string, schema_parameter_ptr>> param_name_types;
   _sesn_obj->get_schema_object()->get_parameters(&param_name_types);
@@ -578,6 +564,26 @@ session_object_ptr session::copy_object(schema_object_ptr _schm_obj,
 
   return created;
 }
+
+void session::copy_relation(session_relation_ptr _sesn_rel,
+                            map<string, session_parameter_ptr>* _param_map)
+{
+  list<boost::tuple<string, schema_parameter_ptr>> param_name_types;
+  _sesn_rel->get_schema_relation()->get_parameters(&param_name_types);
+
+  for (list<boost::tuple<string, schema_parameter_ptr>>::iterator fit =
+         param_name_types.begin();
+       fit != param_name_types.end(); fit++)
+  {
+    map<string, session_parameter_ptr>::iterator it = _param_map->find(
+          boost::get<0>(*fit));
+    if (it != _param_map->end())
+    {
+      insert_relation_parameter_with_arg(_sesn_rel, *fit, it->second->values_);
+    }
+  }
+}
+
 void session::get_object_by_type(list<string>& _otype_list,
                                  list<session_object_ptr>* _sesn_obj_list)
 {
@@ -1626,14 +1632,32 @@ void session::insert_object_parameter_with_arg(session_object_ptr _sesn_obj,
     }
     break;
 
+    default:
+      throw og::core::exception() << exception_message("unexpected param type.");
     }
   }
 
   // register data
-  _sesn_obj->get_parameters()->insert(
-    std::make_pair(boost::get<0>(_sesn_obj_param),
-                   session_parameter_ptr(new session_parameter(_arg,
-                                         boost::get<1>(_sesn_obj_param)))));
+  boost::optional<og::core::session_parameter_ptr> sesn_p =
+    _sesn_obj->get_parameter(boost::get<0>(_sesn_obj_param));
+
+  if (!sesn_p.is_initialized())
+  {
+    list<parameter_value_variant> empty_list;
+    _sesn_obj->get_parameters()->insert
+    (std::make_pair(boost::get<0>(_sesn_obj_param),
+               session_parameter_ptr(new session_parameter(empty_list,
+                                     boost::get<1>(_sesn_obj_param)))));
+
+    sesn_p =
+      _sesn_obj->get_parameter(boost::get<0>(_sesn_obj_param));
+  }
+
+  if (!sesn_p.is_initialized())
+  { throw og::core::exception() << exception_message("unexpected. parameter not found."); }
+
+  sesn_p.get()->values_.clear();
+  sesn_p.get()->values_.assign(_arg.begin(), _arg.end());
 }
 
 void session::insert_relation_parameter_by_default(session_relation_ptr
@@ -1759,6 +1783,15 @@ void session::insert_relation_parameter_with_arg(session_relation_ptr
     {
     case parameter_basetype_enum::integer:
     {
+      if (i == 0)
+      {
+        *(soci_session_.get())
+            <<
+            "DELETE FROM session_relation_parameter_basetype_integer WHERE "
+            "relid = :oid AND param_name = :param_name"
+            , soci::use(_sesn_rel->get_id())
+            , soci::use(_sesn_rel_param.get<0>());
+      }
       *(soci_session_.get())
           <<
           "INSERT INTO session_relation_parameter_basetype_integer(relid, param_name, "
@@ -1773,6 +1806,15 @@ void session::insert_relation_parameter_with_arg(session_relation_ptr
 
     case parameter_basetype_enum::real:
     {
+      if (i == 0)
+      {
+        *(soci_session_.get())
+            <<
+            "DELETE FROM session_relation_parameter_basetype_real WHERE "
+            "relid = :oid AND param_name = :param_name"
+            , soci::use(_sesn_rel->get_id())
+            , soci::use(_sesn_rel_param.get<0>());
+      }
       *(soci_session_.get())
           <<
           "INSERT INTO session_relation_parameter_basetype_real(relid, param_name, "
@@ -1787,6 +1829,15 @@ void session::insert_relation_parameter_with_arg(session_relation_ptr
 
     case parameter_basetype_enum::text:
     {
+      if (i == 0)
+      {
+        *(soci_session_.get())
+            <<
+            "DELETE FROM session_relation_parameter_basetype_text WHERE "
+            "relid = :oid AND param_name = :param_name"
+            , soci::use(_sesn_rel->get_id())
+            , soci::use(_sesn_rel_param.get<0>());
+      }
       *(soci_session_.get())
           <<
           "INSERT INTO session_relation_parameter_basetype_text(relid, param_name, "
@@ -1802,10 +1853,26 @@ void session::insert_relation_parameter_with_arg(session_relation_ptr
   }
 
   // register data
-  _sesn_rel->get_parameters()->insert(
-    std::make_pair(boost::get<0>(_sesn_rel_param),
-                   session_parameter_ptr(new session_parameter(_arg,
-                                         boost::get<1>(_sesn_rel_param)))));
+  boost::optional<og::core::session_parameter_ptr> sesn_p =
+    _sesn_rel->get_parameter(boost::get<0>(_sesn_rel_param));
+
+  if (!sesn_p.is_initialized())
+  {
+    list<parameter_value_variant> empty_list;
+    _sesn_rel->get_parameters()->insert
+    (std::make_pair(boost::get<0>(_sesn_rel_param),
+               session_parameter_ptr(new session_parameter(empty_list,
+                                     boost::get<1>(_sesn_rel_param)))));
+
+    sesn_p =
+      _sesn_rel->get_parameter(boost::get<0>(_sesn_rel_param));
+  }
+
+  if (!sesn_p.is_initialized())
+  { throw og::core::exception() << exception_message("unexpected. parameter not found."); }
+
+  sesn_p.get()->values_.clear();
+  sesn_p.get()->values_.assign(_arg.begin(), _arg.end());
 }
 
 void session::get_connected_from(string _to_id, list<string>& _rel_type_list,

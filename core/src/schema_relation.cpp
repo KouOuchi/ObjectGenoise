@@ -104,7 +104,7 @@ parameter_basetype_enum
 schema_relation::get_parameter_basetype_enum_by_param_name(
   string _param_name)
 {
-  return schema_->get_object_parameter_basetype_enum_by_param_name(id_,
+  return schema_->get_relation_parameter_basetype_enum_by_param_name(id_,
          _param_name);
 }
 
