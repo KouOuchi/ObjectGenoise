@@ -69,6 +69,7 @@ public:
                                   String^ _rel_type);
   void disconnect(OGSessionObject^ _sesn_obj);
   void delete_object();
+  void delete_object(OGConnectionDirection _dir);
   OGSessionObject^ copy_object();
   OGSessionObject^ copy_object(OGConnectionDirection _dir);
 

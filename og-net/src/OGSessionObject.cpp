@@ -112,6 +112,12 @@ void OGSessionObject::delete_object()
   og_session_object_->delete_object();
 }
 
+void OGSessionObject::delete_object(OGConnectionDirection _direction)
+{
+  og_session_object_->delete_object((og::core::connection_direction_enum)
+                                    _direction);
+}
+
 OGSessionObject^ OGSessionObject::copy_object()
 {
   return gcnew OGSessionObject(
@@ -123,7 +129,8 @@ OGSessionObject^ OGSessionObject::copy_object(OGConnectionDirection _direction)
 {
   return gcnew OGSessionObject(
            OGSharedPtr<og::og_session_object>(
-             og_session_object_->copy_object((og::core::connection_direction_enum)_direction)));
+             og_session_object_->copy_object((og::core::connection_direction_enum)
+                 _direction)));
 }
 
 List<OGSessionObject^>^ OGSessionObject::get_connected_object()
@@ -138,7 +145,8 @@ List<OGSessionObject^>^ OGSessionObject::get_connected_object()
 
   return sesn_obj_list;
 }
-List<OGSessionObject^>^ OGSessionObject::get_connected_object(List<String^>^ _rel_type_list)
+List<OGSessionObject^>^ OGSessionObject::get_connected_object(
+  List<String^>^ _rel_type_list)
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -167,7 +175,8 @@ List<OGSessionObject^>^ OGSessionObject::get_connected_object_from()
   return sesn_obj_list;
 }
 
-List<OGSessionObject^>^ OGSessionObject::get_connected_object_from(List<String^>^ _rel_type_list)
+List<OGSessionObject^>^ OGSessionObject::get_connected_object_from(
+  List<String^>^ _rel_type_list)
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -181,7 +190,7 @@ List<OGSessionObject^>^ OGSessionObject::get_connected_object_from(List<String^>
   <std::list<og::og_session_object_ptr>, List<OGSessionObject^>>
       (&objs, sesn_obj_list);
 
-    return sesn_obj_list;
+  return sesn_obj_list;
 }
 List<OGSessionObject^>^ OGSessionObject::get_connected_object_to()
 {
@@ -196,7 +205,8 @@ List<OGSessionObject^>^ OGSessionObject::get_connected_object_to()
   return sesn_obj_list;
 }
 
-List<OGSessionObject^>^ OGSessionObject::get_connected_object_to(List<String^>^ _rel_type_list)
+List<OGSessionObject^>^ OGSessionObject::get_connected_object_to(
+  List<String^>^ _rel_type_list)
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -218,14 +228,16 @@ List<OGSessionObject^>^ OGSessionObject::get_connected_object_to(List<String^>^ 
 //  return 	og_session_object_->validate_connect_to(
 //            _sesn_obj_ptr->og_session_object_);
 //}
-OGConnectionValidationResult OGSessionObject::validate_connect_to(OGSessionObject^ _sesn_obj_ptr,
-    String^ _rel_type)
+OGConnectionValidationResult OGSessionObject::validate_connect_to(
+  OGSessionObject^ _sesn_obj_ptr,
+  String^ _rel_type)
 {
   std::string str;
   OGConverter::convert_clr_to_std<String, std::string>(_rel_type, &str);
 
-  return (OGConnectionValidationResult)(int)(og_session_object_->validate_connect_to(
-           _sesn_obj_ptr->og_session_object_, str));
+  return (OGConnectionValidationResult)(int)(
+           og_session_object_->validate_connect_to(
+             _sesn_obj_ptr->og_session_object_, str));
 }
 
 //bool OGSessionObject::validate_connect_from(OGSessionObject^ _sesn_obj_ptr)
@@ -233,14 +245,16 @@ OGConnectionValidationResult OGSessionObject::validate_connect_to(OGSessionObjec
 //  return 	og_session_object_->validate_connect_from(
 //            _sesn_obj_ptr->og_session_object_);
 //}
-OGConnectionValidationResult OGSessionObject::validate_connect_from(OGSessionObject^ _sesn_obj_ptr,
-    String^ _rel_type)
+OGConnectionValidationResult OGSessionObject::validate_connect_from(
+  OGSessionObject^ _sesn_obj_ptr,
+  String^ _rel_type)
 {
   std::string str;
   OGConverter::convert_clr_to_std<String, std::string>(_rel_type, &str);
 
-  return (OGConnectionValidationResult)(int)(og_session_object_->validate_connect_from(
-           _sesn_obj_ptr->og_session_object_, str));
+  return (OGConnectionValidationResult)(int)(
+           og_session_object_->validate_connect_from(
+             _sesn_obj_ptr->og_session_object_, str));
 }
 
 

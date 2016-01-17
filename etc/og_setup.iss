@@ -1,5 +1,5 @@
 ﻿#define MyAppSetupName 'ObjectGenoise'
-#define MyAppVersion '0.69' 
+#define MyAppVersion '0.70' 
 
 [Setup]
 AppName={#MyAppSetupName}
@@ -61,7 +61,8 @@ Source: "C:\mnt\git2\ObjectGenoise\x64\Release\*.lib"; DestDir: "{app}\release\l
 
 
 Source: "C:\mnt\git2\ObjectGenoise\etc\env.bat"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
-Source: "C:\mnt\git2\ObjectGenoise\util\SchemaUpdater\bin\Release"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
+;Source: "C:\mnt\git2\ObjectGenoise\util\SchemaUpdater\bin\Release"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
+Source: "C:\mnt\git2\ObjectGenoise\util\db-updater\x64\Release\db-updater.exe"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
 
 ;Source: "setup-splash.bmp"; DestName: "setup-splash.bmp"; Flags: dontcopy nocompression
 

@@ -262,6 +262,12 @@ og_session_object_ptr og_session_object::copy_object()
            og::core::connection_direction_enum::direction_none);
 }
 
+void og_session_object::delete_object(
+  og::core::connection_direction_enum _direction)
+{
+  session_object_ptr_->delete_object(_direction);
+}
+
 og_session_object_ptr og_session_object::copy_object(
   og::core::connection_direction_enum _direction)
 {

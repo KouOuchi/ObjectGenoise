@@ -1128,6 +1128,23 @@ namespace test_og_net
                     o1copy2.get_connected_object_to();
 
                     Assert.AreEqual(2, child.Count);
+
+                    string o1id = o1copy2.get_id();
+                    string c1id = child[0].get_id();
+                    string c2id = child[0].get_id();
+
+                    o1copy2.delete_object(OGConnectionDirection.Direction_To);
+                    Assert.IsNull(cleaned_session_.get_object(o1id));
+                    Assert.IsNull(cleaned_session_.get_object(c1id));
+                    Assert.IsNull(cleaned_session_.get_object(c2id));
+                }
+                // copy recursively
+                {
+                    OGSessionObject o1copy2 = o2.copy_object(OGConnectionDirection.Direction_To);
+                    List<OGSessionObject> child = 
+                    o1copy2.get_connected_object_to();
+
+                    Assert.AreEqual(0, child.Count);
                 }
                 // copy recursively
                 {
@@ -1137,13 +1154,23 @@ namespace test_og_net
 
                     Assert.AreEqual(0, child.Count);
                 }
+
                 // copy recursively
                 {
                     OGSessionObject o1copy2 = o2.copy_object(OGConnectionDirection.Direction_From);
-                    List<OGSessionObject> child = 
+                    List<OGSessionObject> parents = 
                     o1copy2.get_connected_object_from();
 
-                    Assert.AreEqual(2, child.Count);
+                    Assert.AreEqual(2, parents.Count);
+
+                    string o1id = o1copy2.get_id();
+                    string c1id = parents[0].get_id();
+                    string c2id = parents[0].get_id();
+
+                    o1copy2.delete_object(OGConnectionDirection.Direction_From);
+                    Assert.IsNull(cleaned_session_.get_object(o1id));
+                    Assert.IsNull(cleaned_session_.get_object(c1id));
+                    Assert.IsNull(cleaned_session_.get_object(c2id));
                 }
             } 
         }

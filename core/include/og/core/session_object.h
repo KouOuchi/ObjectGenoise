@@ -18,6 +18,7 @@ public:
   OG_COREAPI virtual ~session_object();
 
   void delete_object();
+  void delete_object(og::core::connection_direction_enum _direction);
   session_object_ptr copy_object(og::core::connection_direction_enum _direction);
 
   ///////////////////////////////

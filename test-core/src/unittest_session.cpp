@@ -1030,7 +1030,7 @@ BOOST_AUTO_TEST_CASE( session_1100 )
 BOOST_AUTO_TEST_CASE( session_1111 )
 {
 #ifdef WINDOWS
-  og::core::CrtCheckMemory __check__;
+//  og::core::CrtCheckMemory __check__;
 #endif
 
   // initialize db
@@ -1125,7 +1125,7 @@ BOOST_AUTO_TEST_CASE( session_1111 )
   {
     og::og_session_object_ptr copied = o1.get()->copy_object();
 
-	string t;
+    string t;
     copied->get_parameter_value<string>("foo1", &t);
     OG_LOG << t;
 
@@ -1278,6 +1278,158 @@ BOOST_AUTO_TEST_CASE( session_1111 )
         og::core::og_session_relation_comparer::compare(&cleaned_session_, r1,
             childs.front().get<1>()));
     }
+  }
+}
+
+// delete
+BOOST_AUTO_TEST_CASE( session_1112 )
+{
+#ifdef WINDOWS
+//  og::core::CrtCheckMemory __check__;
+#endif
+
+  // initialize db
+  og::og_session cleaned_session_;
+  cleaned_session_.open(DBPATH);
+  cleaned_session_.purge();
+  cleaned_session_.schema()->purge();
+
+  string OTYPE1 = "type_session_1005_1";
+  string ONAME1 = "name_session_1005_1";
+  string OTYPE2 = "type_session_1005_2";
+  string ONAME2 = "name_session_1005_2";
+  string RELTYPE1 = "reltype_session_1004_1";
+
+  // create schema obj
+  og::og_schema_object_ptr schm_obj1 = cleaned_session_.schema()->create_object(
+                                         OTYPE1,
+                                         ONAME1);
+  og::og_schema_object_ptr schm_obj2 = cleaned_session_.schema()->create_object(
+                                         OTYPE2,
+                                         ONAME2);
+
+  og::og_text text_type1;
+  text_type1.default_value_ = std::string("foo");
+  text_type1.warn_max_ = 10;
+  text_type1.system_max_ = 10;
+  text_type1.warn_min_ = 1;
+  text_type1.system_min_ = 1;
+
+  og::og_schema_parameter_ptr text_param1 =
+    cleaned_session_.schema()->create_parameter("foo_type", "foo",
+        &text_type1, 3, 2, 4);
+
+  og::og_integer int_type1;
+  int_type1.default_value_ = 1;
+  int_type1.warn_max_ = 3;
+  int_type1.system_max_ = 3;
+  int_type1.warn_min_ = 1;
+  int_type1.system_min_ = 1;
+
+  og::og_schema_parameter_ptr int_param1 =
+    cleaned_session_.schema()->create_parameter("bar_type", "bar",
+        &int_type1, 3, 2, 4);
+
+  og::og_real real_type1;
+  real_type1.default_value_ = 1.141;
+  real_type1.warn_max_ = 3;
+  real_type1.system_max_ = 3;
+  real_type1.warn_min_ = 1;
+  real_type1.system_min_ = 1;
+
+  og::og_schema_parameter_ptr real_param1 =
+    cleaned_session_.schema()->create_parameter("hoge_type", "hoge",
+        &real_type1, 1, 2, 3);
+
+  schm_obj1->add_parameter_definition("foo1", text_param1);
+  schm_obj1->add_parameter_definition("bar1", int_param1);
+  schm_obj1->add_parameter_definition("hoge1", real_param1);
+
+  schm_obj2->add_parameter_definition("foo2", text_param1);
+  schm_obj2->add_parameter_definition("bar2", int_param1);
+  schm_obj2->add_parameter_definition("hoge2", real_param1);
+
+  og::og_schema_relation_ptr schm_rel = schm_obj1->connect_to(schm_obj2,
+                                        RELTYPE1);
+
+  schm_rel->add_parameter_definition("foo3", text_param1);
+  schm_rel->add_parameter_definition("bar3", int_param1);
+  schm_rel->add_parameter_definition("hoge3", real_param1);
+
+
+
+  og::og_session_object_ptr o1 = cleaned_session_.create_object(schm_obj1);
+  og::og_session_object_ptr o2 = cleaned_session_.create_object(schm_obj2);
+  o1->set_instance_name("a");
+  o1->set_parameter_value<string>("foo1", "foox1");
+  o1->set_parameter_value<int>("bar1", 4);
+  o1->set_parameter_value<double>("hoge1", 4.1);
+
+  o2->set_instance_name("b");
+  o2->set_parameter_value<string>("foo2", "foox2");
+  o2->set_parameter_value<int>("bar2", 5);
+  o2->set_parameter_value<double>("hoge2", 4.2);
+
+  og::og_session_relation_ptr r1 = o1->connect_to(o2, RELTYPE1);
+  r1->set_instance_name("c");
+  r1->set_parameter_value<string>("foo3", "foox3");
+  r1->set_parameter_value<int>("bar3", 6);
+  r1->set_parameter_value<double>("hoge3", 4.3);
+
+  // recurive copy (copy direction 'to')
+  {
+    og::og_session_object_ptr copied = o1->copy_object(
+                                         og::core::connection_direction_enum::direction_to);
+    // childs : 1 object
+
+    list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
+        childs;
+    copied->get_connected_to(&childs);
+
+    string copied_id = copied->get_id();
+    string child_id = boost::get<0>(childs.front())->get_id();
+    string rel_id = boost::get<1>(childs.front())->get_id();
+
+    copied->delete_object(og::core::connection_direction_enum::direction_to);
+
+	boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
+          copied_id);
+    boost::optional<og::og_session_object_ptr> c2 = cleaned_session_.get_object(
+          child_id);
+    boost::optional<og::og_session_relation_ptr> c3 = cleaned_session_.get_relation(
+          rel_id);
+
+    BOOST_REQUIRE(!c1.is_initialized());
+    BOOST_REQUIRE(!c2.is_initialized());
+    BOOST_REQUIRE(!c3.is_initialized());
+  }
+
+  {
+    og::og_session_object_ptr copied = o2->copy_object(
+                                         og::core::connection_direction_enum::direction_from);
+
+    // parents of copied : 1 (with relation)
+
+    list<boost::tuple<og::og_session_object_ptr, og::og_session_relation_ptr>>
+        parents;
+    copied->get_connected_from(&parents);
+
+    string copied_id = copied->get_id();
+    string child_id = boost::get<0>(parents.front())->get_id();
+    string rel_id = boost::get<1>(parents.front())->get_id();
+
+    copied->delete_object(og::core::connection_direction_enum::direction_from);
+
+	boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
+          copied_id);
+    boost::optional<og::og_session_object_ptr> c2 = cleaned_session_.get_object(
+          child_id);
+    boost::optional<og::og_session_relation_ptr> c3 = cleaned_session_.get_relation(
+          rel_id);
+
+	BOOST_REQUIRE(!c1.is_initialized());
+    BOOST_REQUIRE(!c2.is_initialized());
+    BOOST_REQUIRE(!c3.is_initialized());
   }
 }
 

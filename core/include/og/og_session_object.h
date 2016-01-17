@@ -45,6 +45,7 @@ public:
   ///////////////////////////////
   // oepration
   ///////////////////////////////
+  OG_COREAPI void delete_object(og::core::connection_direction_enum _direction);
   OG_COREAPI void delete_object();
   OG_COREAPI og_session_object_ptr copy_object();
   OG_COREAPI og_session_object_ptr copy_object(og::core::connection_direction_enum

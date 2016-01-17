@@ -53,6 +53,44 @@ void session_object::delete_object()
   session_->delete_object(id_, param_map);
 }
 
+void session_object::delete_object(
+  og::core::connection_direction_enum
+  _direction)
+{
+
+  if (_direction == og::core::connection_direction_enum::direction_from)
+  {
+    list<boost::tuple<session_object_ptr, session_relation_ptr>> from_objs;
+    get_connected_from(&from_objs);
+    for (list<boost::tuple<session_object_ptr, session_relation_ptr>>::iterator it =
+           from_objs.begin();
+         it != from_objs.end(); it++)
+    {
+      // disconnect
+      boost::get<1>(*it)->delete_relation();
+      // recursive call
+      boost::get<0>(*it)->delete_object(_direction);
+    }
+  }
+
+  if (_direction == og::core::connection_direction_enum::direction_to)
+  {
+    list<boost::tuple<session_object_ptr, session_relation_ptr>> to_objs;
+    get_connected_to(&to_objs);
+    for (list<boost::tuple<session_object_ptr, session_relation_ptr>>::iterator it =
+           to_objs.begin();
+         it != to_objs.end(); it++)
+    {
+      // recursive call
+      boost::get<1>(*it)->delete_relation();
+      // recursive call
+      boost::get<0>(*it)->delete_object(_direction);
+    }
+  }
+
+  delete_object();
+}
+
 session_object_ptr session_object::copy_object(
   og::core::connection_direction_enum
   _direction)
@@ -82,10 +120,10 @@ session_object_ptr session_object::copy_object(
       session_relation_ptr sesn_rel =
         target->connect_from(parent_of_target, boost::get<1>(*it)->get_type());
 
-	  // assign copied parameter
+      // assign copied parameter
       map<string, session_parameter_ptr>* _source_param_map =
         boost::get<1>(*it)->get_parameters();
-	  session_->copy_relation(sesn_rel, _source_param_map);
+      session_->copy_relation(sesn_rel, _source_param_map);
     }
   }
 
@@ -105,7 +143,7 @@ session_object_ptr session_object::copy_object(
       // assign copied parameter
       map<string, session_parameter_ptr>* _source_param_map =
         boost::get<1>(*it)->get_parameters();
-	  session_->copy_relation(sesn_rel, _source_param_map);
+      session_->copy_relation(sesn_rel, _source_param_map);
     }
   }
 
