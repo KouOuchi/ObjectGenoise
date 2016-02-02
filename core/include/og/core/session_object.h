@@ -13,7 +13,8 @@ class session_object : public session_base
 {
 
 public:
-  OG_COREAPI session_object(session* _session, string _id, schema_object_ptr _schm_obj);
+  OG_COREAPI session_object(session* _session, string _id,
+                            schema_object_ptr _schm_obj);
   OG_COREAPI session_object(session* _session);
   OG_COREAPI virtual ~session_object();
 
@@ -39,20 +40,25 @@ public:
   void get_connected_object_to(list<string>& _rel_type_list,
                                list<session_object_ptr>* _sesn_obj_list);
 
-  void get_connected(list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
+  void get_connected(list<boost::tuple<session_object_ptr, session_relation_ptr>>*
+                     _sesn_obj_list);
   void get_connected(list<string>& _rel_type_list,
-                            list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
-  void get_connected_from(list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
+                     list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
+  void get_connected_from(
+    list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
   void get_connected_from(list<string>& _rel_type_list,
-                                 list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
-  void get_connected_to(list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
+                          list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
+  void get_connected_to(
+    list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
   void get_connected_to(list<string>& _rel_type_list,
-                               list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
+                        list<boost::tuple<session_object_ptr, session_relation_ptr>>* _sesn_obj_list);
 
   //bool validate_connect_to(session_object_ptr _sesn_obj_ptr);
-  connection_validation_result_enum validate_connect_to(session_object_ptr _sesn_obj_ptr, string _rel_type);
+  connection_validation_result_enum validate_connect_to(session_object_ptr
+      _sesn_obj_ptr, string _rel_type);
   //bool validate_connect_from(session_object_ptr _sesn_obj_ptr);
-  connection_validation_result_enum validate_connect_from(session_object_ptr _sesn_obj_ptr, string _rel_type);
+  connection_validation_result_enum validate_connect_from(
+    session_object_ptr _sesn_obj_ptr, string _rel_type);
   void get_connectable_relation_type_to(list<string>* _rel_type_list);
   void get_connectable_relation_type_from(list<string>* _rel_type_list);
   void get_connectable_to(map<string, list<schema_object_ptr> >* _rel_type_map);
@@ -89,7 +95,7 @@ public:
     // get only front element;
     list<T> vs;
     get_parameter_values(_param_name, &vs);
-	*_value = *(vs.begin());
+    *_value = *(vs.begin());
   }
   template <typename T>
   void get_parameter_values(std::string _param_name, list<T>* _values)
@@ -102,7 +108,8 @@ public:
 
     if(param->get()->values_.size() == 0)
     {
-      throw og::core::exception() << exception_message("param size is 0.");
+      //throw og::core::exception() << exception_message("param size is 0.");
+      return;
     }
 
     parameter_value_converter<T>().convert_from_variant_list_to_list
@@ -110,7 +117,8 @@ public:
   }
 
   OG_COREAPI optional<session_parameter_ptr> get_parameter(string _param_name);
-  OG_COREAPI void set_parameter(string _param_name, list<parameter_value_variant>& _values);
+  OG_COREAPI void set_parameter(string _param_name,
+                                list<parameter_value_variant>& _values);
 
   // object parameters end.
 
@@ -124,7 +132,7 @@ public:
   // <=== schema
 
   virtual void sync();
-  virtual void revision_up(){};
+  virtual void revision_up() {};
 
   // accessor
   session* get_session()
