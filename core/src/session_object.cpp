@@ -49,6 +49,16 @@ void session_object::delete_object()
                           exception_message("unexpected. invalid_session."));
   }
 
+  list<boost::tuple<session_object_ptr, session_relation_ptr>> from_to_objs;
+  get_connected(&from_to_objs);
+  for (list<boost::tuple<session_object_ptr, session_relation_ptr>>::iterator it =
+         from_to_objs.begin();
+       it != from_to_objs.end(); it++)
+  {
+    // disconnect
+    disconnect(boost::get<0>(*it));
+  }
+
   map<string, session_parameter_ptr>* param_map(get_parameters());
   session_->delete_object(id_, param_map);
 }

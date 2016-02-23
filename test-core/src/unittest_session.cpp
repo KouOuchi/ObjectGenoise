@@ -1403,6 +1403,58 @@ BOOST_AUTO_TEST_CASE( session_1112 )
     BOOST_REQUIRE(!c2.is_initialized());
     BOOST_REQUIRE(!c3.is_initialized());
   }
+  {
+    og::og_session_object_ptr copied = o1->copy_object(
+                                         og::core::connection_direction_enum::direction_to);
+    // childs : 1 object
+
+    list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
+        childs;
+    copied->get_connected_to(&childs);
+
+    string copied_id = copied->get_id();
+    string child_id = boost::get<0>(childs.front())->get_id();
+    string rel_id = boost::get<1>(childs.front())->get_id();
+
+    copied->delete_object(og::core::connection_direction_enum::direction_from);
+
+	boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
+          copied_id);
+    boost::optional<og::og_session_object_ptr> c2 = cleaned_session_.get_object(
+          child_id);
+    boost::optional<og::og_session_relation_ptr> c3 = cleaned_session_.get_relation(
+          rel_id);
+
+    BOOST_REQUIRE(!c1.is_initialized());
+    BOOST_REQUIRE(c2.is_initialized());
+    BOOST_REQUIRE(!c3.is_initialized());
+  }
+  {
+    og::og_session_object_ptr copied = o1->copy_object(
+                                         og::core::connection_direction_enum::direction_to);
+    // childs : 1 object
+
+    list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
+        childs;
+    copied->get_connected_to(&childs);
+
+    string copied_id = copied->get_id();
+    string child_id = boost::get<0>(childs.front())->get_id();
+    string rel_id = boost::get<1>(childs.front())->get_id();
+
+    copied->delete_object();
+
+	boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
+          copied_id);
+    boost::optional<og::og_session_object_ptr> c2 = cleaned_session_.get_object(
+          child_id);
+    boost::optional<og::og_session_relation_ptr> c3 = cleaned_session_.get_relation(
+          rel_id);
+
+    BOOST_REQUIRE(!c1.is_initialized());
+    BOOST_REQUIRE(c2.is_initialized());
+    BOOST_REQUIRE(!c3.is_initialized());
+  }
 
   {
     og::og_session_object_ptr copied = o2->copy_object(
@@ -1431,6 +1483,62 @@ BOOST_AUTO_TEST_CASE( session_1112 )
     BOOST_REQUIRE(!c2.is_initialized());
     BOOST_REQUIRE(!c3.is_initialized());
   }
+
+  {
+    og::og_session_object_ptr copied = o2->copy_object(
+                                         og::core::connection_direction_enum::direction_from);
+
+    // parents of copied : 1 (with relation)
+
+    list<boost::tuple<og::og_session_object_ptr, og::og_session_relation_ptr>>
+        parents;
+    copied->get_connected_from(&parents);
+
+    string copied_id = copied->get_id();
+    string child_id = boost::get<0>(parents.front())->get_id();
+    string rel_id = boost::get<1>(parents.front())->get_id();
+
+    copied->delete_object(og::core::connection_direction_enum::direction_to);
+
+	boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
+          copied_id);
+    boost::optional<og::og_session_object_ptr> c2 = cleaned_session_.get_object(
+          child_id);
+    boost::optional<og::og_session_relation_ptr> c3 = cleaned_session_.get_relation(
+          rel_id);
+
+	BOOST_REQUIRE(!c1.is_initialized());
+    BOOST_REQUIRE(c2.is_initialized());
+    BOOST_REQUIRE(!c3.is_initialized());
+  }
+  {
+    og::og_session_object_ptr copied = o2->copy_object(
+                                         og::core::connection_direction_enum::direction_from);
+
+    // parents of copied : 1 (with relation)
+
+    list<boost::tuple<og::og_session_object_ptr, og::og_session_relation_ptr>>
+        parents;
+    copied->get_connected_from(&parents);
+
+    string copied_id = copied->get_id();
+    string child_id = boost::get<0>(parents.front())->get_id();
+    string rel_id = boost::get<1>(parents.front())->get_id();
+
+    copied->delete_object();
+
+	boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
+          copied_id);
+    boost::optional<og::og_session_object_ptr> c2 = cleaned_session_.get_object(
+          child_id);
+    boost::optional<og::og_session_relation_ptr> c3 = cleaned_session_.get_relation(
+          rel_id);
+
+	BOOST_REQUIRE(!c1.is_initialized());
+    BOOST_REQUIRE(c2.is_initialized());
+    BOOST_REQUIRE(!c3.is_initialized());
+  }
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()
