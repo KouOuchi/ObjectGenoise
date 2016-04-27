@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(large_data_1001)
   og::og_schema_object_ptr p2 = cleaned_session_.schema()->create_object(OTYPE2, ONAME);
 
 
-  for (int i = 0; i < 500; i++)
+  for (int i = 0; i < 100; i++)
   {
     cleaned_session_.schema()->create_object(OTYPE2, ONAME);
   }
@@ -43,11 +43,11 @@ BOOST_AUTO_TEST_CASE(large_data_1001)
   oname_list.push_back(ONAME);
   list<og::og_schema_object_ptr> olist;
   cleaned_session_.schema()->get_object_by_name(oname_list, &olist);
-  BOOST_REQUIRE_EQUAL(olist.size(), 502);
+  BOOST_REQUIRE_EQUAL(olist.size(), 102);
   olist.clear();
 
   cleaned_session_.schema()->get_object_by_type(otype_list, &olist);
-  BOOST_REQUIRE_EQUAL(olist.size(), 502);
+  BOOST_REQUIRE_EQUAL(olist.size(), 102);
 
   og::og_schema_relation_ptr rel_ptr = p1->connect_to(p2, RELTYPE);
 
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(large_data_1001)
       BOOST_REQUIRE_EQUAL(i, 100);
     }
 
-    for (int i = 0; i < 888; i++)
+    for (int i = 0; i < 99; i++)
     {
       h2.push_back(200);
     }
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(large_data_1001)
     o1_2.get()->set_parameter_values<int>("H1", h2);
 
     o1_2.get()->get_parameter_values<int>("H1", &h3);
-    BOOST_REQUIRE_EQUAL(h3.size(), 888);
+    BOOST_REQUIRE_EQUAL(h3.size(), 99);
     BOOST_FOREACH(int &i, h3)
     {
       BOOST_REQUIRE_EQUAL(i, 200);

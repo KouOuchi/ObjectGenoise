@@ -105,7 +105,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_WARNINGS;BOOST_ALL_NO_LIB;_DLL;_UNICODE;UNICODE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_WARNINGS;BOOST_ALL_NO_LIB;_DLL;_UNICODE;UNICODE;WIN32;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>og/net/stdafx.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -124,7 +124,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>boost_atomic-vc120-mt-gd-1_57.lib;boost_chrono-vc120-mt-gd-1_57.lib;boost_date_time-vc120-mt-gd-1_57.lib;boost_system-vc120-mt-gd-1_57.lib;boost_filesystem-vc120-mt-gd-1_57.lib;libboost_log-vc120-mt-gd-1_57.lib;libboost_log_setup-vc120-mt-gd-1_57.lib;boost_timer-vc120-mt-gd-1_57.lib;boost_regex-vc120-mt-gd-1_57.lib;boost_thread-vc120-mt-gd-1_57.lib;boost_zlib-vc120-mt-gd-1_57.lib;libboost_unit_test_framework-vc120-mt-gd-1_57.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>boost_chrono-vc120-mt-gd-1_60.lib;boost_date_time-vc120-mt-gd-1_60.lib;boost_system-vc120-mt-gd-1_60.lib;boost_filesystem-vc120-mt-gd-1_60.lib;libboost_log-vc120-mt-gd-1_60.lib;libboost_log_setup-vc120-mt-gd-1_60.lib;boost_timer-vc120-mt-gd-1_60.lib;boost_regex-vc120-mt-gd-1_60.lib;boost_thread-vc120-mt-gd-1_60.lib;libboost_iostreams-vc120-mt-gd-1_60.lib;boost_zlib-vc120-mt-gd-1_60.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <SubSystem>Windows</SubSystem>
       <AddModuleNamesToAssembly>
@@ -160,7 +160,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>boost_atomic-vc120-mt-1_57.lib;boost_chrono-vc120-mt-1_57.lib;boost_date_time-vc120-mt-1_57.lib;boost_system-vc120-mt-1_57.lib;boost_filesystem-vc120-mt-1_57.lib;libboost_log-vc120-mt-1_57.lib;libboost_log_setup-vc120-mt-1_57.lib;boost_timer-vc120-mt-1_57.lib;boost_regex-vc120-mt-1_57.lib;boost_thread-vc120-mt-1_57.lib;boost_zlib-vc120-mt-1_57.lib;libboost_unit_test_framework-vc120-mt-1_57.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>boost_chrono-vc120-mt-1_60.lib;boost_date_time-vc120-mt-1_60.lib;boost_system-vc120-mt-1_60.lib;boost_filesystem-vc120-mt-1_60.lib;libboost_log-vc120-mt-1_60.lib;libboost_log_setup-vc120-mt-1_60.lib;boost_timer-vc120-mt-1_60.lib;boost_regex-vc120-mt-1_60.lib;boost_thread-vc120-mt-1_60.lib;libboost_iostreams-vc120-mt-1_60.lib;boost_zlib-vc120-mt-1_60.lib;libboost_unit_test_framework-vc120-mt-1_60.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>

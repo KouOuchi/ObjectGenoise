@@ -144,7 +144,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_WARNINGS;BOOST_ALL_NO_LIB;_UNICODE;UNICODE;WIN32;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_WARNINGS;BOOST_ALL_NO_LIB;_UNICODE;UNICODE;WIN32;WINDOWS;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseUnicodeForAssemblerListing>
       </UseUnicodeForAssemblerListing>
       <CompileAsManaged>false</CompileAsManaged>
@@ -153,9 +153,10 @@
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>boost_atomic-vc120-mt-gd-1_57.lib;boost_chrono-vc120-mt-gd-1_57.lib;boost_date_time-vc120-mt-gd-1_57.lib;boost_system-vc120-mt-gd-1_57.lib;boost_filesystem-vc120-mt-gd-1_57.lib;libboost_log-vc120-mt-gd-1_57.lib;libboost_log_setup-vc120-mt-gd-1_57.lib;boost_timer-vc120-mt-gd-1_57.lib;boost_regex-vc120-mt-gd-1_57.lib;boost_thread-vc120-mt-gd-1_57.lib;boost_zlib-vc120-mt-gd-1_57.lib;libboost_unit_test_framework-vc120-mt-gd-1_57.lib</AdditionalDependencies>
+      <AdditionalDependencies>boost_chrono-vc120-mt-gd-1_60.lib;boost_date_time-vc120-mt-gd-1_60.lib;boost_system-vc120-mt-gd-1_60.lib;boost_filesystem-vc120-mt-gd-1_60.lib;libboost_log-vc120-mt-gd-1_60.lib;libboost_log_setup-vc120-mt-gd-1_60.lib;boost_timer-vc120-mt-gd-1_60.lib;boost_regex-vc120-mt-gd-1_60.lib;boost_thread-vc120-mt-gd-1_60.lib;libboost_iostreams-vc120-mt-gd-1_60.lib;boost_zlib-vc120-mt-gd-1_60.lib;libboost_unit_test_framework-vc120-mt-gd-1_60.lib</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>
@@ -171,11 +172,12 @@ REM XCOPY.EXE /Y "$(SolutionDir)lib\debug\*.dll" "$(TargetDir)"</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies);boost_atomic-vc120-mt-1_57.lib;boost_chrono-vc120-mt-1_57.lib;boost_date_time-vc120-mt-1_57.lib;boost_system-vc120-mt-1_57.lib;boost_filesystem-vc120-mt-1_57.lib;libboost_log-vc120-mt-1_57.lib;libboost_log_setup-vc120-mt-1_57.lib;boost_timer-vc120-mt-1_57.lib;boost_regex-vc120-mt-1_57.lib;boost_thread-vc120-mt-1_57.lib;boost_zlib-vc120-mt-1_57.lib;libboost_unit_test_framework-vc120-mt-1_57.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);boost_chrono-vc120-mt-1_60.lib;boost_date_time-vc120-mt-1_60.lib;boost_system-vc120-mt-1_60.lib;boost_filesystem-vc120-mt-1_60.lib;libboost_log-vc120-mt-1_60.lib;libboost_log_setup-vc120-mt-1_60.lib;boost_timer-vc120-mt-1_60.lib;boost_regex-vc120-mt-1_60.lib;boost_thread-vc120-mt-1_60.lib;libboost_iostreams-vc120-mt-1_60.lib;boost_zlib-vc120-mt-1_60.lib;libboost_unit_test_framework-vc120-mt-1_60.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;BOOST_ALL_NO_LIB;_UNICODE;UNICODE;WIN32;WINDOWS;</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <PostBuildEvent>
       <Command>
