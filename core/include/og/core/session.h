@@ -196,6 +196,9 @@ public:
     }
   }
 
+  session_object_ptr get_property_object();
+  session_object_ptr build_property_object();
+
 private:
   void initialize_sqlite_sequence(string _tbl);
   void set_foreign_key(bool _enable);

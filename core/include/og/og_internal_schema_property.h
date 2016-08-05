@@ -11,7 +11,7 @@
 
 namespace og
 {
-
+#ifdef nouse
 class internal_schema_property
 {
 public:
@@ -102,7 +102,7 @@ public:
       }
     }
   }
-
 };
+#endif
 
 }// namespace og;

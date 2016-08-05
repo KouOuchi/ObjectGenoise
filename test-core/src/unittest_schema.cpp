@@ -19,10 +19,10 @@ void _check_schema_object(og::og_schema_object_ptr _soptr, string _oid,
 BOOST_AUTO_TEST_CASE(schema_0001)
 {
 #ifdef WINDOWS
-	og::core::CrtCheckMemory __check__;
+  og::core::CrtCheckMemory __check__;
 #endif
 
-	// initialize db
+  // initialize db
   og::og_session cleaned_session_;
   cleaned_session_.open(DBPATH);
 
@@ -33,10 +33,6 @@ BOOST_AUTO_TEST_CASE(schema_0001)
   cleaned_session_.get_object_by_type(ts, &objs);
 
   BOOST_REQUIRE_EQUAL(objs.size(), 1);
-
-  int val;
-  objs.front()->get_parameter_value<int>(string(og::og_schema::schema_property_core_revision()), &val);
-  BOOST_REQUIRE_EQUAL(val, 0);
 
 }
 
@@ -59,7 +55,7 @@ BOOST_AUTO_TEST_CASE(schema_999)
                                    ONAME);
 }
 
-BOOST_AUTO_TEST_CASE( schema_1000 )
+BOOST_AUTO_TEST_CASE(schema_1000)
 {
 #ifdef WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -77,8 +73,8 @@ BOOST_AUTO_TEST_CASE( schema_1000 )
     og::og_schema_object_ptr soptr = cleaned_session_.schema()->create_object(OTYPE,
                                      ONAME);
 
-	BOOST_REQUIRE_EQUAL(soptr->get_revision(), "0");
-	soptr->revision_up();
+    BOOST_REQUIRE_EQUAL(soptr->get_revision(), "0");
+    soptr->revision_up();
 
     // instance check
     _check_schema_object(soptr, soptr->get_id(), OTYPE, ONAME);
@@ -91,7 +87,7 @@ BOOST_AUTO_TEST_CASE( schema_1000 )
     BOOST_REQUIRE(soptr2.is_initialized());
 
     _check_schema_object(soptr, soptr2.get()->get_id(), OTYPE, ONAME);
-	BOOST_REQUIRE_EQUAL(soptr2.get()->get_revision(), "1");
+    BOOST_REQUIRE_EQUAL(soptr2.get()->get_revision(), "1");
 
     // get_object_id
     list<string> type_list;
@@ -109,7 +105,7 @@ BOOST_AUTO_TEST_CASE( schema_1000 )
 }
 
 // over session and get/set comment/revision
-BOOST_AUTO_TEST_CASE( schema_1001 )
+BOOST_AUTO_TEST_CASE(schema_1001)
 {
 #ifdef WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -147,7 +143,7 @@ BOOST_AUTO_TEST_CASE( schema_1001 )
 }
 
 // get object by type
-BOOST_AUTO_TEST_CASE( schema_1002 )
+BOOST_AUTO_TEST_CASE(schema_1002)
 {
 #ifdef WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -178,11 +174,14 @@ BOOST_AUTO_TEST_CASE( schema_1002 )
     list<string> types;
     cleaned_session_.schema()->get_object_type(&types);
 
-    BOOST_REQUIRE(types.size() == 2);
+    BOOST_REQUIRE(types.size() == 3); // property type
 
     BOOST_FOREACH(string &t, types)
     {
-      BOOST_REQUIRE(t.compare(OTYPE1) == 0 || t.compare(OTYPE2) == 0);;
+      if (t.compare(og::core::schema::schema_property_object_type_) == 0)
+      { continue; }
+
+      BOOST_REQUIRE(t.compare(OTYPE1) == 0 || t.compare(OTYPE2) == 0);
     }
   }
 
@@ -192,7 +191,7 @@ BOOST_AUTO_TEST_CASE( schema_1002 )
     list<og::og_schema_object_ptr> obj_list1;
     ses2.schema()->get_object_by_type(otype_list, &obj_list1);
 
-    BOOST_REQUIRE(obj_list1.size() == 2);
+    BOOST_REQUIRE(obj_list1.size() == 2); // except for property type
 
     BOOST_FOREACH(og::og_schema_object_ptr &o, obj_list1)
     {
@@ -203,7 +202,7 @@ BOOST_AUTO_TEST_CASE( schema_1002 )
 }
 
 // get object by name
-BOOST_AUTO_TEST_CASE( schema_1003 )
+BOOST_AUTO_TEST_CASE(schema_1003)
 {
 #ifdef WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -251,7 +250,7 @@ BOOST_AUTO_TEST_CASE( schema_1003 )
 }
 
 // null/nothing test
-BOOST_AUTO_TEST_CASE( schema_1005 )
+BOOST_AUTO_TEST_CASE(schema_1005)
 {
 #ifdef WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -289,7 +288,7 @@ BOOST_AUTO_TEST_CASE( schema_1005 )
 }
 
 // relation object
-BOOST_AUTO_TEST_CASE( schema_2000 )
+BOOST_AUTO_TEST_CASE(schema_2000)
 {
 #ifdef WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -326,18 +325,18 @@ BOOST_AUTO_TEST_CASE( schema_2000 )
     to_id = p2->get_id();
     og::og_schema_relation_ptr rel_ptr = p1->connect_to(p2, RELTYPE);
 
-	BOOST_REQUIRE_EQUAL(rel_ptr->get_revision(), "0");
+    BOOST_REQUIRE_EQUAL(rel_ptr->get_revision(), "0");
 
-	rel_id = rel_ptr->get_id();
+    rel_id = rel_ptr->get_id();
 
     rel_ptr->set_comment("hoge");
     rel_ptr->set_name(RELNAME);
-	rel_ptr->revision_up();
+    rel_ptr->revision_up();
 
-	list<string> rels;
-	cleaned_session_.schema()->get_relation_type(&rels);
+    list<string> rels;
+    cleaned_session_.schema()->get_relation_type(&rels);
 
-	BOOST_REQUIRE_EQUAL(rels.size(), 1);
+    BOOST_REQUIRE_EQUAL(rels.size(), 1);
   }
 
   {
@@ -444,7 +443,7 @@ BOOST_AUTO_TEST_CASE( schema_2000 )
 }
 
 // relation auto delete test
-BOOST_AUTO_TEST_CASE( schema_2001 )
+BOOST_AUTO_TEST_CASE(schema_2001)
 {
 #ifdef WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -486,7 +485,7 @@ BOOST_AUTO_TEST_CASE( schema_2001 )
 }
 
 // connected relation
-BOOST_AUTO_TEST_CASE( schema_2002 )
+BOOST_AUTO_TEST_CASE(schema_2002)
 {
 #ifdef WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -530,7 +529,7 @@ BOOST_AUTO_TEST_CASE( schema_2002 )
     &rel_list);
 
   BOOST_REQUIRE(rel_list.size() == 1);
-  BOOST_REQUIRE( (*(rel_list.begin()))->get_id() == rel_ptr->get_id() );
+  BOOST_REQUIRE((*(rel_list.begin()))->get_id() == rel_ptr->get_id());
 
   rel_list.clear();
   cleaned_session_.schema()->get_connected_relation_from(
@@ -539,7 +538,7 @@ BOOST_AUTO_TEST_CASE( schema_2002 )
     &rel_list);
 
   BOOST_REQUIRE(rel_list.size() == 1);
-  BOOST_REQUIRE( (*(rel_list.begin()))->get_id() == rel_ptr->get_id() );
+  BOOST_REQUIRE((*(rel_list.begin()))->get_id() == rel_ptr->get_id());
 
   rel_list.clear();
   cleaned_session_.schema()->get_connected_relation_to(
@@ -563,73 +562,73 @@ BOOST_AUTO_TEST_CASE( schema_2002 )
 BOOST_AUTO_TEST_CASE( schema_3001 )
 {
 #ifdef WINDOWS
-  og::core::CrtCheckMemory __check__;
+og::core::CrtCheckMemory __check__;
 #endif
-  // initialize db
-  og::og_session cleaned_session_;
-  cleaned_session_.open(DBPATH);
-  cleaned_session_.purge();
-  cleaned_session_.schema()->purge();
+// initialize db
+og::og_session cleaned_session_;
+cleaned_session_.open(DBPATH);
+cleaned_session_.purge();
+cleaned_session_.schema()->purge();
 
-  string OTYPE1 = "Document2002from";
-  string OTYPE2 = "Document2002to";
-  string RELTYPE = "Document2002rel";
-  string RELTYPE2 = "Document2002rel2";
-  string ONAME = "Dcument-Name2002";
-  string RELNAME = "Rel-Name2002";
-  list<string> otype_list;
-  otype_list.push_back(OTYPE1);
-  otype_list.push_back(OTYPE2);
+string OTYPE1 = "Document2002from";
+string OTYPE2 = "Document2002to";
+string RELTYPE = "Document2002rel";
+string RELTYPE2 = "Document2002rel2";
+string ONAME = "Dcument-Name2002";
+string RELNAME = "Rel-Name2002";
+list<string> otype_list;
+otype_list.push_back(OTYPE1);
+otype_list.push_back(OTYPE2);
 
-  list<string> rel_type_list;
-  rel_type_list.push_back(RELTYPE);
+list<string> rel_type_list;
+rel_type_list.push_back(RELTYPE);
 
-  og::og_schema_object_ptr p1 = cleaned_session_.schema()->create_object(OTYPE1,
-                                ONAME);
-  og::og_schema_object_ptr p2 = cleaned_session_.schema()->create_object(OTYPE2,
-                                ONAME);
-  og::og_schema_object_ptr p3 = cleaned_session_.schema()->create_object(OTYPE1,
-                                ONAME);
-  og::og_schema_object_ptr p4 = cleaned_session_.schema()->create_object(OTYPE2,
-                                ONAME);
+og::og_schema_object_ptr p1 = cleaned_session_.schema()->create_object(OTYPE1,
+ONAME);
+og::og_schema_object_ptr p2 = cleaned_session_.schema()->create_object(OTYPE2,
+ONAME);
+og::og_schema_object_ptr p3 = cleaned_session_.schema()->create_object(OTYPE1,
+ONAME);
+og::og_schema_object_ptr p4 = cleaned_session_.schema()->create_object(OTYPE2,
+ONAME);
 
-  og::og_schema_relation_ptr rel_ptr = p1->connect_to(p2, RELTYPE);
-  og::og_schema_relation_ptr rel_ptr2 = p3->connect_to(p4, RELTYPE2);
+og::og_schema_relation_ptr rel_ptr = p1->connect_to(p2, RELTYPE);
+og::og_schema_relation_ptr rel_ptr2 = p3->connect_to(p4, RELTYPE2);
 
-  list<og::og_schema_relation_ptr> rel_list;
-  cleaned_session_.schema()->get_connected_relation_to(
-    p1->get_id(),
-    rel_type_list,
-    &rel_list);
+list<og::og_schema_relation_ptr> rel_list;
+cleaned_session_.schema()->get_connected_relation_to(
+p1->get_id(),
+rel_type_list,
+&rel_list);
 
-  BOOST_REQUIRE(rel_list.size() == 1);
-  BOOST_REQUIRE( (*(rel_list.begin()))->get_id() == rel_ptr->get_id() );
+BOOST_REQUIRE(rel_list.size() == 1);
+BOOST_REQUIRE( (*(rel_list.begin()))->get_id() == rel_ptr->get_id() );
 
-  rel_list.clear();
-  cleaned_session_.schema()->get_connected_relation_from(
-    p2->get_id(),
-    rel_type_list,
-    &rel_list);
+rel_list.clear();
+cleaned_session_.schema()->get_connected_relation_from(
+p2->get_id(),
+rel_type_list,
+&rel_list);
 
-  BOOST_REQUIRE(rel_list.size() == 1);
-  BOOST_REQUIRE( (*(rel_list.begin()))->get_id() == rel_ptr->get_id() );
+BOOST_REQUIRE(rel_list.size() == 1);
+BOOST_REQUIRE( (*(rel_list.begin()))->get_id() == rel_ptr->get_id() );
 
-  rel_list.clear();
-  cleaned_session_.schema()->get_connected_relation_to(
-    p2->get_id(),
-    rel_type_list,
-    &rel_list);
+rel_list.clear();
+cleaned_session_.schema()->get_connected_relation_to(
+p2->get_id(),
+rel_type_list,
+&rel_list);
 
-  BOOST_REQUIRE(rel_list.size() == 0);
+BOOST_REQUIRE(rel_list.size() == 0);
 
 
-  rel_list.clear();
-  cleaned_session_.schema()->get_connected_relation_from(
-    p1->get_id(),
-    rel_type_list,
-    &rel_list);
+rel_list.clear();
+cleaned_session_.schema()->get_connected_relation_from(
+p1->get_id(),
+rel_type_list,
+&rel_list);
 
-  BOOST_REQUIRE(rel_list.size() == 0);
+BOOST_REQUIRE(rel_list.size() == 0);
 }
 */
 

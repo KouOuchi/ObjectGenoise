@@ -94,6 +94,8 @@ public:
   OG_COREAPI void disconnect(string _rel_id);
   // relation ends.
 
+  OG_COREAPI og_session_object_ptr get_property_object();
+
   scoped_ptr<og::core::session> session_;
   scoped_ptr<og::og_schema> og_schema_;
 };

@@ -31,6 +31,7 @@ public:
   OG_COREAPI string get_comment();
   OG_COREAPI void set_comment(string _comment);
   OG_COREAPI string get_revision();
+  OG_COREAPI void set_revision(string _rev);
   OG_COREAPI string get_create_date();
   OG_COREAPI string get_update_date();
 

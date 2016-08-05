@@ -100,6 +100,13 @@ string og_schema_relation::get_revision()
 {
   return schema_relation_ptr_->get_revision();
 }
+void og_schema_relation::set_revision(string _rev)
+{
+  schema_relation_ptr_->set_revision(_rev);
+
+  schema_relation_ptr_->revision_up_auto();
+  schema_relation_ptr_->sync_auto();
+}
 string og_schema_relation::get_create_date()
 {
   return schema_relation_ptr_->get_create_date();

@@ -362,6 +362,21 @@ bool OGSession::catchup_schema(String^ _path)
   return og_session_->catchup_schema(str);
 }
 
+OGSessionObject^ OGSession::get_property_object()
+{
+  og::og_session_object_ptr sesn_obj = og_session_->get_property_object();
+
+  if (sesn_obj == nullptr)
+  {
+    return nullptr;
+  }
+  else
+  {
+    return gcnew OGSessionObject(OGSharedPtr<og::og_session_object>(sesn_obj));
+  }
+}
+
+
 } // namespace net
 } // namespace og
 

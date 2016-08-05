@@ -23,10 +23,10 @@ String^ OGSchema::schema_property_object_name::get()
 {
   return gcnew String(og_schema::schema_property_object_name());
 }
-String^ OGSchema::schema_property_core_revision::get()
-{
-  return gcnew String(og_schema::schema_property_core_revision());
-}
+//String^ OGSchema::schema_property_core_revision::get()
+//{
+//  return gcnew String(og_schema::schema_property_core_revision());
+//}
 
 OGSchema::OGSchema(og::og_schema* _og_schema)
   : og_schema_(_og_schema)
@@ -126,7 +126,7 @@ void OGSchema::delete_object(String^ _oid)
   }
 }
 List<OGSchemaObject^>^ OGSchema::get_object_by_type(List<String^>^ _otype_list
-                                  )
+                                                   )
 {
   std::list<std::string> strl;
   OGConverter::convert_clr_to_std<List<String^>, std::list<std::string>>
@@ -451,6 +451,21 @@ OGSchemaParameter^ OGSchema::create_parameter_bool(String^ _param_type,
   return gcnew OGSchemaParameter(
            OGSharedPtr<og::og_schema_parameter>(p));
 }
+
+OGSchemaObject^ OGSchema::get_property_object()
+{
+  og::og_schema_object_ptr schm_obj = og_schema_->get_property_object();
+
+  if (schm_obj == nullptr)
+  {
+    return nullptr;
+  }
+  else
+  {
+    return gcnew OGSchemaObject(OGSharedPtr<og::og_schema_object>(schm_obj));
+  }
+}
+
 
 }
 }

@@ -43,6 +43,11 @@ string og_session_relation::get_revision()
 {
   return session_relation_ptr_->get_revision();
 }
+void og_session_relation::set_revision(string _rev)
+{
+  session_relation_ptr_->set_revision(_rev);
+  session_relation_ptr_->sync();
+}
 string og_session_relation::get_create_date()
 {
   return session_relation_ptr_->get_create_date();

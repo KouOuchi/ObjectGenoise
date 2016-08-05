@@ -14,6 +14,7 @@
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/lexical_cast.hpp>
 
 #ifndef OG_LOG_STDERR
 #include <boost/log/trivial.hpp>

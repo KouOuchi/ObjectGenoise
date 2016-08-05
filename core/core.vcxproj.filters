@@ -167,9 +167,6 @@
     <ClInclude Include="include\og\core\og.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\og\og_internal_schema_property.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\og\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>

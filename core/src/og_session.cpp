@@ -4,7 +4,6 @@
 #include "og/og_schema_object.h"
 #include "og/og_session_object.h"
 #include "og/og_converter.h"
-#include "og/og_internal_schema_property.h"
 
 #include "og/core/schema.h"
 #include "og/core/session.h"
@@ -24,9 +23,6 @@ og_session::~og_session()
 void og_session::open(string _connection_string)
 {
   session_->open(_connection_string);
-
-  internal_schema_property initializer;
-  initializer.internal_initialize(this);
 }
 
 void og_session::close()
@@ -245,6 +241,18 @@ void og_session::get_object(list<og_session_object_ptr>* _sesn_obj_list)
   og_converter::convert
   <list<og::core::session_object_ptr>&, list<og_session_object_ptr>*>
   (objs, _sesn_obj_list);
+}
+og_session_object_ptr og_session::get_property_object()
+{
+  og::core::session_object_ptr sesn_obj = session_->get_property_object();
+  if (sesn_obj == nullptr)
+  {
+    return nullptr;
+  }
+  else
+  {
+    return og_session_object_ptr(new og_session_object(sesn_obj));
+  }
 }
 
 } // namespace og;

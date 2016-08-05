@@ -16,7 +16,7 @@ using namespace System::Security::Permissions;
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("")];
 [assembly:AssemblyProductAttribute("og.net")];
-[assembly:AssemblyCopyrightAttribute("Copyright (c)  2015")];
+[assembly:AssemblyCopyrightAttribute("Copyright (c)  2016")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
 

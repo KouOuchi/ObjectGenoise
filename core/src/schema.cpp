@@ -22,7 +22,25 @@ const char schema::schema_property_object_type_[] =
   "__SCHEMA_PROPERTY_TYPE__";
 const char schema::schema_property_object_name_[] =
   "__SCHEMA_PROPERTY_NAME__";
-const char schema::schema_property_core_revision_[] = "__core_revision__";
+//const char schema::schema_property_core_revision_[] = "__core_revision__";
+
+schema_object_ptr schema::get_property_object()
+{
+  list<schema_object_ptr> schem_objs;
+  list<string> prop_type_name_list;
+  prop_type_name_list.push_back(string(schema_property_object_type_));
+
+  get_object_by_type(prop_type_name_list, &schem_objs);
+
+  if (schem_objs.size() == 0)
+  {
+    return nullptr;
+  }
+  else
+  {
+    return schem_objs.front();
+  }
+}
 
 schema::schema()
   : session_(NULL)
@@ -34,6 +52,13 @@ schema::~schema()
 void schema::initialize(session* _session)
 {
   session_ = _session;
+
+  // build property if not exists
+  if (get_property_object() == nullptr)
+  { build_property_object(); }
+
+  if (session_->get_property_object() == nullptr)
+  {	session_->build_property_object(); }
 }
 
 schema_object_ptr schema::create_object(string _otype, string _oname)
@@ -68,7 +93,7 @@ schema_object_ptr schema::create_object(string _otype, string _oname)
 
 void schema::add_object(schema_object_ptr _schm_obj)
 {
-//insert record
+  //insert record
   *session_->soci_session_
       <<
       "INSERT INTO schema_object(id_, comment, type, "
@@ -95,7 +120,7 @@ schema_relation_ptr schema::create_relation(string _rel_type, string _rel_name,
                            "INSERT INTO schema_relation_seq(id_seed) VALUES(NULL)";
   *session_->soci_session_ << "SELECT MAX(id_seed) FROM schema_relation_seq",
                            soci::into(id_seed);
-  string rel_id(SCHEMA_RELATION_ID_PREFIX + boost::lexical_cast < string >
+  string rel_id(SCHEMA_RELATION_ID_PREFIX + boost::lexical_cast <string>
                 (id_seed));
 
   //create object
@@ -124,10 +149,10 @@ void schema::add_relation(schema_relation_ptr _schm_rel)
       <<
       "INSERT INTO schema_relation(id_, from_id, to_id, comment, type, "
       "name, revision, create_date, update_date, "
-	  "from_multiplicity_min, from_multiplicity_max, to_multiplicity_min, to_multiplicity_max) "
+      "from_multiplicity_min, from_multiplicity_max, to_multiplicity_min, to_multiplicity_max) "
       "VALUES(:id_, :from_id, :to_id, :comment, :type, "
       ":name, :revision, :create_date, :update_date, "
-	  ":from_multiplicity_min, :from_multiplicity_max, :to_multiplicity_min, :to_multiplicity_max)",
+      ":from_multiplicity_min, :from_multiplicity_max, :to_multiplicity_min, :to_multiplicity_max)",
       soci::use(*(_schm_rel.get()));
 
   // drop updated/bulk sync flag
@@ -292,7 +317,7 @@ optional<schema_object_ptr> schema::get_object(string _id)
       soci::into(*schm_obj.get()),
       soci::use(_id);
 
-  if(schm_obj->get_id().empty())
+  if (schm_obj->get_id().empty())
   {
     return optional<schema_object_ptr>();
   }
@@ -324,10 +349,10 @@ void schema::get_object(list<string>& _oid_list,
 {
   _schm_obj_list->clear();
 
-  for(list<string>::iterator it = _oid_list.begin(); it != _oid_list.end(); ++it)
+  for (list<string>::iterator it = _oid_list.begin(); it != _oid_list.end(); ++it)
   {
     optional<schema_object_ptr> obj_ptr_opt = get_object(*it);
-    if(obj_ptr_opt.is_initialized())
+    if (obj_ptr_opt.is_initialized())
     {
       _schm_obj_list->push_back(obj_ptr_opt.get());
     }
@@ -371,7 +396,7 @@ optional<schema_relation_ptr> schema::get_relation(string _rel_id)
       soci::into(*(schm_rel.get())),
       soci::use(_rel_id);
 
-  if(schm_rel->get_id().empty())
+  if (schm_rel->get_id().empty())
   {
     return optional<schema_relation_ptr>();
   }
@@ -389,11 +414,11 @@ void schema::get_relation(list<string>& _rel_id_list,
 {
   _schm_rel_list->clear();
 
-  for(list<string>::iterator it = _rel_id_list.begin(); it != _rel_id_list.end();
-      ++it)
+  for (list<string>::iterator it = _rel_id_list.begin(); it != _rel_id_list.end();
+       ++it)
   {
     optional<schema_relation_ptr> rel_ptr_opt = get_relation(*it);
-    if(rel_ptr_opt.is_initialized())
+    if (rel_ptr_opt.is_initialized())
     {
       _schm_rel_list->push_back(rel_ptr_opt.get());
     }
@@ -496,7 +521,7 @@ void schema::get_connected_object_to_by_query(string _from_o_id,
     + _query()
     + " AND schema_relation.from_id = :_from_o_id"
     , soci::use(_from_o_id)
-    ,  &o_id_list);
+    , &o_id_list);
 
   get_object(o_id_list, _schm_obj_list);
 }
@@ -545,6 +570,26 @@ void schema::get_relation_by_query(const T& _query,
   get_relation(rel_id_list, _schm_rel_list);
 }
 
+long schema::get_schema_rev_from_file(string _path)
+{
+  fs::path imp(_path);
+
+  boost::system::error_code error;
+  const bool result = fs::exists(imp, error);
+  if (!result || error)
+  {
+    OG_LOG << "import file is not found:" << _path;
+    return -1;
+  }
+
+  // Create XML document
+  boost::property_tree::ptree pt;
+  xml_stream().read_from_file(_path, &pt);
+
+  long rev = pt.get<long>("og.schema.<xmlattr>.revision");
+  return rev;
+}
+
 bool schema::import_from_file(string _path)
 {
   fs::path imp(_path);
@@ -557,6 +602,15 @@ bool schema::import_from_file(string _path)
     return false;
   }
 
+  // delete session property object in advance
+  {
+    session_object_ptr sesn_prop = session_->get_property_object();
+    if (sesn_prop != nullptr) { sesn_prop->delete_object(); }
+
+    schema_object_ptr prop_obj = get_property_object();
+    if (prop_obj != nullptr) { prop_obj->delete_object(); }
+  }
+
   // Create XML document
   boost::property_tree::ptree pt;
   xml_stream().read_from_file(_path, &pt);
@@ -567,7 +621,7 @@ bool schema::import_from_file(string _path)
   {
     // deserialize
     schema_parameter_ptr schm_par(new schema_parameter(this));
-    if(serializer<schema_parameter_ptr>::deserialize(child, schm_par))
+    if (serializer<schema_parameter_ptr>::deserialize(child, schm_par))
     {
       insert_schema_param(schm_par, false);
     }
@@ -581,7 +635,7 @@ bool schema::import_from_file(string _path)
     schema_object_ptr schm_obj(new schema_object(this));
 
     list<schema_object_parameter> obj_params;
-    if(serializer<schema_object_ptr>::deserialize(child, schm_obj, obj_params))
+    if (serializer<schema_object_ptr>::deserialize(child, schm_obj, obj_params))
     {
       add_object(schm_obj);
 
@@ -622,7 +676,37 @@ bool schema::import_from_file(string _path)
     }
   }
 
+  // build property if not exists
+  if (get_property_object() == nullptr)
+  { build_property_object(); }
+
+  if (session_->get_property_object() == nullptr)
+  {	session_->build_property_object(); }
+
   return true;
+}
+
+schema_object_ptr schema::build_property_object()
+{
+  schema_object_ptr schm_prop;
+  list<schema_object_ptr> schem_objs;
+  list<string> prop_type_name_list;
+  prop_type_name_list.push_back(string(schema_property_object_type_));
+
+  get_object_by_type(prop_type_name_list, &schem_objs);
+
+  if (schem_objs.size() == 0)
+  {
+    schm_prop = create_object(string(schema_property_object_type_),
+                              string(schema_property_object_name_));
+    return schm_prop;
+  }
+  else
+  {
+    string mes("fatal. schema property object exists.");
+    OG_LOG << mes;
+    throw og::core::exception() << exception_message(mes);
+  }
 }
 
 void schema::import_parameter(schema_parameter_ptr _schm_par,
@@ -640,7 +724,7 @@ void schema::import_parameter(schema_parameter_ptr _schm_par,
     {
       //insert record
       insert_schema_basetype(_schm_par, base_i);
-//      insert_schema_param(_schm_par, false);
+      //      insert_schema_param(_schm_par, false);
     }
   }
   break;
@@ -653,7 +737,7 @@ void schema::import_parameter(schema_parameter_ptr _schm_par,
     {
       //insert record
       insert_schema_basetype(_schm_par, base_r);
-//      insert_schema_param(_schm_par, false);
+      //      insert_schema_param(_schm_par, false);
     }
   }
   break;
@@ -666,7 +750,7 @@ void schema::import_parameter(schema_parameter_ptr _schm_par,
     {
       //insert record
       insert_schema_basetype(_schm_par, base_t);
-//      insert_schema_param(_schm_par, false);
+      //      insert_schema_param(_schm_par, false);
     }
   }
   break;
@@ -679,6 +763,10 @@ void schema::export_to_file(string _path)
   // Create XML document
   boost::property_tree::ptree pt;
   ptree& pt_1 = pt.add("og.schema", "");
+
+  std::string rev = get_property_object()->get_revision();
+  OG_LOG << "exporting schema revision:" << rev;
+  pt_1.put("<xmlattr>.revision", rev);
 
   // schema parameter
   list<schema_parameter_ptr> schm_par_list;
@@ -729,6 +817,8 @@ void schema::purge()
   *session_->soci_session_ << "DELETE FROM schema_relation;";
   *session_->soci_session_ << "DELETE FROM schema_object;";
 
+  build_property_object();
+  session_->build_property_object();
 }
 
 template <>
@@ -744,7 +834,7 @@ void schema::insert_schema_basetype<parameter_basetype_integer>
       <<
       "INSERT INTO schema_parameter_basetype_integer(id_, default_value, system_min, system_max, warn_min, warn_max) "
       "VALUES (:id_, :default_value, :system_min, :system_max, :warn_min, :warn_max)"
-//      , soci::use(_schm_param->get_id())
+      //      , soci::use(_schm_param->get_id())
       , soci::use(_basetype);
 }
 template <>
@@ -760,7 +850,7 @@ void schema::insert_schema_basetype<parameter_basetype_real>
       <<
       "INSERT INTO schema_parameter_basetype_real(id_, default_value, system_min, system_max, warn_min, warn_max) "
       "VALUES (:id_, :default_value, :system_min, :system_max, :warn_min, :warn_max)"
-//	  , soci::use(_schm_param->get_id())
+      //	  , soci::use(_schm_param->get_id())
       , soci::use(_basetype);
 }
 template <>
@@ -776,7 +866,7 @@ void schema::insert_schema_basetype<parameter_basetype_text>
       <<
       "INSERT INTO schema_parameter_basetype_text(id_, default_value, system_min, system_max, warn_min, warn_max) "
       "VALUES (:id_, :default_value, :system_min, :system_max, :warn_min, :warn_max)"
-//      , soci::use(_schm_param->get_id())
+      //      , soci::use(_schm_param->get_id())
       , soci::use(_basetype);
 }
 
@@ -799,8 +889,8 @@ void schema::insert_schema_param(schema_parameter_ptr _schm_par, bool _initial)
                              "INSERT INTO schema_parameter_seq(id_seed) VALUES(NULL)";
     *session_->soci_session_ << "SELECT MAX(id_seed) FROM schema_parameter_seq",
                              soci::into(id_seed);
-    string par_id( SCHEMA_PARAMETER_ID_PREFIX + boost::lexical_cast<string>
-                   (id_seed) );
+    string par_id(SCHEMA_PARAMETER_ID_PREFIX + boost::lexical_cast<string>
+                  (id_seed));
     _schm_par->set_id(par_id);
 
     // set date
@@ -831,7 +921,7 @@ void schema::insert_schema_param(schema_parameter_ptr _schm_par, bool _initial)
   {
     parameter_basetype_integer* base_i = boost::get<parameter_basetype_integer>
                                          (&_schm_par->basetype_variant_);
-    OG_LOG << "INTEGER:(def)" << base_i->default_value_;
+    //OG_LOG << "INTEGER:(def)" << base_i->default_value_;
 
     insert_schema_basetype(_schm_par, *base_i);
   }
@@ -840,7 +930,7 @@ void schema::insert_schema_param(schema_parameter_ptr _schm_par, bool _initial)
   {
     parameter_basetype_real* base_r = boost::get<parameter_basetype_real>
                                       (&_schm_par->basetype_variant_);
-    OG_LOG << "REAL:(def)" << base_r->default_value_;
+    //OG_LOG << "REAL:(def)" << base_r->default_value_;
 
     insert_schema_basetype(_schm_par, *base_r);
   }
@@ -849,7 +939,7 @@ void schema::insert_schema_param(schema_parameter_ptr _schm_par, bool _initial)
   {
     parameter_basetype_text* base_t = boost::get<parameter_basetype_text>
                                       (&_schm_par->basetype_variant_);
-    OG_LOG << "TEXT:(def)" << base_t->default_value_;
+    //OG_LOG << "TEXT:(def)" << base_t->default_value_;
 
     insert_schema_basetype(_schm_par, *base_t);
   }
@@ -1136,11 +1226,11 @@ void schema::get_parameter(list<string>& _p_id_list,
 {
   _schm_par_list->clear();
 
-  for(list<string>::iterator it = _p_id_list.begin(); it != _p_id_list.end();
-      it++)
+  for (list<string>::iterator it = _p_id_list.begin(); it != _p_id_list.end();
+       it++)
   {
     optional<schema_parameter_ptr> par_ptr_opt = get_parameter(*it);
-    if(par_ptr_opt.is_initialized())
+    if (par_ptr_opt.is_initialized())
     {
       _schm_par_list->push_back(par_ptr_opt.get());
     }
@@ -1156,12 +1246,12 @@ optional<schema_parameter_ptr> schema::get_parameter(string _par_id)
       soci::into(*(schm_par.get())),
       soci::use(_par_id);
 
-  if(schm_par->get_id().empty())
+  if (schm_par->get_id().empty())
   {
     return optional<schema_parameter_ptr>();
   }
 
-  switch((parameter_basetype_enum)schm_par->get_basetype())
+  switch ((parameter_basetype_enum)schm_par->get_basetype())
   {
   case parameter_basetype_enum::integer:
   {
@@ -1170,7 +1260,7 @@ optional<schema_parameter_ptr> schema::get_parameter(string _par_id)
 
     *session_->soci_session_
         <<
-//		"SELECT id_, default_value, system_min, system_max, warn_min, warn_max FROM schema_parameter_basetype_integer WHERE id_ = :id_",
+        //		"SELECT id_, default_value, system_min, system_max, warn_min, warn_max FROM schema_parameter_basetype_integer WHERE id_ = :id_",
         "SELECT * FROM schema_parameter_basetype_integer WHERE id_ = :id_",
         soci::into(*base),
         soci::use(schm_par->get_id());
@@ -1194,7 +1284,7 @@ optional<schema_parameter_ptr> schema::get_parameter(string _par_id)
 
     *session_->soci_session_
         <<
-//		"SELECT id_, default_value, system_min, system_max, warn_min, warn_max FROM schema_parameter_basetype_text WHERE id_ = :id_",
+        //		"SELECT id_, default_value, system_min, system_max, warn_min, warn_max FROM schema_parameter_basetype_text WHERE id_ = :id_",
         "SELECT * FROM schema_parameter_basetype_text WHERE id_ = :id_",
         soci::into(*base),
         soci::use(schm_par->get_id());
@@ -1207,7 +1297,7 @@ optional<schema_parameter_ptr> schema::get_parameter(string _par_id)
 
 string schema::revision_up_revision(const string& _revision)
 {
-  int rev = boost::lexical_cast<int>(_revision);
+  long rev = boost::lexical_cast<long>(_revision);
   return boost::lexical_cast<string>(++rev);
 }
 

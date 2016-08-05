@@ -49,6 +49,7 @@ public:
   String^ get_comment();
   void set_comment(String^ _comment);
   String^ get_revision();
+  void set_revision(String^ _rev);
   String^ get_create_date();
   String^ get_update_date();
 

@@ -191,6 +191,11 @@ string og_session_object::get_revision()
 {
   return session_object_ptr_->get_revision();
 }
+void og_session_object::set_revision(string _rev)
+{
+  session_object_ptr_->set_revision(_rev);
+  session_object_ptr_->sync();
+}
 string og_session_object::get_create_date()
 {
   return session_object_ptr_->get_create_date();

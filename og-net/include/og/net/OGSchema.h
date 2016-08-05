@@ -117,12 +117,14 @@ public:
   {
 	  String^ get();
   }
-  static property String^ schema_property_core_revision
-  {
-	  String^ get();
-  }
+  //static property String^ schema_property_core_revision
+  //{
+	 // String^ get();
+  //}
 
   // parameters ends.
+
+  OGSchemaObject^ get_property_object();
 
   ///////////////////////////////
   // file io and management

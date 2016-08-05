@@ -31,10 +31,10 @@ const char* og_schema::schema_property_object_name()
 {
   return core::schema::schema_property_object_name_;
 }
-const char* og_schema::schema_property_core_revision()
-{
-  return core::schema::schema_property_core_revision_;
-}
+//const char* og_schema::schema_property_core_revision()
+//{
+//  return core::schema::schema_property_core_revision_;
+//}
 
 og_schema_object_ptr og_schema::create_object(string _otype, string _oname)
 {
@@ -226,6 +226,18 @@ bool og_schema::validate_connect_by_type_id(string _otype, string _oid_from,
 void og_schema::delete_object(string _oid)
 {
   schema_->get_object(_oid).get()->delete_object();
+}
+og_schema_object_ptr og_schema::get_property_object()
+{
+  og::core::schema_object_ptr schm_obj = schema_->get_property_object();
+  if (schm_obj == nullptr)
+  {
+    return nullptr;
+  }
+  else
+  {
+    return og_schema_object_ptr(new og_schema_object(schm_obj, true));
+  }
 }
 
 } // namespace og;

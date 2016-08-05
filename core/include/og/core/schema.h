@@ -48,9 +48,17 @@ public:
   OG_COREAPI schema();
   OG_COREAPI virtual ~schema();
 
+  ///////////////////////////////
+  // schema properties
+  ///////////////////////////////
   OG_COREAPI static const char schema_property_object_type_[];
   OG_COREAPI static const char schema_property_object_name_[];
-  OG_COREAPI static const char schema_property_core_revision_[];
+//  OG_COREAPI static const char schema_property_core_revision_[];
+
+  OG_COREAPI schema_object_ptr get_property_object();
+  schema_object_ptr build_property_object();
+  // schema properties end.
+
 
   schema_object_ptr create_object(string _otype, string _oname);
   //schema_object_ptr copy_object(schema_object _object);
@@ -206,10 +214,11 @@ public:
   ///////////////////////////////
   void export_to_file(string _path);
   bool import_from_file(string _path);
+  long get_schema_rev_from_file(string _path);
   void purge();
 
-  void initialize(session* _session);
   // file io and management end.
+  void initialize(session* _session);
 
 private:
   ///////////////////////////////

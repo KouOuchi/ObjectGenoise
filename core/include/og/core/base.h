@@ -98,8 +98,16 @@ public:
   }
   virtual void set_revision(string _rev)
   {
-    revision_ = _rev;
-    set_updated();
+    try
+    {
+      long r = boost::lexical_cast<long>(_rev);
+      revision_ = _rev;
+      set_updated();
+    }
+    catch (...)
+    {
+      OG_LOG << "Error. Revision must be long value:" << _rev;
+    }
   }
   virtual void set_create_date(string _date)
   {
@@ -131,11 +139,11 @@ public:
 
   void sync_auto()
   {
-	  if (auto_sync_) sync();
+    if (auto_sync_) { sync(); }
   }
   void revision_up_auto()
   {
-	  if (auto_revision_up_) revision_up();
+    if (auto_revision_up_) { revision_up(); }
   }
 
 protected:

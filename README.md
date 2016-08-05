@@ -224,7 +224,7 @@ And support files :
 
 ## Prerequisite
 ObjectGenoise depends on the following package
-* [boost] 1.57
+* [boost] 1.60
         Note: while using boost_log from c++/cli, I'm faced with crash.
         So, i use this [buildscript].
 
@@ -251,27 +251,17 @@ SQLITE3=c:\path\to\sqlite3
 use VisualStudio2013. Set platform to x64.
 
 ## Version and History
+0.77  * add global object, schema property.
+      * enhancement : catchup_schema checks revision of schema property.
+      * catched up soci 3_2_3
 0.6.1 add : schema catchup
       add : copy_object
 0.4.0 internal release
 0.0.1 initial revision
 
-## TODO
- - Code : Write CMake build script.
- - Code : Add Code Comments.
- - Code : Add Oracle, Postgresql and Mysql test.
- - Code : Add tests on *nix.
- - Function : Search Criteria
- - Function : Add embedded type. Now i have 3 basic types: integer, real and text.
- - Function : User or Domain control
- - Function : Multiprexity validation.
- - <<FIXED>>Function : "Auto Revision Up" and "Catch Up schema revision"
- - Function : (under investigtoin) Multiple Revision management both schema and session.
- - Tool : Session instances viewer.
-
 ## Licenses and Authors
   * Licensed under the [Boost Software License 1.0]
-  * Copyright &copy; 2015 Kou Ouchi <kou.ouchi@division-engineering.com>
+  * Copyright &copy; 2014-2016 Kou Ouchi <kou.ouchi@division-engineering.com>
 
 ## Related Information
 - [Enterprise Architect] : Data Modeling editor. "CodeEngineering" function can generates DDL of various DataBase Systems.

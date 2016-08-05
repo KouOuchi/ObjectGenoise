@@ -139,8 +139,10 @@ BOOST_AUTO_TEST_CASE(etc_1000_basic_import)
   cleaned_session_.schema()->purge();
   cleaned_session_.schema()->import_from_file("schema.xml.gz");
 
-  boost::optional<og::og_schema_object_ptr> p1test = cleaned_session_.schema()->get_object(p1id);
-  boost::optional<og::og_schema_relation_ptr> reltest = cleaned_session_.schema()->get_relation(relid);
+  boost::optional<og::og_schema_object_ptr> p1test =
+    cleaned_session_.schema()->get_object(p1id);
+  boost::optional<og::og_schema_relation_ptr> reltest =
+    cleaned_session_.schema()->get_relation(relid);
 
   list<boost::tuple<string, og::og_schema_parameter_ptr>> __params_p1_after;
   p1test.get()->get_parameters(&__params_p1_after);
@@ -314,13 +316,10 @@ BOOST_AUTO_TEST_CASE(etc_1002_schema_verup)
 
   BOOST_REQUIRE_EQUAL(prop_objs.size(), 1);
 
-  int ver;
-  prop_objs.front()->get_parameter_value<int>
-  (og::og_schema::schema_property_core_revision(), &ver);
+  og::og_session_object_ptr prop_obj =
+    cleaned_session_.get_property_object();
 
-  ++ver;
-  prop_objs.front()->set_parameter_value<int>
-  (og::og_schema::schema_property_core_revision(), ver);
+  BOOST_REQUIRE_EQUAL(prop_objs.front()->get_id(), prop_obj->get_id());
 
   //"delete param definition" deletes all session's parameters
   p2->add_parameter_definition(string("add int"), ptest1);
@@ -331,10 +330,13 @@ BOOST_AUTO_TEST_CASE(etc_1002_schema_verup)
   p3->delete_parameter_definition(string("V6"), ptest6);
   rel_ptr13->delete_parameter_definition(string("I6"), ptest6);
 
+  cleaned_session_.schema()->get_property_object()->set_comment("set property @@@");
+  cleaned_session_.schema()->get_property_object()->revision_up();
   cleaned_session_.schema()->export_to_file("schema_xml_catchup1.xml.gz");
 
   cleaned_session_.purge();
-  BOOST_REQUIRE_EQUAL(true, cleaned_session_.import_from_file("session_xml_catchup0.xml.gz"));
+  BOOST_REQUIRE_EQUAL(true,
+                      cleaned_session_.import_from_file("session_xml_catchup0.xml.gz"));
 
   list<og::og_session_object_ptr> sesn_objs;
   cleaned_session_.get_object_by_type(otype_list, &sesn_objs);
@@ -378,7 +380,7 @@ BOOST_AUTO_TEST_CASE(etc_1002_schema_verup)
           int i;
           double ii;
           string iii;
-		  it2->get()->get_parameter_value<int>("add int", &i);
+          it2->get()->get_parameter_value<int>("add int", &i);
           it2->get()->get_parameter_value<double>("add real", &ii);
           it2->get()->get_parameter_value<string>("add text", &iii);
 
@@ -473,7 +475,7 @@ BOOST_AUTO_TEST_CASE(etc_1003_schema_catchup)
           int i;
           double ii;
           string iii;
-		  it2->get()->get_parameter_value<int>("add int", &i);
+          it2->get()->get_parameter_value<int>("add int", &i);
           it2->get()->get_parameter_value<double>("add real", &ii);
           it2->get()->get_parameter_value<string>("add text", &iii);
 
@@ -489,6 +491,28 @@ BOOST_AUTO_TEST_CASE(etc_1003_schema_catchup)
       }
     }
   }
+
+  /// property tests
+  // initialize db
+  og::og_schema_object_ptr schm_prop =
+    cleaned_session_.schema()->get_property_object();
+
+  schm_prop->set_revision("100");
+  cleaned_session_.schema()->export_to_file("rev100.xml.gz");
+
+  schm_prop->set_revision("99");
+  cleaned_session_.catchup_schema("rev100.xml.gz");
+
+  og::og_schema_object_ptr schm_prop2 =
+    cleaned_session_.schema()->get_property_object();
+  BOOST_REQUIRE_EQUAL(schm_prop2->get_revision(), "100");
+
+  schm_prop2->set_revision("101");
+  cleaned_session_.catchup_schema("rev100.xml.gz");
+
+  og::og_schema_object_ptr schm_prop3 =
+    cleaned_session_.schema()->get_property_object();
+  BOOST_REQUIRE_EQUAL(schm_prop3->get_revision(), "101");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

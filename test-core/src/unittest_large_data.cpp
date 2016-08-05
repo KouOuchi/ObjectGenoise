@@ -1,7 +1,7 @@
 #include "fixtures.h"
 #include "utility.h"
 
-#ifdef TEST_OG_LARGE_DATA
+#ifndef TEST_OG_LARGE_DATA
 
 BOOST_FIXTURE_TEST_SUITE(large_data, fixture_clean_session);
 

@@ -359,12 +359,11 @@ namespace test_og_net
 
             Assert.AreEqual(prop_objs.Count, 1);
 
-            int ver = prop_objs[0].get_parameter_value_integer(
-            OGSchema.schema_property_core_revision);
+            string rev1 = prop_objs[0].get_id();
+            OGSessionObject ooo = cleaned_session_.get_property_object();
 
-            ++ver;
-            prop_objs[0].set_parameter_value_integer
-            (OGSchema.schema_property_core_revision, ver);
+            string rev2 = ooo.get_id();
+            Assert.AreEqual(rev1, rev2);
 
             //"delete param definition" deletes all session's parameters
             p2.add_parameter_definition(("add int"), ptest1);
@@ -375,6 +374,8 @@ namespace test_og_net
             p3.delete_parameter_definition("V6", ptest6);
             rel_ptr13.delete_parameter_definition("I6", ptest6);
 
+            cleaned_session_.schema().get_property_object().set_comment("set property @@@");
+            cleaned_session_.schema().get_property_object().revision_up();
             cleaned_session_.schema().export_to_file("schema_xml_catchup1.xml.gz");
 
             cleaned_session_.purge();
@@ -464,7 +465,7 @@ namespace test_og_net
 
             Assert.AreEqual(true, res);
 
-            List<OGSessionObject> sesn_objs = 
+            List<OGSessionObject> sesn_objs =
             cleaned_session_.get_object_by_type(otype_list);
 
             Assert.AreEqual(sesn_objs.Count, 3);
@@ -473,7 +474,7 @@ namespace test_og_net
             {
                 if (it.get_schema_object_type() == OTYPE1)
                 {
-                    List<OGSessionObject> sesn_cons = 
+                    List<OGSessionObject> sesn_cons =
                     it.get_connected_object();
                     Assert.AreEqual(sesn_cons.Count, 2);
 
@@ -517,24 +518,47 @@ namespace test_og_net
                     }
                 }
             }
+
+
+            /// property tests
+            // initialize db
+            OGSchemaObject schm_prop =
+              cleaned_session_.schema().get_property_object();
+
+            schm_prop.set_revision("100");
+            cleaned_session_.schema().export_to_file("rev100.xml.gz");
+
+            schm_prop.set_revision("99");
+            cleaned_session_.catchup_schema("rev100.xml.gz");
+
+            OGSchemaObject schm_prop2 =
+              cleaned_session_.schema().get_property_object();
+            Assert.AreEqual(schm_prop2.get_revision(), "100");
+
+            schm_prop2.set_revision("101");
+            cleaned_session_.catchup_schema("rev100.xml.gz");
+
+            OGSchemaObject schm_prop3 =
+              cleaned_session_.schema().get_property_object();
+            Assert.AreEqual(schm_prop3.get_revision(), "101");
         }
 
         // xml import
-        [TestMethod]
-        public void etc_schema_update()
-        {
-            OGSession session = null;
+        //[TestMethod]
+        //public void etc_schema_update()
+        //{
+        //    OGSession session = null;
 
-            session = new OGSession();
-            session.open("project.db");
+        //    session = new OGSession();
+        //    session.open("project.db");
 
-            if (session.catchup_schema("GhostProject.schema.xml.gz"))
-            {
-            }
-            else
-            {
-                Assert.Fail();
-            }
-        }
+        //    if (session.catchup_schema("GhostProject.schema.xml.gz"))
+        //    {
+        //    }
+        //    else
+        //    {
+        //        Assert.Fail();
+        //    }
+        //}
     }
 }

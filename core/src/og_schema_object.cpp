@@ -203,6 +203,13 @@ string og_schema_object::get_revision()
 {
   return schema_object_ptr_->get_revision();
 }
+void og_schema_object::set_revision(string _rev)
+{
+  schema_object_ptr_->set_revision(_rev);
+
+//  schema_object_ptr_->revision_up_auto();
+  schema_object_ptr_->sync_auto();
+}
 string og_schema_object::get_create_date()
 {
   return schema_object_ptr_->get_create_date();

@@ -47,6 +47,13 @@ String^ OGSessionRelation::get_revision()
 {
   return gcnew String(og_session_relation_->get_revision().c_str());
 }
+void OGSessionRelation::set_revision(String^ _rev)
+{
+  std::string str;
+  OGConverter::convert_clr_to_std<String, std::string>(_rev, &str);
+
+  og_session_relation_->set_revision(str);
+}
 String^ OGSessionRelation::get_create_date()
 {
   return gcnew String(og_session_relation_->get_create_date().c_str());

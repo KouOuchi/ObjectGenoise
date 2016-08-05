@@ -51,13 +51,13 @@ void session::build()
   boost::algorithm::split(sql_commands, schema_sql,
                           boost::algorithm::is_any_of(";"));
 
-  for(vector<string>::const_iterator it = sql_commands.begin();
-      it != sql_commands.end(); ++it)
+  for (vector<string>::const_iterator it = sql_commands.begin();
+       it != sql_commands.end(); ++it)
   {
     string ddl(*it);
     boost::trim(ddl);
 
-    if(ddl.length() != 0)
+    if (ddl.length() != 0)
     {
       OG_LOG << "DDL:" << ddl;
       *(soci_session_.get()) << ddl;
@@ -93,7 +93,7 @@ void session::initialize_sqlite_sequence(string _tbl)
   *(soci_session_.get()) << "SELECT COUNT(*) FROM " << _tbl,
                          soci::into(count);
 
-  if(count == 0)
+  if (count == 0)
   {
     *(soci_session_.get()) << "INSERT INTO " << _tbl << " VALUES(0)";
   }
@@ -161,8 +161,8 @@ void session::get_sequence(string* _id)
   *(soci_session_.get()) << "INSERT INTO session_object_seq VALUES(NULL)";
   *(soci_session_.get()) << "SELECT MAX(id_seed) FROM session_object_seq",
                          soci::into(id_seed);
-  *_id = string( SESSION_OBJECT_ID_PREFIX + boost::lexical_cast<string>
-                 (id_seed) );
+  *_id = string(SESSION_OBJECT_ID_PREFIX + boost::lexical_cast<string>
+                (id_seed));
 }
 
 session_object_ptr session::create_object(schema_object_ptr _schm_obj)
@@ -294,7 +294,7 @@ void session::import_parameter(const ptree& _param_elm,
     optional<int> basetype = pt.second.get_optional<int>("<xmlattr>.basetype");
 
     list<parameter_value_variant> values;
-//	const  ptree& item_elm = pt.second.get_child("items");
+    //	const  ptree& item_elm = pt.second.get_child("items");
 
     switch ((parameter_basetype_enum)basetype.get())
     {
@@ -358,7 +358,7 @@ optional<session_object_ptr> session::get_object(string _id)
       soci::into(*(sesn_obj.get())),
       soci::use(_id);
 
-  if(sesn_obj->get_id().empty())
+  if (sesn_obj->get_id().empty())
   {
     // no id found
     return optional<session_object_ptr>();
@@ -456,10 +456,10 @@ void session::get_object(list<string>& _oid_list,
 {
   _sesn_obj_list->clear();
 
-  for(list<string>::iterator it = _oid_list.begin(); it != _oid_list.end(); ++it)
+  for (list<string>::iterator it = _oid_list.begin(); it != _oid_list.end(); ++it)
   {
     optional<session_object_ptr> ptr = get_object(*it);
-    if(ptr.is_initialized())
+    if (ptr.is_initialized())
     {
       _sesn_obj_list->push_back(ptr.get());
     }
@@ -474,12 +474,12 @@ void session::get_object_relation(list<string>& _oid_list,
 
   list<string>::iterator it = _oid_list.begin();
   list<string>::iterator it2 = _rel_list.begin();
-  for(; it != _oid_list.end(); ++it, ++it2)
+  for (; it != _oid_list.end(); ++it, ++it2)
   {
     optional<session_object_ptr> ptr = get_object(*it);
     optional<session_relation_ptr> ptr_rel = get_relation(*it2);
 
-    if(ptr.is_initialized() && ptr_rel.is_initialized())
+    if (ptr.is_initialized() && ptr_rel.is_initialized())
     {
       _sesn_objrel_list->push_back(
         boost::make_tuple<session_object_ptr, session_relation_ptr>(ptr.get(),
@@ -624,7 +624,7 @@ session_relation_ptr session::connect(string _from_id, string _to_id,
   *(soci_session_.get()) << "INSERT INTO session_relation_seq VALUES(NULL)";
   *(soci_session_.get()) << "SELECT MAX(id_seed) FROM session_relation_seq",
                          soci::into(id_seed);
-  string id( SESSION_RELATION_ID_PREFIX + boost::lexical_cast<string>(id_seed) );
+  string id(SESSION_RELATION_ID_PREFIX + boost::lexical_cast<string>(id_seed));
 
   //create object
   session_relation_ptr sesn_rel(new session_relation(this, id, _schm_rel));
@@ -834,8 +834,8 @@ void session::get_relation(list<string> _rel_id_list,
 {
   _sesn_rel_list->clear();
 
-  for(list<string>::iterator it = _rel_id_list.begin(); it != _rel_id_list.end();
-      ++it)
+  for (list<string>::iterator it = _rel_id_list.begin(); it != _rel_id_list.end();
+       ++it)
   {
     optional<session_relation_ptr> ptr = get_relation(*it);
     if (ptr.is_initialized())  { _sesn_rel_list->push_back(ptr.get()); }
@@ -849,11 +849,11 @@ void session::get_relation(string _from_id, string _to_id,
 
   fetcher<string>::fetch_use2(
     *soci_session_
-    ,  "SELECT id_ FROM session_relation WHERE "
+    , "SELECT id_ FROM session_relation WHERE "
     "from_id = :from_id AND to_id = :to_id"
-    ,soci::use(_from_id, "from_id")
-    ,soci::use(_to_id, "to_id")
-    ,&rel_id_list);
+    , soci::use(_from_id, "from_id")
+    , soci::use(_to_id, "to_id")
+    , &rel_id_list);
 
   get_relation(rel_id_list, _sesn_rel_list);
 }
@@ -1021,6 +1021,12 @@ bool session::import_from_file(string _path)
     return false;
   }
 
+  // delete session property object in advance
+  {
+    session_object_ptr prop_obj = get_property_object();
+    if (prop_obj != nullptr) { prop_obj->delete_object(); }
+  }
+
   boost::property_tree::ptree pt;
   xml_stream().read_from_file(_path, &pt);
 
@@ -1054,7 +1060,7 @@ bool session::import_from_file(string _path)
     }
   }
 
-// session relation
+  // session relation
   BOOST_FOREACH(ptree::value_type & child,
                 pt.get_child("og.session.relations"))
   {
@@ -1093,7 +1099,61 @@ bool session::import_from_file(string _path)
     }
   }
 
+  if (get_property_object() == nullptr)
+  {
+    build_property_object();
+  }
+
   return true;
+}
+session_object_ptr session::get_property_object()
+{
+  schema_object_ptr schm_obj = this->schema_->get_property_object();
+  if (schm_obj == nullptr)
+  {
+    return nullptr;
+  }
+
+  list<session_object_ptr> sesn_objs;
+  list<schema_object_ptr> schm_objs;
+  schm_objs.push_back(schm_obj);
+
+  get_object_by_schema_object(schm_objs, &sesn_objs);
+
+  if (sesn_objs.size() == 0)
+  {
+    return nullptr;
+  }
+  else
+  {
+    return sesn_objs.front();
+  }
+}
+
+session_object_ptr session::build_property_object()
+{
+  schema_object_ptr schm_obj = this->schema_->get_property_object();
+  if (schm_obj == nullptr)
+  {
+    schm_obj = this->schema_->build_property_object();
+  }
+
+  list<session_object_ptr> sesn_objs;
+  list<schema_object_ptr> schm_objs;
+  schm_objs.push_back(schm_obj);
+
+  get_object_by_schema_object(schm_objs, &sesn_objs);
+
+  if (sesn_objs.size() == 0)
+  {
+    return create_object(schm_objs.front());
+  }
+  else
+  {
+    string mes("fatal. schema property object exists.");
+    OG_LOG << mes;
+    throw og::core::exception() << exception_message(mes);
+  }
 }
 
 void session::export_to_file(string _path)
@@ -1303,6 +1363,19 @@ bool session::catchup_schema(string _path)
     throw og::core::exception() << exception_message("schema file is not found.");
   }
 
+  // get current schema version
+  std::string rev = schema_->get_property_object()->get_revision();
+  long current_schema_rev = boost::lexical_cast<long>(rev);
+  OG_LOG << "current schema revision: " << current_schema_rev;
+  long file_schema_rev = schema_->get_schema_rev_from_file(_path);
+  OG_LOG << "file schema revision: " << file_schema_rev;
+
+  if (file_schema_rev <= current_schema_rev)
+  {
+    OG_LOG << "It's not necessary to catchup.";
+    return true;
+  }
+
   char* tempdir = getenv("TEMP");
   stringstream session_tempname, schema_tempname;
   session_tempname << tempdir << "/SESSION-%%%%-%%%%-%%%%-%%%%.xml.gz";
@@ -1330,7 +1403,7 @@ bool session::catchup_schema(string _path)
   }
 
   OG_LOG << "import session from backup";
-  if(!import_from_file(session_temp.string()))
+  if (!import_from_file(session_temp.string()))
   {
     //tran.rollback();
     return false;
@@ -1646,15 +1719,18 @@ void session::insert_object_parameter_with_arg(session_object_ptr _sesn_obj,
     list<parameter_value_variant> empty_list;
     _sesn_obj->get_parameters()->insert
     (std::make_pair(boost::get<0>(_sesn_obj_param),
-               session_parameter_ptr(new session_parameter(empty_list,
-                                     boost::get<1>(_sesn_obj_param)))));
+                    session_parameter_ptr(new session_parameter(empty_list,
+                                          boost::get<1>(_sesn_obj_param)))));
 
     sesn_p =
       _sesn_obj->get_parameter(boost::get<0>(_sesn_obj_param));
   }
 
   if (!sesn_p.is_initialized())
-  { throw og::core::exception() << exception_message("unexpected. parameter not found."); }
+  {
+    throw og::core::exception() <<
+                                exception_message("unexpected. parameter not found.");
+  }
 
   sesn_p.get()->values_.clear();
   sesn_p.get()->values_.assign(_arg.begin(), _arg.end());
@@ -1861,15 +1937,18 @@ void session::insert_relation_parameter_with_arg(session_relation_ptr
     list<parameter_value_variant> empty_list;
     _sesn_rel->get_parameters()->insert
     (std::make_pair(boost::get<0>(_sesn_rel_param),
-               session_parameter_ptr(new session_parameter(empty_list,
-                                     boost::get<1>(_sesn_rel_param)))));
+                    session_parameter_ptr(new session_parameter(empty_list,
+                                          boost::get<1>(_sesn_rel_param)))));
 
     sesn_p =
       _sesn_rel->get_parameter(boost::get<0>(_sesn_rel_param));
   }
 
   if (!sesn_p.is_initialized())
-  { throw og::core::exception() << exception_message("unexpected. parameter not found."); }
+  {
+    throw og::core::exception() <<
+                                exception_message("unexpected. parameter not found.");
+  }
 
   sesn_p.get()->values_.clear();
   sesn_p.get()->values_.assign(_arg.begin(), _arg.end());

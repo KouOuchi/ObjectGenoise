@@ -88,7 +88,9 @@ public:
 
   OG_COREAPI static const char* schema_property_object_type();
   OG_COREAPI static const char* schema_property_object_name();
-  OG_COREAPI static const char* schema_property_core_revision();
+  //OG_COREAPI static const char* schema_property_core_revision();
+
+  OG_COREAPI og_schema_object_ptr get_property_object();
 
   ///////////////////////////////
   // parameters

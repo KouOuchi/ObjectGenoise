@@ -62,7 +62,6 @@
     <ClInclude Include="include\og\core\where_condition.h" />
     <ClInclude Include="include\og\core\xml_stream.h" />
     <ClInclude Include="include\og\og_converter.h" />
-    <ClInclude Include="include\og\og_internal_schema_property.h" />
     <ClInclude Include="include\og\og_schema.h" />
     <ClInclude Include="include\og\og_schema_object.h" />
     <ClInclude Include="include\og\og_schema_parameter.h" />

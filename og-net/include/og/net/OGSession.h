@@ -51,15 +51,18 @@ public:
 
   List<OGSessionObject^>^ get_object_by_name(List<String^>^ _oname_list);
 
-  List<OGSessionObject^>^ get_object_by_schema_object_name(List<String^>^ _schm_obj_oname_list);
+  List<OGSessionObject^>^ get_object_by_schema_object_name(
+    List<String^>^ _schm_obj_oname_list);
 
 //  List<OGSessionObject^>^ get_object_by_schema_object(List<OGSchemaObject^>^ _schm_obj_list);
 
   ///////////////////////////////
   // relation
   ///////////////////////////////
-  List<OGSessionObject^>^ get_connected_object_from(String^ _to_id, List<String^>^ _rel_type_list);
-  List<OGSessionObject^>^ get_connected_object_to(String^ _from_id, List<String^>^ _rel_type_list);
+  List<OGSessionObject^>^ get_connected_object_from(String^ _to_id,
+      List<String^>^ _rel_type_list);
+  List<OGSessionObject^>^ get_connected_object_to(String^ _from_id,
+      List<String^>^ _rel_type_list);
 
   //bool validate_connect(String^ _from_id, String^ _to_id,
   //                      List<String^>^ _rel_type_list);
@@ -75,6 +78,8 @@ public:
   // relation ends.
 
   bool catchup_schema(String^ _path);
+
+  OGSessionObject^ get_property_object();
 
 internal:
   OGSharedPtr<og::og_session> og_session_;

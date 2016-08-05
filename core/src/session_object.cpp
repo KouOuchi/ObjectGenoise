@@ -112,7 +112,7 @@ session_object_ptr session_object::copy_object(
   // adjust name and comment
   target->set_comment(get_comment());
   stringstream ss;
-  ss << "copy of ";
+//  ss << "copy of ";
   ss << get_name();
   target->set_name(ss.str());
   target->sync();
