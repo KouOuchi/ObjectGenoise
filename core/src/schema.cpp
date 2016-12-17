@@ -619,11 +619,14 @@ bool schema::import_from_file(string _path)
   BOOST_FOREACH(const ptree::value_type & child,
                 pt.get_child("og.schema.parameters"))
   {
+
     // deserialize
     schema_parameter_ptr schm_par(new schema_parameter(this));
     if (serializer<schema_parameter_ptr>::deserialize(child, schm_par))
     {
+      transaction tran(*session_);
       insert_schema_param(schm_par, false);
+      tran.commit();
     }
   }
 
@@ -637,6 +640,7 @@ bool schema::import_from_file(string _path)
     list<schema_object_parameter> obj_params;
     if (serializer<schema_object_ptr>::deserialize(child, schm_obj, obj_params))
     {
+      transaction tran(*session_);
       add_object(schm_obj);
 
       for (list<schema_object_parameter>::iterator it = obj_params.begin();
@@ -644,6 +648,7 @@ bool schema::import_from_file(string _path)
       {
         add_object_parameter_definition(schm_obj->get_id(), it->param_name_, it->pid_);
       }
+	  tran.commit();
     }
     else
     {
@@ -661,6 +666,7 @@ bool schema::import_from_file(string _path)
 
     if (serializer<schema_relation_ptr>::deserialize(child, schm_rel, rel_params))
     {
+      transaction tran(*session_);
       add_relation(schm_rel);
 
       for (list<schema_relation_parameter>::iterator it = rel_params.begin();
@@ -669,6 +675,7 @@ bool schema::import_from_file(string _path)
         add_relation_parameter_definition(schm_rel->get_id(), it->param_name_,
                                           it->pid_);
       }
+	  tran.commit();
     }
     else
     {

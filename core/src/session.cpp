@@ -199,6 +199,8 @@ session_object_ptr session::create_object(schema_object_ptr _schm_obj)
 bool session::import_object(session_object_ptr _sesn_obj,
                             const ptree& _param_elm)
 {
+  transaction tran(*this);
+
   // declare insert target and current schema's target
   map<string, list<parameter_value_variant>> params_file;
 
@@ -231,12 +233,15 @@ bool session::import_object(session_object_ptr _sesn_obj,
     }
   }
 
+  tran.commit();
   return true;
 }
 
 bool session::import_relation(session_relation_ptr _sesn_rel,
                               const ptree& _param_elm)
 {
+  transaction tran(*this);
+
   // declare insert target
   map<string, list<parameter_value_variant>> params;
 
@@ -244,18 +249,18 @@ bool session::import_relation(session_relation_ptr _sesn_rel,
   import_parameter(_param_elm, &params);
 
   // check revision up or not
-  int schema_rev = boost::lexical_cast<int>
-                   (_sesn_rel->get_schema_relation()->get_revision());
-  int session_rev = boost::lexical_cast<int>
-                    (_sesn_rel->get_revision());
+  //int schema_rev = boost::lexical_cast<int>
+  //                 (_sesn_rel->get_schema_relation()->get_revision());
+  //int session_rev = boost::lexical_cast<int>
+  //                  (_sesn_rel->get_revision());
 
-  if (schema_rev > session_rev)
-  {
-  }
-  else
-  {
+  //if (schema_rev > session_rev)
+  //{
+  //}
+  //else
+  //{
 
-  }
+  //}
 
   //insert record
   insert_relation(_sesn_rel);
@@ -281,6 +286,8 @@ bool session::import_relation(session_relation_ptr _sesn_rel,
     }
 
   }
+
+  tran.commit();
   return true;
 }
 
@@ -1030,10 +1037,13 @@ bool session::import_from_file(string _path)
   boost::property_tree::ptree pt;
   xml_stream().read_from_file(_path, &pt);
 
+  int count_object = 0;
   // session object
   BOOST_FOREACH(ptree::value_type & child,
                 pt.get_child("og.session.objects"))
   {
+    OG_LOG << "import session object:" << count_object++;
+
     session_object_ptr sesn_obj(new session_object(this));
 
     // deserialize
@@ -1061,9 +1071,12 @@ bool session::import_from_file(string _path)
   }
 
   // session relation
+  int count_relation = 0;
   BOOST_FOREACH(ptree::value_type & child,
                 pt.get_child("og.session.relations"))
   {
+    OG_LOG << "import session relation:" << count_relation++;
+
     session_relation_ptr sesn_rel(new session_relation(this));
 
     // deserialize
@@ -1101,6 +1114,7 @@ bool session::import_from_file(string _path)
 
   if (get_property_object() == nullptr)
   {
+    OG_LOG << "building property.";
     build_property_object();
   }
 
@@ -1383,9 +1397,6 @@ bool session::catchup_schema(string _path)
   fs::path session_temp = fs::unique_path(session_tempname.str());
   fs::path schema_temp = fs::unique_path(schema_tempname.str());
 
-  // start transaction
-  //transaction tran(*this);
-
   OG_LOG << "session backup:" << session_temp;
   export_to_file(session_temp.string());
 
@@ -1398,20 +1409,17 @@ bool session::catchup_schema(string _path)
   OG_LOG << "import schema from file";
   if (!schema_->import_from_file(_path))
   {
-    //tran.rollback();
     return false;
   }
 
   OG_LOG << "import session from backup";
   if (!import_from_file(session_temp.string()))
   {
-    //tran.rollback();
     return false;
   }
 
   OG_LOG << "catchup done.";
 
-  //tran.commit();
   return true;
 }
 

@@ -54,12 +54,12 @@ int main(int argc, char* argv[])
   {
     if (session.catchup_schema(argv[2]))
     {
-      PrintUsage("Catchup schemea does.");
+      PrintUsage("Catchup schemea success.");
       exit(0);
     }
     else
     {
-      PrintUsage("Chatchup schema doesn't do.");
+      PrintUsage("Chatchup schema failure.");
       exit(1);
     }
   }

@@ -1,5 +1,5 @@
 ﻿#define MyAppSetupName 'ObjectGenoise'
-#define MyAppVersion '0.77' 
+#define MyAppVersion '0.78' 
 
 [Setup]
 AppId=ObjectGenoise
