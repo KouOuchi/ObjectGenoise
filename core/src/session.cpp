@@ -119,27 +119,35 @@ void session::purge(bool _delete_schema_property_object)
   list<session_relation_ptr> rels;
   get_relation_by_query(where_clause<string>("1=1"), &rels);
 
-  for (list<session_relation_ptr>::iterator it = rels.begin(); it != rels.end();
-       ++it)
   {
-    it->get()->delete_relation();
+    transaction tran(*this);
+    for (list<session_relation_ptr>::iterator it = rels.begin(); it != rels.end();
+         ++it)
+    {
+      it->get()->delete_relation();
+    }
+    tran.commit();
   }
 
   list<session_object_ptr> objs;
   get_object_by_query(where_clause<string>("1=1"), &objs);
 
-  for (list<session_object_ptr>::iterator it = objs.begin(); it != objs.end();
-       ++it)
   {
-    if (it->get()->get_type().compare(schema::schema_property_object_type_) == 0 &&
-        !_delete_schema_property_object)
+    transaction tran(*this);
+    for (list<session_object_ptr>::iterator it = objs.begin(); it != objs.end();
+         ++it)
     {
-      continue;
+      if (it->get()->get_type().compare(schema::schema_property_object_type_) == 0 &&
+          !_delete_schema_property_object)
+      {
+        continue;
+      }
+      else
+      {
+        it->get()->delete_object();
+      }
     }
-    else
-    {
-      it->get()->delete_object();
-    }
+    tran.commit();
   }
 
   /*

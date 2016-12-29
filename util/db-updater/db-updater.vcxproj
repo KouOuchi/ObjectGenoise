@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -31,13 +31,14 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>test</RootNamespace>
     <ProjectName>db-updater</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -45,15 +46,16 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>false</UseOfMfc>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>false</UseOfMfc>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -76,14 +78,14 @@
     <LibraryPath>../Debug;../lib;$(BOOST)\stage\lib;$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)core/include;$(SOCI)\include\soci;$(SQLITE3);include;$(BOOST);$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration)\;$(SOCI)\debug\lib64;$(SQLITE3);$(BOOST)\lib64-msvc-12.0;$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>$(SolutionDir)core/include;$(SOCI)\include\soci;$(SQLITE3);include;$(BOOST);$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;$(WindowsSDK_IncludePath);$(UniversalCRT_IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration)\;$(SOCI)\debug\lib64;$(SQLITE3);$(BOOST)\stage\lib;$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSDK_LibraryPath_x64);$(UniversalCRT_LibraryPath_x64)</LibraryPath>
     <SourcePath>src;$(VCInstallDir)atlmfc\src\mfc;$(VCInstallDir)atlmfc\src\mfcm;$(VCInstallDir)atlmfc\src\atl;$(VCInstallDir)crt\src;</SourcePath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(SolutionDir)core/include;$(SOCI)\include\soci;$(SQLITE3);include;$(BOOST);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration)\;$(SOCI)\release\lib64;$(SQLITE3);$(BOOST)\lib64-msvc-12.0;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
+    <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration)\;$(SOCI)\release\lib64;$(SQLITE3);$(BOOST)\stage\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -140,7 +142,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>boost_chrono-vc120-mt-gd-1_60.lib;boost_date_time-vc120-mt-gd-1_60.lib;boost_system-vc120-mt-gd-1_60.lib;boost_filesystem-vc120-mt-gd-1_60.lib;libboost_log-vc120-mt-gd-1_60.lib;libboost_log_setup-vc120-mt-gd-1_60.lib;boost_timer-vc120-mt-gd-1_60.lib;boost_regex-vc120-mt-gd-1_60.lib;boost_thread-vc120-mt-gd-1_60.lib;libboost_iostreams-vc120-mt-gd-1_60.lib;boost_zlib-vc120-mt-gd-1_60.lib</AdditionalDependencies>
+      <AdditionalDependencies>boost_chrono-vc140-mt-gd-1_63.lib;boost_date_time-vc140-mt-gd-1_63.lib;boost_system-vc140-mt-gd-1_63.lib;boost_filesystem-vc140-mt-gd-1_63.lib;libboost_log-vc140-mt-gd-1_63.lib;libboost_log_setup-vc140-mt-gd-1_63.lib;boost_timer-vc140-mt-gd-1_63.lib;boost_regex-vc140-mt-gd-1_63.lib;boost_thread-vc140-mt-gd-1_63.lib;libboost_iostreams-vc140-mt-gd-1_63.lib;boost_zlib-vc140-mt-gd-1_63.lib</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>
@@ -156,7 +158,7 @@ REM XCOPY.EXE /Y "$(SolutionDir)lib\debug\*.dll" "$(TargetDir)"</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies);boost_chrono-vc120-mt-1_60.lib;boost_date_time-vc120-mt-1_60.lib;boost_system-vc120-mt-1_60.lib;boost_filesystem-vc120-mt-1_60.lib;libboost_log-vc120-mt-1_60.lib;libboost_log_setup-vc120-mt-1_60.lib;boost_timer-vc120-mt-1_60.lib;boost_regex-vc120-mt-1_60.lib;boost_thread-vc120-mt-1_60.lib;libboost_iostreams-vc120-mt-1_60.lib;boost_zlib-vc120-mt-1_60.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);boost_chrono-vc140-mt-1_63.lib;boost_date_time-vc140-mt-1_63.lib;boost_system-vc140-mt-1_63.lib;boost_filesystem-vc140-mt-1_63.lib;libboost_log-vc140-mt-1_63.lib;libboost_log_setup-vc140-mt-1_63.lib;boost_timer-vc140-mt-1_63.lib;boost_regex-vc140-mt-1_63.lib;boost_thread-vc140-mt-1_63.lib;libboost_iostreams-vc140-mt-1_63.lib;boost_zlib-vc140-mt-1_63.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
     <ClCompile>

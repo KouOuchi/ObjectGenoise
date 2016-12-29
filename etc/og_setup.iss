@@ -1,5 +1,5 @@
 ﻿#define MyAppSetupName 'ObjectGenoise'
-#define MyAppVersion '0.78' 
+#define MyAppVersion '0.80' 
 
 [Setup]
 AppId=ObjectGenoise
@@ -12,7 +12,7 @@ AppPublisher=Division Engineering
 ;AppPublisherURL=http://...
 ;AppSupportURL=http://...
 ;AppUpdatesURL=http://...
-OutputBaseFilename={#MyAppSetupName}-{#MyAppVersion}-lib64-msvc-12.0
+OutputBaseFilename={#MyAppSetupName}-{#MyAppVersion}-lib64-msvc-14.0
 DefaultGroupName=Lib
 DefaultDirName={pf}\ObjectGenoise
 ;UninstallDisplayIcon={app}\MyProgram.exe

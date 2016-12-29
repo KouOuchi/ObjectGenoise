@@ -1,8 +1,8 @@
-﻿#define MyAppSetupName 'Boost1.60.0'
+﻿#define MyAppSetupName 'Boost1.63.0'
 #define MyAppVersion '0.1' 
 
 [Setup]
-AppName="boost_1_60_0"
+AppName="boost_1_63_0"
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppSetupName} {#MyAppVersion}
 AppCopyright=Copyright ｩ Division Engineering 2015
@@ -13,7 +13,7 @@ AppPublisher=Division Engineering
 ;AppUpdatesURL=http://...
 OutputBaseFilename={#MyAppSetupName}-{#MyAppVersion}
 ;DefaultGroupName="Lib"
-DefaultDirName={pf}\boost_1_60_0
+DefaultDirName={pf}\boost_1_63_0
 ;UninstallDisplayIcon={app}\MyProgram.exe
 ;OutputDir=bin
 SourceDir=.
@@ -44,7 +44,7 @@ DirExistsWarning=no
 ;Source: "src\MyProgram-IA64.exe"; DestDir: "{app}"; DestName: "MyProgram.exe"; Check: IsIA64
 ;Source: "src\MyProgram.exe"; DestDir: "{app}"; Check: not Is64BitInstallMode
 
-Source: "C:\mnt\lib2\Boost1.57_Ogre1.9.0 DevKit2\boost_1_60_0\*"; DestDir: "{app}\"; Flags: ignoreversion recursesubdirs createallsubdirs; 
+Source: "C:\mnt\lib2\boost_1_63_0\*"; DestDir: "{app}\"; Flags: ignoreversion recursesubdirs createallsubdirs; 
 ;Source: "C:\mnt\lib2\Boost1.57_Ogre1.9.0 DevKit\Ogre-v1-9-0\*"; DestDir: "{app}\Ogre-v1-9-0\"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: Ogre
 
 ;Source: "setup-splash.bmp"; DestName: "setup-splash.bmp"; Flags: dontcopy nocompression
@@ -57,7 +57,7 @@ Source: "C:\mnt\lib2\Boost1.57_Ogre1.9.0 DevKit2\boost_1_60_0\*"; DestDir: "{app
 Name: "UpdateEnv"; Description: "Create or Update BOOST environment value"; Types: custom full
 
 [Run]
-Filename: "{app}\link.bat"
+;Filename: "{app}\link.bat"
 Filename: "{app}\env.bat"; Components: UpdateEnv
 
 [CustomMessages]

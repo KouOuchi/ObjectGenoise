@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>test_og_net</RootNamespace>
     <AssemblyName>test-og-net</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -88,13 +88,6 @@
     <Compile Include="UnitTest_Session.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\og-net\og-net.vcxproj">
-      <Project>{da3ec6c7-b216-4f4b-a3be-24013ae86fda}</Project>
-      <Name>og.net</Name>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="project.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -103,6 +96,12 @@
     <Content Include="GhostProject.schema.xml.gz">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\og-net\og-net.vcxproj">
+      <Project>{da3ec6c7-b216-4f4b-a3be-24013ae86fda}</Project>
+      <Name>og.net</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
