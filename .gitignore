@@ -175,3 +175,4 @@ $RECYCLE.BIN/
  
 # Mac crap
 .DS_Store
+/OG.VC.db
