@@ -10,6 +10,7 @@ using namespace boost::filesystem;
 
 void PrintUsage(string mes)
 {
+  cout << "db-updater(20170405)" << endl;
   cout << "usage: [db file] [schema file]" << endl;
   cout << endl;
   cout << mes << endl;
@@ -46,7 +47,10 @@ int main(int argc, char* argv[])
   }
   catch (exception e)
   {
-    PrintUsage(e.what());
+    stringstream ss;
+    ss << "Exception.1 ";
+    ss << e.what();
+    PrintUsage(ss.str());
     exit(1);
   }
 
@@ -65,7 +69,10 @@ int main(int argc, char* argv[])
   }
   catch (exception e)
   {
-    PrintUsage(e.what());
+    stringstream ss;
+    ss << "Exception.2 ";
+    ss << e.what();
+    PrintUsage(ss.str());
     exit(1);
   }
 }
