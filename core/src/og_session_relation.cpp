@@ -1,5 +1,3 @@
-#include "og/stdafx.h"
-
 #include "og/og_session_relation.h"
 #include "og/og_session_parameter.h"
 

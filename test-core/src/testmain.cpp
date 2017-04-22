@@ -11,7 +11,7 @@ struct TestCoreConfig
   ~TestCoreConfig()
   {
 
-#ifdef WINDOWS
+#ifdef _WINDOWS
 	  ::system("pause");
 #endif
 

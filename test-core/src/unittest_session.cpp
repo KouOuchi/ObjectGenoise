@@ -8,7 +8,7 @@ BOOST_FIXTURE_TEST_SUITE(session, fixture_clean_session);
 // basic
 BOOST_AUTO_TEST_CASE( session_1000 )
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE( session_1000 )
 // not found
 BOOST_AUTO_TEST_CASE( session_1001 )
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE( session_1001 )
 // session relatoin basic test
 BOOST_AUTO_TEST_CASE( session_1002 )
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -265,7 +265,7 @@ BOOST_AUTO_TEST_CASE( session_1003 )
 // connectable relation
 BOOST_AUTO_TEST_CASE( session_1004 )
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -368,7 +368,7 @@ BOOST_AUTO_TEST_CASE( session_1004 )
 // 2 schema relation
 BOOST_AUTO_TEST_CASE( session_1005 )
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -414,7 +414,7 @@ BOOST_AUTO_TEST_CASE( session_1005 )
 // parameter test (integer)
 BOOST_AUTO_TEST_CASE(session_1006)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -605,7 +605,7 @@ BOOST_AUTO_TEST_CASE(session_1006)
 // parameter test (real)
 BOOST_AUTO_TEST_CASE(session_1007)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -795,7 +795,7 @@ BOOST_AUTO_TEST_CASE(session_1007)
 // parameter test text
 BOOST_AUTO_TEST_CASE(session_1008)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -987,7 +987,7 @@ BOOST_AUTO_TEST_CASE(session_1008)
 // disconnect
 BOOST_AUTO_TEST_CASE( session_1100 )
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -1029,7 +1029,7 @@ BOOST_AUTO_TEST_CASE( session_1100 )
 // COPY
 BOOST_AUTO_TEST_CASE( session_1111 )
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
 //  og::core::CrtCheckMemory __check__;
 #endif
 
@@ -1284,7 +1284,7 @@ BOOST_AUTO_TEST_CASE( session_1111 )
 // delete
 BOOST_AUTO_TEST_CASE( session_1112 )
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
 //  og::core::CrtCheckMemory __check__;
 #endif
 

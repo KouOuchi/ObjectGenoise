@@ -8,6 +8,12 @@ namespace test_og_net
     [TestClass]
     public class UnitTest_Transaction
     {
+        [TestInitialize]
+        public void setpath()
+        {
+            InitilizeOnce.GetInstance().SetPath();
+        }
+
         [TestMethod]
         public void transaction_1000()
         {

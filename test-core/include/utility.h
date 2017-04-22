@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef WINDOWS
+#ifdef _WINDOWS
 #include <boost/date_time.hpp>
 #include <crtdbg.h>
 #include <boost/test/unit_test.hpp>

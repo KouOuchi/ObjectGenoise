@@ -224,14 +224,18 @@ And support files :
 
 ## Prerequisite
 ObjectGenoise depends on the following package
-* [boost] 1.60
+* [boost] 1.63
         Note: while using boost_log from c++/cli, I'm faced with crash.
-        So, i use this [buildscript].
-
-* [soci] 3.2
+```
+\b2 toolset=msvc -s ZLIB_SOURCE="C:\Apps\lib\zlib-1.2.8" address-model=64 -j 4 define=BOOST_LOG_USE_CHAR define=BOOST_LOG_USE_WINNT5_API define=_HAS_ITERATOR_DEBUGGING=0 define=_ITERATOR_DEBUG_LEVEL=0  define=BOOST_LOG_USE_WINNT5_API threading=single,multi link=static,shared --build-type=complete stage
+```
+* [soci] 3.3.2
 * [SQLite3] 3.8.7
 
 ## Building
+
+*** Step.1 Prepare 3 packages and its environment
+
 You need 3 environment variable as follows :
 - BOOST
 - SOCI
@@ -247,10 +251,40 @@ SOCI=c:\path\to\soci
 SQLITE3=c:\path\to\sqlite3
 ```
 
-*** Windows
-use VisualStudio2013. Set platform to x64.
+*** Step.2 run CMake
+
+*** Step.3 Coose Debug or Release
+
+In the top level of CMakeLists.txt, uncomment Debug or Release line as follows:
+
+```
+cmake_minimum_required(VERSION 3.0.2)
+ 
+set(CMAKE_BUILD_TYPE "Debug")
+#set(CMAKE_BUILD_TYPE "Release")
+
+```
+
+*** Step.4 Set Debug or Release in Visuals Studio Configuration
+
+and then, build solution.
+
+*** Step.5 Testing
+
+**** C++ tests 
+Written with boost unittest framework in test-core project.
+Sets the projet to startup and run.
+
+**** C# tests 
+
+Written with microsoft unittest framework in test-og-net project.
+Sets test architecture to x64. Open test explorer and click Run All.
+And then rebuild the project, you can see test items in test explorer.
 
 ## Version and History
+0.83  * Add CMake scripts.
+0.81  * runtime version is changed from 8.1 to 10.xxx
+0.80  * boost 1.64 + VS2015 support.
 0.77  * add global object, schema property.
       * enhancement : catchup_schema checks revision of schema property.
       * catched up soci 3_2_3

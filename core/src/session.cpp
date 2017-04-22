@@ -1,5 +1,3 @@
-#include "og/stdafx.h"
-
 #include "og/core/session.h"
 #include "og/core/schema.h"
 #include "og/core/where_condition.h"

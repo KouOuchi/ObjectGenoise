@@ -6,7 +6,7 @@
 // test boost posix_time
 BOOST_AUTO_TEST_CASE( basic_001 )
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory check;
 #endif
 
@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE( basic_001 )
 /*
 BOOST_AUTO_TEST_CASE( basic_002 )
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   CrtCheckMemory check;
 #endif
 

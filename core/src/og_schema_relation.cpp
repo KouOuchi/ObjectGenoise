@@ -1,5 +1,3 @@
-#include "og/stdafx.h"
-
 #include "og/og_schema_relation.h"
 #include "og/core/schema_relation.h"
 #include "og/core/schema.h"

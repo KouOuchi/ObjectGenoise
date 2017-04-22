@@ -8,6 +8,12 @@ namespace test_og_net
     [TestClass]
     public class UnitTest_Schema
     {
+        [TestInitialize]
+        public void setpath()
+        {
+            InitilizeOnce.GetInstance().SetPath();
+        }
+
         void _check_OGSchemaObject(OGSchemaObject _soptr, string _oid, string _otype,
                                   string _oname)
         {

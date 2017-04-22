@@ -65,6 +65,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="og-net, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\og-net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -97,12 +101,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\og-net\og-net.vcxproj">
-      <Project>{da3ec6c7-b216-4f4b-a3be-24013ae86fda}</Project>
-      <Name>og.net</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
@@ -124,9 +122,11 @@
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>XCOPY.EXE /Y "$(SolutionDir)lib\$(ConfigurationName)\*.dll" "$(TargetDir)"
-XCOPY.EXE /Y "$(SolutionDir)x64\$(ConfigurationName)\core*.dll" "$(TargetDir)"
+    <PostBuildEvent>XCOPY.EXE /E /Y "$(SolutionDir)bin\$(Configuration)" "$(TargetDir)"
 </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>XCOPY.EXE /Y "$(SolutionDir)bin\$(Configuration)\og-net.dll" "$(ProjectDir)"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

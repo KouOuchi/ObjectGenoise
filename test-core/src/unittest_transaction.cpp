@@ -7,7 +7,7 @@ BOOST_FIXTURE_TEST_SUITE(tran, fixture_clean_session);
 
 BOOST_AUTO_TEST_CASE( transaction_1000 )
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE( transaction_1000 )
 
 BOOST_AUTO_TEST_CASE( transaction_1001 )
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE( transaction_1001 )
 // parameter and transaction
 BOOST_AUTO_TEST_CASE(transaction_1002)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 

@@ -1,5 +1,3 @@
-#include "og/stdafx.h"
-
 #include "og/og_session.h"
 #include "og/og_schema_object.h"
 #include "og/og_session_object.h"

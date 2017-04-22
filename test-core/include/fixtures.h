@@ -38,8 +38,8 @@
 #include <exception>
 #include <boost/filesystem.hpp>
 
-#define DBPATH "../sql/og.db"
-#define SRC_DBPATH "../sql/og_src.db"
+#define DBPATH "../../sql/og.db"
+#define SRC_DBPATH "../../sql/og_src.db"
 
 namespace pt = boost::posix_time;
 using namespace std;

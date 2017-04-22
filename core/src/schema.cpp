@@ -1,5 +1,3 @@
-#include "og/stdafx.h"
-
 #include "og/core/schema.h"
 #include "og/core/mapping.h"
 #include "og/core/serializer.h"

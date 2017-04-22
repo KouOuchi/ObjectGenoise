@@ -18,7 +18,7 @@ void _check_schema_object(og::og_schema_object_ptr _soptr, string _oid,
 // schema basics
 BOOST_AUTO_TEST_CASE(schema_0001)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(schema_0001)
 
 BOOST_AUTO_TEST_CASE(schema_999)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(schema_999)
 
 BOOST_AUTO_TEST_CASE(schema_1000)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(schema_1000)
 // over session and get/set comment/revision
 BOOST_AUTO_TEST_CASE(schema_1001)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(schema_1001)
 // get object by type
 BOOST_AUTO_TEST_CASE(schema_1002)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE(schema_1002)
 // get object by name
 BOOST_AUTO_TEST_CASE(schema_1003)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -252,7 +252,7 @@ BOOST_AUTO_TEST_CASE(schema_1003)
 // null/nothing test
 BOOST_AUTO_TEST_CASE(schema_1005)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -290,7 +290,7 @@ BOOST_AUTO_TEST_CASE(schema_1005)
 // relation object
 BOOST_AUTO_TEST_CASE(schema_2000)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -445,7 +445,7 @@ BOOST_AUTO_TEST_CASE(schema_2000)
 // relation auto delete test
 BOOST_AUTO_TEST_CASE(schema_2001)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -487,7 +487,7 @@ BOOST_AUTO_TEST_CASE(schema_2001)
 // connected relation
 BOOST_AUTO_TEST_CASE(schema_2002)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
 #endif
 
@@ -561,7 +561,7 @@ BOOST_AUTO_TEST_CASE(schema_2002)
 /*
 BOOST_AUTO_TEST_CASE( schema_3001 )
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
 og::core::CrtCheckMemory __check__;
 #endif
 // initialize db

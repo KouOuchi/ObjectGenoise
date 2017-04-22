@@ -6,7 +6,7 @@ using System.IO;
 
 namespace test_og_net
 {
-#if skip_large_test
+#if !skip_large_test
     [TestClass]
     public class UnitTest_LargeData
     {

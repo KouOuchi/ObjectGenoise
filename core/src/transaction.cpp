@@ -1,5 +1,3 @@
-#include "og/stdafx.h"
-
 #include "og/core/transaction.h"
 #include "og/core/session.h"
 

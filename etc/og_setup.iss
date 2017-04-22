@@ -1,12 +1,12 @@
 ﻿#define MyAppSetupName 'ObjectGenoise'
-#define MyAppVersion '0.82' 
+#define MyAppVersion '0.83' 
 
 [Setup]
 AppId=ObjectGenoise
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppSetupName} {#MyAppVersion}
-AppCopyright=Copyright ｩ Division Engineering 2016
+AppCopyright=Copyright ｩ Division Engineering 2017
 VersionInfoCompany=Division Engineering
 AppPublisher=Division Engineering
 ;AppPublisherURL=http://...
@@ -16,8 +16,8 @@ OutputBaseFilename={#MyAppSetupName}-{#MyAppVersion}-lib64-msvc-14.0
 DefaultGroupName=Lib
 DefaultDirName={pf}\ObjectGenoise
 ;UninstallDisplayIcon={app}\MyProgram.exe
-;OutputDir=
-SourceDir=.
+OutputDir=..\SDKInstaller
+SourceDir=..\build\SDK
 AllowNoIcons=yes
 ;SetupIconFile=MyProgramIcon
 SolidCompression=yes
@@ -45,16 +45,10 @@ DirExistsWarning=no
 ;Source: "src\MyProgram-IA64.exe"; DestDir: "{app}"; DestName: "MyProgram.exe"; Check: IsIA64
 ;Source: "src\MyProgram.exe"; DestDir: "{app}"; Check: not Is64BitInstallMode
 
-Source: "C:\mnt\git2\ObjectGenoise\core\include\*"; DestDir: "{app}\include"; Flags: ignoreversion recursesubdirs ; Components: UpdateEnv
-Source: "C:\mnt\git2\ObjectGenoise\test-og-net\bin\x64\Debug\*.dll"; DestDir: "{app}\debug\bin"; Flags: ignoreversion recursesubdirs ; Components: UpdateEnv
-Source: "C:\mnt\git2\ObjectGenoise\test-og-net\bin\x64\Debug\*.pdb"; DestDir: "{app}\debug\bin"; Flags: ignoreversion recursesubdirs ; Components: UpdateEnv
-Source: "C:\mnt\git2\ObjectGenoise\x64\Debug\*.lib"; DestDir: "{app}\debug\lib64"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
-
-Source: "C:\mnt\git2\ObjectGenoise\test-og-net\bin\x64\Release\*.dll"; DestDir: "{app}\release\bin"; Flags: ignoreversion recursesubdirs ; Components: UpdateEnv
-Source: "C:\mnt\git2\ObjectGenoise\test-og-net\bin\x64\Release\*.pdb"; DestDir: "{app}\release\bin"; Flags: ignoreversion recursesubdirs ; Components: UpdateEnv
-Source: "C:\mnt\git2\ObjectGenoise\x64\Release\*.lib"; DestDir: "{app}\release\lib64"; Flags: ignoreversion recursesubdirs ; Components: UpdateEnv
-Source: "C:\mnt\git2\ObjectGenoise\etc\env.bat"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs; Components: UpdateEnv
-Source: "C:\mnt\git2\ObjectGenoise\x64\Release\db-updater.exe"; DestDir: "{app}\release\bin"; Flags: ignoreversion recursesubdirs; Components: UpdateEnv
+Source: "include\*"; DestDir: "{app}\include"; Flags: ignoreversion recursesubdirs ; Components: UpdateEnv
+Source: "Debug\*"; DestDir: "{app}\Debug"; Flags: ignoreversion recursesubdirs ; Components: UpdateEnv
+Source: "Release\*"; DestDir: "{app}\Release"; Flags: ignoreversion recursesubdirs ; Components: UpdateEnv
+Source: "env.bat"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs; Components: UpdateEnv
 
 ;Source: "C:\mnt\git2\ObjectGenoise\util\SchemaUpdater\bin\Release"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: UpdateEnv
 ;Source: "setup-splash.bmp"; DestName: "setup-splash.bmp"; Flags: dontcopy nocompression

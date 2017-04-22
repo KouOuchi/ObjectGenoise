@@ -11,7 +11,7 @@ BOOST_FIXTURE_TEST_SUITE(etc, fixture_clean_session);
 // xml export
 BOOST_AUTO_TEST_CASE(etc_1000_basic_import)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   // TODO: CrtCheckMemory detects memory leak in this test.
   //og::core::CrtCheckMemory __check__;
 #endif
@@ -156,7 +156,7 @@ BOOST_AUTO_TEST_CASE(etc_1000_basic_import)
 // xml export
 BOOST_AUTO_TEST_CASE(etc_1002_schema_verup)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   // TODO: CrtCheckMemory detects memory leak in this test.
   //og::core::CrtCheckMemory __check__;
 #endif
@@ -401,7 +401,7 @@ BOOST_AUTO_TEST_CASE(etc_1002_schema_verup)
 // xml export
 BOOST_AUTO_TEST_CASE(etc_1003_schema_catchup)
 {
-#ifdef WINDOWS
+#ifdef _WINDOWS
   // TODO: CrtCheckMemory detects memory leak in this test.
   //og::core::CrtCheckMemory __check__;
 #endif

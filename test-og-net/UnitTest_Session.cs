@@ -8,6 +8,12 @@ namespace test_og_net
     [TestClass]
     public class UnitTest_Session
     {
+        [TestInitialize]
+        public void setpath()
+        {
+            InitilizeOnce.GetInstance().SetPath();
+        }
+
         // basic
         [TestMethod]
         public void session_1000()
