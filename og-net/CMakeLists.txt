@@ -137,9 +137,9 @@ set_directory_properties(PROPERTIES
     "${PROJECT_SOURCE_DIR}"
     )
 set_target_properties(og-net PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
-cotire(og-net CONFIGURATIONS ${CMAKE_BUILD_TYPE})
 
 set_target_properties(og-net PROPERTIES COMPILE_FLAGS "/clr /EHa")
+set_property(TARGET og-net PROPERTY OUTPUT_NAME "og.net")
 
 #
 # install

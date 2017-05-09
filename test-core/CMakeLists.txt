@@ -130,5 +130,5 @@ remove_definitions(-D_MBCS)
 #    "${PROJECT_SOURCE_DIR}"
 #    )
 #set_target_properties(test-core PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
-#cotire(test-core CONFIGURATIONS ${CMAKE_BUILD_TYPE})
+
 

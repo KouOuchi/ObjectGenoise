@@ -134,7 +134,6 @@ set_directory_properties(PROPERTIES
     "${PROJECT_SOURCE_DIR}"
     )
 set_target_properties(core PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
-cotire(core CONFIGURATIONS ${CMAKE_BUILD_TYPE})
 
 #
 # install

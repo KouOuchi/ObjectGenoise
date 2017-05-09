@@ -131,7 +131,6 @@ set_directory_properties(PROPERTIES
     "${PROJECT_SOURCE_DIR}"
     )
 set_target_properties(db-updater PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
-cotire(db-updater CONFIGURATIONS ${CMAKE_BUILD_TYPE})
 
 #
 # install
