@@ -34,7 +34,7 @@ public:
   bool import_from_file(string _path);
   void export_to_file(string _path);
   bool catchup_schema(string _path);
-
+  bool reload_schema(string _path, string _sess_tmp);
   OG_COREAPI void build();
   void open(string _connection_string);
   void close();

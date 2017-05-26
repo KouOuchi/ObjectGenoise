@@ -19,9 +19,9 @@ void PrintUsage(string mes)
 
 int main(int argc, char* argv[])
 {
-  if (argc != 3)
+  if (!(argc == 3 || argc == 4))
   {
-    PrintUsage("number of argument is not 2.");
+    PrintUsage("number of argument is not 2 or not 4.");
     exit(1);
   }
 
@@ -56,16 +56,33 @@ int main(int argc, char* argv[])
 
   try
   {
-    if (session.catchup_schema(argv[2]))
-    {
-      PrintUsage("Catchup schemea success.");
-      exit(0);
-    }
-    else
-    {
-      PrintUsage("Chatchup schema failure.");
-      exit(1);
-    }
+	  if (argc == 3)
+	  {
+		  if (session.catchup_schema(argv[2]))
+		  {
+			  PrintUsage("Catchup schemea success.");
+			  exit(0);
+		  }
+		  else
+		  {
+			  PrintUsage("Chatchup schema failure.");
+			  exit(1);
+		  }
+	  }
+	  else
+	  {
+		  if (session.reload_schema(argv[2], argv[3]))
+		  {
+			  PrintUsage("Catchup schemea success.");
+			  exit(0);
+		  }
+		  else
+		  {
+			  PrintUsage("Chatchup schema failure.");
+			  exit(1);
+		  }
+
+	  }
   }
   catch (exception e)
   {

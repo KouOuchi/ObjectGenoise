@@ -1429,6 +1429,45 @@ bool session::catchup_schema(string _path)
   return true;
 }
 
+bool session::reload_schema(string _path, string _sess_tmp)
+{
+  OG_LOG << "reload_schema start.";
+
+  fs::path schema_new(_path);
+
+  boost::system::error_code error;
+  const bool result = fs::exists(schema_new, error);
+  if (!result || error)
+  {
+    OG_LOG << "schema file is not found:" << _path;
+    throw og::core::exception() << exception_message("schema file is not found.");
+  }
+
+  long file_schema_rev = schema_->get_schema_rev_from_file(_path);
+  OG_LOG << "file schema revision: " << file_schema_rev;
+
+  fs::path session_temp(_sess_tmp);
+
+  OG_LOG << "purge schema";
+  schema_->purge();
+
+  OG_LOG << "import schema from file";
+  if (!schema_->import_from_file(_path))
+  {
+    return false;
+  }
+
+  OG_LOG << "import session from backup";
+  if (!import_from_file(session_temp.string()))
+  {
+    return false;
+  }
+
+  OG_LOG << "reload done.";
+
+  return true;
+}
+
 void session::delete_object_parameter_definition(string _param_name,
     schema_parameter_ptr _param)
 {

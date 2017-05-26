@@ -66,6 +66,10 @@ bool og_session::catchup_schema(string _path)
 {
   return session_->catchup_schema(_path);
 }
+bool og_session::reload_schema(string _path, string _sesn_path)
+{
+  return session_->reload_schema(_path, _sesn_path);
+}
 
 optional<og_session_object_ptr> og_session::get_object(string _id)
 {
