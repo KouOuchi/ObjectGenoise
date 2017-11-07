@@ -90,7 +90,7 @@ ELSE ()
     add_library(og-net SHARED ${HDRS} ${SRCS})
 
     # shared libs
-#    set(MyBoost_THREAD_LIBRARY optimized "boost_thread-vc140-mt-1_63.lib" debug "boost_thread-vc140-mt-gd-1_63.lib")
+    set(MyBoost_THREAD_LIBRARY optimized "boost_thread-vc140-mt-1_63.lib" debug "boost_thread-vc140-mt-gd-1_63.lib")
     set(MyBoost_DATE_TIME_LIBRARY optimized "boost_date_time-vc140-mt-1_63.lib" debug "boost_date_time-vc140-mt-gd-1_63.lib")
     set(MyBoost_SYSTEM_LIBRARY optimized "boost_system-vc140-mt-1_63.lib" debug "boost_system-vc140-mt-gd-1_63.lib")
     set(MyBoost_FILESYSTEM_LIBRARY optimized "boost_filesystem-vc140-mt-1_63.lib" debug "boost_filesystem-vc140-mt-gd-1_63.lib")
@@ -137,6 +137,16 @@ set_property(TARGET og-net PROPERTY OUTPUT_NAME "og.net")
 #
 # install
 #
-install (TARGETS og-net 
-    DESTINATION "${CMAKE_BINARY_DIR}/SDK/${CMAKE_BUILD_TYPE}/bin/"
+install (TARGETS og-net CONFIGURATIONS Release
+    DESTINATION "${CMAKE_BINARY_DIR}/SDK/Release/bin/"
     )
+
+install (TARGETS og-net CONFIGURATIONS Debug
+    DESTINATION "${CMAKE_BINARY_DIR}/SDK/Debug/bin/"
+    )
+
+install (TARGETS og-net CONFIGURATIONS RelWithDebInfo
+    DESTINATION "${CMAKE_BINARY_DIR}/SDK/RelWithDebInfo/bin/"
+    )
+
+

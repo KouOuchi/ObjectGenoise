@@ -134,44 +134,54 @@ install (DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include"
     DESTINATION "${CMAKE_BINARY_DIR}/SDK/"
     )
 
-install (TARGETS core 
-    RUNTIME DESTINATION "${CMAKE_BINARY_DIR}/SDK/${CMAKE_BUILD_TYPE}/bin/"
-    ARCHIVE DESTINATION "${CMAKE_BINARY_DIR}/SDK/${CMAKE_BUILD_TYPE}/lib64/"
+install (TARGETS core CONFIGURATIONS Release
+    RUNTIME DESTINATION "${CMAKE_BINARY_DIR}/SDK/Release/bin"
+    ARCHIVE DESTINATION "${CMAKE_BINARY_DIR}/SDK/Release/lib64"
+    )
+install (TARGETS core CONFIGURATIONS Debug
+    RUNTIME DESTINATION "${CMAKE_BINARY_DIR}/SDK/Debug/bin"
+    ARCHIVE DESTINATION "${CMAKE_BINARY_DIR}/SDK/Debug/lib64"
+    )
+install (TARGETS core CONFIGURATIONS RelWithDebInfo
+    RUNTIME DESTINATION "${CMAKE_BINARY_DIR}/SDK/RelWithDebInfo/bin"
+    ARCHIVE DESTINATION "${CMAKE_BINARY_DIR}/SDK/RelWithDebInfo/lib64"
     )
 
-    install (FILES CONFIGURATIONS Debug
-        "$ENV{BOOST}/stage/lib/boost_chrono-vc140-mt-gd-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_date_time-vc140-mt-gd-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_filesystem-vc140-mt-gd-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_iostreams-vc140-mt-gd-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_locale-vc140-mt-gd-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_log_setup-vc140-mt-gd-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_log-vc140-mt-gd-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_regex-vc140-mt-gd-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_system-vc140-mt-gd-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_thread-vc140-mt-gd-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_timer-vc140-mt-gd-1_63.dll"
-#        "$ENV{BOOST}/stage/lib/boost_zlib-vc140-mt-gd-1_63.dll"
-        DESTINATION "${CMAKE_BINARY_DIR}/SDK/${CMAKE_BUILD_TYPE}/bin/"
+    install (FILES 
+        "${BOOST_LIBRARYDIR}/boost_thread-vc140-mt-gd-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_date_time-vc140-mt-gd-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_system-vc140-mt-gd-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_filesystem-vc140-mt-gd-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_chrono-vc140-mt-gd-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_timer-vc140-mt-gd-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_regex-vc140-mt-gd-1_63.dll"
+        DESTINATION "${CMAKE_BINARY_DIR}/SDK/Debug/bin/"
+		CONFIGURATIONS Debug
         )
 
-    install (FILES CONFIGURATIONS Release
-        "$ENV{BOOST}/stage/lib/boost_chrono-vc140-mt-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_date_time-vc140-mt-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_filesystem-vc140-mt-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_iostreams-vc140-mt-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_locale-vc140-mt-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_log_setup-vc140-mt-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_log-vc140-mt-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_regex-vc140-mt-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_system-vc140-mt-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_thread-vc140-mt-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_timer-vc140-mt-1_63.dll"
-#        "$ENV{BOOST}/stage/lib/boost_zlib-vc140-mt-1_63.dll"
-        DESTINATION "${CMAKE_BINARY_DIR}/SDK/${CMAKE_BUILD_TYPE}/bin/"
+    install (FILES
+        "${BOOST_LIBRARYDIR}/boost_thread-vc140-mt-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_date_time-vc140-mt-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_system-vc140-mt-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_filesystem-vc140-mt-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_chrono-vc140-mt-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_timer-vc140-mt-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_regex-vc140-mt-1_63.dll"
+        DESTINATION "${CMAKE_BINARY_DIR}/SDK/Release/bin/"
+        CONFIGURATIONS Release
         )
 
-
+    install (FILES
+        "${BOOST_LIBRARYDIR}/boost_thread-vc140-mt-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_date_time-vc140-mt-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_system-vc140-mt-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_filesystem-vc140-mt-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_chrono-vc140-mt-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_timer-vc140-mt-1_63.dll"
+        "${BOOST_LIBRARYDIR}/boost_regex-vc140-mt-1_63.dll"
+        DESTINATION "${CMAKE_BINARY_DIR}/SDK/RelWithDebInfo/bin/"
+        CONFIGURATIONS RelWithDebInfo
+        )
 
 install (FILES "${CMAKE_CURRENT_SOURCE_DIR}/../etc/env.bat"
     DESTINATION "${CMAKE_BINARY_DIR}/SDK/"

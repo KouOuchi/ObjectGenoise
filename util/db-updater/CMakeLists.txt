@@ -94,7 +94,7 @@ ELSE ()
     set(MyBoost_TIMER_LIBRARY optimized "boost_timer-vc140-mt-1_63.lib" debug "boost_timer-vc140-mt-gd-1_63.lib")
     set(MyBoost_REGEX_LIBRARY optimized "boost_regex-vc140-mt-1_63.lib" debug "boost_regex-vc140-mt-gd-1_63.lib")
 
-    target_link_libraries(db-updater core sqlite3 libsoci_core_3_2 libsoci_sqlite3_3_2 ${Boost_ZLIB_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${MyBoost_THREAD_LIBRARY} ${MyBoost_DATE_TIME_LIBRARY} ${MyBoost_SYSTEM_LIBRARY} ${MyBoost_FILESYSTEM_LIBRARY} ${MyBoost_CHRONO_LIBRARY} ${MyBoost_TIMER_LIBRARY} ${MyBoost_REGEX_LIBRARY})
+    target_link_libraries(db-updater core ${Boost_ZLIB_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${MyBoost_THREAD_LIBRARY} ${MyBoost_DATE_TIME_LIBRARY} ${MyBoost_SYSTEM_LIBRARY} ${MyBoost_FILESYSTEM_LIBRARY} ${MyBoost_CHRONO_LIBRARY} ${MyBoost_TIMER_LIBRARY} ${MyBoost_REGEX_LIBRARY})
 
     set(CMAKE_EXE_LINKER_FLAGS
       "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
@@ -127,6 +127,13 @@ set_target_properties(db-updater PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
 #
 # install
 #
-install (TARGETS db-updater 
-    DESTINATION "${CMAKE_BINARY_DIR}/SDK/${CMAKE_BUILD_TYPE}/bin/"
+install (TARGETS db-updater CONFIGURATIONS Release
+    DESTINATION "${CMAKE_BINARY_DIR}/SDK/Release/bin/"
+    )
+
+install (TARGETS db-updater CONFIGURATIONS Debug
+    DESTINATION "${CMAKE_BINARY_DIR}/SDK/Debug/bin/"
+    )
+install (TARGETS db-updater CONFIGURATIONS RelWithDebInfo
+    DESTINATION "${CMAKE_BINARY_DIR}/SDK/RelWithDebInfo/bin/"
     )
