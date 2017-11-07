@@ -21,7 +21,7 @@ endif(WIN32 OR APPLE)
 #
 set(BOOST_ROOT $ENV{BOOST})
 set(BOOST_INCLUDEDIR $ENV{BOOST})
-set(BOOST_LIBRARYDIR $ENV{BOOST}/stage/lib)
+set(BOOST_LIBRARYDIR $ENV{BOOST}/lib64-msvc-14.0)
 
 IF (UNIX)
    add_definitions(-DBOOST_ALL_DYN_LINK -DBOOST_LOG_DYN_LINK)
@@ -34,7 +34,6 @@ IF (UNIX)
    find_package( Boost REQUIRED )
    
 ELSE ()
-   add_definitions(-D_HAS_ITERATOR_DEBUGGING=0 -D_ITERATOR_DEBUG_LEVEL=0 -D_WIN32_WINNT=0x0601)
    include(GenerateExportHeader)
    # Activate C++ exception handling
    IF (NOT CMAKE_CXX_FLAGS MATCHES "/EHsc")
@@ -56,24 +55,12 @@ ELSE ()
    SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD") 
    SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd") 
 
-   set(Boost_USE_STATIC_LIBS        OFF)
-   set(Boost_USE_MULTITHREADED      ON)
-   set(Boost_USE_STATIC_RUNTIME     OFF)
-   find_package( Boost REQUIRED COMPONENTS thread date_time system filesystem chrono regex zlib)
-
    set(Boost_USE_STATIC_LIBS        ON)
    set(Boost_USE_MULTITHREADED      ON)
    set(Boost_USE_STATIC_RUNTIME     OFF)
-   find_package( Boost REQUIRED COMPONENTS iostreams log log_setup)
+   find_package( Boost REQUIRED COMPONENTS iostreams log log_setup zlib)
 
 ENDIF (UNIX)
-
-if (WIN32 OR APPLE)
-	set(Boost_USE_STATIC_LIBS TRUE)
-else ()
-	# Statically linking boost to a dynamic Ogre build doesn't work on Linux 64bit
-	set(Boost_USE_STATIC_LIBS FALSE)
-endif ()
 
 set(Boost_ADDITIONAL_VERSIONS)
 
@@ -84,7 +71,7 @@ include_directories(
     $ENV{SQLITE3}
 )
 link_directories(
-    $ENV{BOOST}/stage/lib
+    ${BOOST_LIBRARYDIR}
     $ENV{SQLITE3}
     $ENV{SOCI}/${CMAKE_BUILD_TYPE}/lib64
 )
@@ -97,11 +84,16 @@ IF (UNIX)
 ELSE ()
     add_library(core SHARED ${HDRS} ${SRCS})
 
-    # static libs
-    target_link_libraries(core sqlite3 libsoci_core_3_2 libsoci_sqlite3_3_2 ${Boost_ZLIB_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_LOG_SETUP_LIBRARY})
-
     # shared libs
-    target_link_libraries(core ${Boost_THREAD_LIBRARY} ${Boost_DATE_TIME_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_CHRONO_LIBRARY} ${Boost_REGEX_LIBRARY})
+    set(MyBoost_THREAD_LIBRARY optimized "boost_thread-vc140-mt-1_63.lib" debug "boost_thread-vc140-mt-gd-1_63.lib")
+    set(MyBoost_DATE_TIME_LIBRARY optimized "boost_date_time-vc140-mt-1_63.lib" debug "boost_date_time-vc140-mt-gd-1_63.lib")
+    set(MyBoost_SYSTEM_LIBRARY optimized "boost_system-vc140-mt-1_63.lib" debug "boost_system-vc140-mt-gd-1_63.lib")
+    set(MyBoost_FILESYSTEM_LIBRARY optimized "boost_filesystem-vc140-mt-1_63.lib" debug "boost_filesystem-vc140-mt-gd-1_63.lib")
+    set(MyBoost_CHRONO_LIBRARY optimized "boost_chrono-vc140-mt-1_63.lib" debug "boost_chrono-vc140-mt-gd-1_63.lib")
+    set(MyBoost_TIMER_LIBRARY optimized "boost_timer-vc140-mt-1_63.lib" debug "boost_timer-vc140-mt-gd-1_63.lib")
+    set(MyBoost_REGEX_LIBRARY optimized "boost_regex-vc140-mt-1_63.lib" debug "boost_regex-vc140-mt-gd-1_63.lib")
+
+    target_link_libraries(core sqlite3 libsoci_core_3_2 libsoci_sqlite3_3_2 ${Boost_ZLIB_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${MyBoost_THREAD_LIBRARY} ${MyBoost_DATE_TIME_LIBRARY} ${MyBoost_SYSTEM_LIBRARY} ${MyBoost_FILESYSTEM_LIBRARY} ${MyBoost_CHRONO_LIBRARY} ${MyBoost_TIMER_LIBRARY} ${MyBoost_REGEX_LIBRARY})
 
     set(CMAKE_EXE_LINKER_FLAGS
       "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
@@ -117,8 +109,8 @@ set_target_properties(core PROPERTIES DEBUG_POSTFIX d)
 add_definitions(-DOG_CORE_LIBRARY_EXPORT)
 add_definitions(-DBOOST_ALL_NO_LIB)
 add_definitions(-D_DLL)
-add_definitions(-D_SCL_SECURE_NO_WARNINGS)
-add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+#add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+#add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_definitions(-D_UNICOCE)
 add_definitions(-DUNICODE)
 add_definitions(-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS)
@@ -147,8 +139,7 @@ install (TARGETS core
     ARCHIVE DESTINATION "${CMAKE_BINARY_DIR}/SDK/${CMAKE_BUILD_TYPE}/lib64/"
     )
 
-IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    install (FILES 
+    install (FILES CONFIGURATIONS Debug
         "$ENV{BOOST}/stage/lib/boost_chrono-vc140-mt-gd-1_63.dll"
         "$ENV{BOOST}/stage/lib/boost_date_time-vc140-mt-gd-1_63.dll"
         "$ENV{BOOST}/stage/lib/boost_filesystem-vc140-mt-gd-1_63.dll"
@@ -160,11 +151,11 @@ IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         "$ENV{BOOST}/stage/lib/boost_system-vc140-mt-gd-1_63.dll"
         "$ENV{BOOST}/stage/lib/boost_thread-vc140-mt-gd-1_63.dll"
         "$ENV{BOOST}/stage/lib/boost_timer-vc140-mt-gd-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_zlib-vc140-mt-gd-1_63.dll"
+#        "$ENV{BOOST}/stage/lib/boost_zlib-vc140-mt-gd-1_63.dll"
         DESTINATION "${CMAKE_BINARY_DIR}/SDK/${CMAKE_BUILD_TYPE}/bin/"
         )
-ELSE ()
-    install (FILES 
+
+    install (FILES CONFIGURATIONS Release
         "$ENV{BOOST}/stage/lib/boost_chrono-vc140-mt-1_63.dll"
         "$ENV{BOOST}/stage/lib/boost_date_time-vc140-mt-1_63.dll"
         "$ENV{BOOST}/stage/lib/boost_filesystem-vc140-mt-1_63.dll"
@@ -176,11 +167,11 @@ ELSE ()
         "$ENV{BOOST}/stage/lib/boost_system-vc140-mt-1_63.dll"
         "$ENV{BOOST}/stage/lib/boost_thread-vc140-mt-1_63.dll"
         "$ENV{BOOST}/stage/lib/boost_timer-vc140-mt-1_63.dll"
-        "$ENV{BOOST}/stage/lib/boost_zlib-vc140-mt-1_63.dll"
+#        "$ENV{BOOST}/stage/lib/boost_zlib-vc140-mt-1_63.dll"
         DESTINATION "${CMAKE_BINARY_DIR}/SDK/${CMAKE_BUILD_TYPE}/bin/"
         )
 
-ENDIF()
+
 
 install (FILES "${CMAKE_CURRENT_SOURCE_DIR}/../etc/env.bat"
     DESTINATION "${CMAKE_BINARY_DIR}/SDK/"

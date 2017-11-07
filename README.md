@@ -224,13 +224,26 @@ And support files :
 
 ## Prerequisite
 ObjectGenoise depends on the following package
-* [boost] 1.63
-        Note: while using boost_log from c++/cli, I'm faced with crash.
+### [boost] 
+- version 1.63
+
+### [soci]
+- version 3.3.2
+- Check CMake variables 
 ```
-\b2 toolset=msvc -s ZLIB_SOURCE="C:\Apps\lib\zlib-1.2.8" address-model=64 -j 4 define=BOOST_LOG_USE_CHAR define=BOOST_LOG_USE_WINNT5_API define=_HAS_ITERATOR_DEBUGGING=0 define=_ITERATOR_DEBUG_LEVEL=0  define=BOOST_LOG_USE_WINNT5_API threading=single,multi link=static,shared --build-type=complete stage
+SOCI_SQLITE3
+SOCI_STATIC
+SOCI_TESTS
+WITH_SQLITE3
 ```
-* [soci] 3.3.2
-* [SQLite3] 3.8.7
+
+### [SQLite3]
+- version sqlite-amalgamation-3210000
+- use CMakefile.txt from https://github.com/snikulov/sqlite.cmake.build
+- add Preprocesser 
+```
+SQLITE_ENABLE_COLUMN_METADATA
+```
 
 ## Building
 
@@ -253,23 +266,11 @@ SQLITE3=c:\path\to\sqlite3
 
 *** Step.2 run CMake
 
-*** Step.3 Coose Debug or Release
-
-In the top level of CMakeLists.txt, uncomment Debug or Release line as follows:
-
-```
-cmake_minimum_required(VERSION 3.0.2)
- 
-set(CMAKE_BUILD_TYPE "Debug")
-#set(CMAKE_BUILD_TYPE "Release")
-
-```
-
-*** Step.4 Set Debug or Release in Visuals Studio Configuration
+*** Step.3 Set Debug or Release in Visuals Studio Configuration
 
 and then, build solution.
 
-*** Step.5 Testing
+*** Step.4 Testing
 
 **** C++ tests 
 Written with boost unittest framework in test-core project.
@@ -282,6 +283,7 @@ Sets test architecture to x64. Open test explorer and click Run All.
 And then rebuild the project, you can see test items in test explorer.
 
 ## Version and History
+0.84  * Update all CMakefile.txt to improve link boost's libraries.
 0.83  * Add CMake scripts.
 0.81  * runtime version is changed from 8.1 to 10.xxx
 0.80  * boost 1.64 + VS2015 support.
@@ -309,9 +311,8 @@ for C, C++, C++/CLI, Objective?C, C#, and Java Source Code
 [Enterprise Architect]:http://www.sparxsystems.com/products/ea/index.html
 [PupSQLite]:https://www.eonet.ne.jp/~pup/software.html
 [Boost Software License 1.0]:http://www.boost.org/LICENSE_1_0.txt
-[SQLite3]:http://soci.sourceforge.net/
+[SQLite3]:https://sqlite.org/amalgamation.html
 [Astyle]:http://astyle.sourceforge.net/
 [Google C++ Style Guid]:http://google-styleguide.googlecode.com/svn/trunk/cppguide.html
 [Internal Schema PDF]:https://github.com/KouOuchi/ObjectGenoise/blob/master/sql/OG-Schema.pdf
 [Internal Schema SQL]:https://github.com/KouOuchi/ObjectGenoise/blob/master/sql/OG-Schema.sql
-[buildscript]:https://github.com/KouOuchi/ObjectGenoise/blob/master/etc/boost_build.bat
