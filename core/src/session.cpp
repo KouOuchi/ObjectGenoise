@@ -627,6 +627,20 @@ void session::get_object_by_schema_object(list<schema_object_ptr>&
                       , _sesn_obj_list);
 }
 
+void session::get_object_by_parameter(string& _param_name,
+                                          parameter_value_variant& _value,
+                                          list<session_object_ptr>* _sesn_obj_list)
+{
+
+}
+
+void session::get_object_by_parameter_range(string& _param_name,
+                                          parameter_value_variant& _value_min,
+                                          parameter_value_variant& _value_max,
+                                          list<session_object_ptr>* _sesn_obj_list)
+{
+
+}
 
 // relation ===>
 session_relation_ptr session::connect(string _from_id, string _to_id,

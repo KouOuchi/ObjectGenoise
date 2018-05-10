@@ -105,7 +105,7 @@ usage of connect and copy
                   |                                   +-------------------+
        +---------------------+           |
        |<SessionObject> EO-A1|                                    |
-       +---------+-----------+----+      | 
+       +---------+-----------+----+      |
                   \               _\/                             |
                    \         +-----------------------+
                     \        |<SessionRelation> ER-X1|            |
@@ -224,30 +224,37 @@ And support files :
 
 ## Prerequisite
 ObjectGenoise depends on the following package
-### [boost] 
+### [boost]
 - version 1.63
-
+-
 ### [soci]
 - version 3.3.2
-- Check CMake variables 
+- CMake variables in SOCI secsion:
 ```
 SOCI_SQLITE3
 SOCI_STATIC
-SOCI_TESTS
+```
+- CMake variables in WITH secsion:
+```
+WITH_BOOST
 WITH_SQLITE3
 ```
 
 ### [SQLite3]
-- version sqlite-amalgamation-3210000
+- version sqlite-amalgamation-3220000
 - use CMakefile.txt from https://github.com/snikulov/sqlite.cmake.build
-- add Preprocesser 
+- Preprocessers
 ```
 SQLITE_ENABLE_COLUMN_METADATA
+SQLITE_ENABLE_RTREE
+SQLITE_ENABLE_FTS4
+SQLITE_ENABLE_FTS5
+SQLITE_ENABLE_JSON1
 ```
 
 ## Building
 
-*** Step.1 Prepare 3 packages and its environment
+*** Step.1 Configure CMake Parameters
 
 You need 3 environment variable as follows :
 - BOOST
@@ -272,11 +279,11 @@ and then, build solution.
 
 *** Step.4 Testing
 
-**** C++ tests 
+**** C++ tests
 Written with boost unittest framework in test-core project.
 Sets the projet to startup and run.
 
-**** C# tests 
+**** C# tests
 
 Written with microsoft unittest framework in test-og-net project.
 Sets test architecture to x64. Open test explorer and click Run All.

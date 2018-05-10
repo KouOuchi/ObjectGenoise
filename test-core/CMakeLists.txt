@@ -1,27 +1,9 @@
-#
-# CMake Installs
-#
-set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}")
+project(test-core)
 
 # Specify build paths
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
-if (WIN32 OR APPLE)
-  if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    # We don't want to install in default system location, install is really for the SDK, so call it that
-    set(CMAKE_INSTALL_PREFIX
-	  "${CMAKE_BINARY_DIR}/${PROJECT_NAME}" CACHE PATH "${PROJECT_NAME} install prefix" FORCE
-    )
-  endif (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-endif(WIN32 OR APPLE)
-
-#
-# Find Boost
-#
-set(BOOST_ROOT $ENV{BOOST})
-set(BOOST_INCLUDEDIR $ENV{BOOST})
-set(BOOST_LIBRARYDIR $ENV{BOOST}/lib64-msvc-14.0)
 
 IF (UNIX)
    add_definitions(-DBOOST_ALL_DYN_LINK -DBOOST_LOG_DYN_LINK)
@@ -31,7 +13,7 @@ IF (UNIX)
    #set(Boost_USE_STATIC_LIBS        ON)
    #set(Boost_USE_MULTITHREADED      ON)
    #set(Boost_USE_STATIC_RUNTIME    ON)
-   find_package( Boost REQUIRED )
+   #find_package( Boost REQUIRED )
    
 ELSE ()
    include(GenerateExportHeader)
@@ -62,20 +44,17 @@ ELSE ()
 
 ENDIF (UNIX)
 
-set(Boost_ADDITIONAL_VERSIONS)
-
 include_directories(
 	../core/include
-        $ENV{SOCI}/include/soci
-        $ENV{SQLITE3}
+    include
+    ${SOCI_SOURCE_DIR}/core
+    ${SOCI_SOURCE_DIR}/backends
 	${Boost_INCLUDE_DIR}
-        include
+    ${SQLITE3_SOURCE_DIR}
 )
 
 link_directories(
-        ${BOOST_LIBRARYDIR}
-        $ENV{SQLITE3}
-        $ENV{SOCI}/lib64
+    ${Boost_LIBRARY_DIR}
 )
 
 FILE(GLOB_RECURSE HDRS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
@@ -95,7 +74,7 @@ ELSE ()
     set(MyBoost_REGEX_LIBRARY optimized "boost_regex-vc140-mt-1_63.lib" debug "boost_regex-vc140-mt-gd-1_63.lib")
 
     # static libs
-    target_link_libraries(test-core core sqlite3 libsoci_core_3_2 libsoci_sqlite3_3_2 ${Boost_ZLIB_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}  ${MyBoost_THREAD_LIBRARY} ${MyBoost_DATE_TIME_LIBRARY} ${MyBoost_SYSTEM_LIBRARY} ${MyBoost_FILESYSTEM_LIBRARY} ${MyBoost_CHRONO_LIBRARY} ${MyBoost_TIMER_LIBRARY} ${MyBoost_REGEX_LIBRARY})
+    target_link_libraries(test-core core ${SQLITE3_LIBRARY} ${SOCI_CORE_LIBRARY} ${SOCI_SQLITE3_LIBRARY} ${Boost_ZLIB_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}  ${MyBoost_THREAD_LIBRARY} ${MyBoost_DATE_TIME_LIBRARY} ${MyBoost_SYSTEM_LIBRARY} ${MyBoost_FILESYSTEM_LIBRARY} ${MyBoost_CHRONO_LIBRARY} ${MyBoost_TIMER_LIBRARY} ${MyBoost_REGEX_LIBRARY})
 
     set(CMAKE_EXE_LINKER_FLAGS
       "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")

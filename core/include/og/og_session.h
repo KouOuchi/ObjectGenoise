@@ -68,6 +68,14 @@ public:
       _schm_obj_list,
       list<og_session_object_ptr>* _sesn_obj_list);
 
+  OG_COREAPI void get_object_by_parameter(string& _param_name,
+                                          og::core::parameter_value_variant& _value,
+                                          list<og_session_object_ptr>* _sesn_obj_list);
+  OG_COREAPI void get_object_by_parameter_range(string& _param_name,
+                                          og::core::parameter_value_variant& _value_min,
+                                          og::core::parameter_value_variant& _value_max,
+                                          list<og_session_object_ptr>* _sesn_obj_list);
+
   ///////////////////////////////
   // relation
   ///////////////////////////////
@@ -77,8 +85,9 @@ public:
   OG_COREAPI void get_connected_object_to(string _from_id,
                                           list<string> _rel_type_list,
                                           list<og_session_object_ptr>* _sesn_obj_list);
-  OG_COREAPI og::core::connection_validation_result_enum validate_connect(string _from_id, string _to_id,
-                                   list<string> _rel_type_list);
+  OG_COREAPI og::core::connection_validation_result_enum validate_connect(
+    string _from_id, string _to_id,
+    list<string> _rel_type_list);
 
   OG_COREAPI boost::optional<og_session_relation_ptr> get_relation(
     string _rel_id);
