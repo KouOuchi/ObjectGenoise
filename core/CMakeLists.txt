@@ -1,4 +1,4 @@
-project(code)
+project(core)
 
 # Specify build paths
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
@@ -94,10 +94,9 @@ add_definitions(-DBOOST_ALL_NO_LIB)
 add_definitions(-D_DLL)
 #add_definitions(-D_SCL_SECURE_NO_WARNINGS)
 #add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-add_definitions(-D_UNICOCE)
-add_definitions(-DUNICODE)
 add_definitions(-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS)
 add_definitions(-DBOOST_MPL_LIMIT_LIST_SIZE=30)
+add_definitions(-DUNICODE -D_UNICOCE)
 remove_definitions(-D_MBCS)
 
 #

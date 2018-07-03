@@ -12,6 +12,7 @@ namespace test_og_net
         public void setpath()
         {
             InitilizeOnce.GetInstance().SetPath();
+            InitilizeOnce.GetInstance().Build();
         }
 
         // basic

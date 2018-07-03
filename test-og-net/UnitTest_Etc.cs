@@ -20,6 +20,9 @@ namespace test_og_net
 
         public InitilizeOnce()
         {
+        }
+        public void Build()
+        {
             new FileInfo(TestInitializer.DBPATH_SRC).CopyTo(TestInitializer.DBPATH, true);
 
             og.net.OGSession cleaned_session_ = new OGSession();
@@ -28,32 +31,22 @@ namespace test_og_net
         }
         public void SetPath()
         {
-#if DEBUG
-            string config = "debug";
-#else
-            string config = "release";
-#endif
             string boost =
-               string.Format("{0}/stage/lib",
+               string.Format("{0}/lib64-msvc-14.0",
                 System.Environment.GetEnvironmentVariable("BOOST"));
-
-            string soci =
-               string.Format("{0}/{1}/bin64",
-                System.Environment.GetEnvironmentVariable("SOCI"),
-                config);
 
             string path = System.Environment.GetEnvironmentVariable("PATH");
             System.Environment.SetEnvironmentVariable(
                 "PATH",
-                path + ";" + boost + ";" + soci,
+                path + ";" + boost ,
                     EnvironmentVariableTarget.Process);
         }
     }
 
     public class TestInitializer
     {
-        public const string DBPATH = "../../../../sql/og.db";
-        public const string DBPATH_SRC = "../../../../sql/og_src.db";
+        public const string DBPATH = "../../../sql/og.db";
+        public const string DBPATH_SRC = "../../../sql/og_src.db";
         public og.net.OGSession initialize()
         {
             InitilizeOnce.GetInstance();
@@ -78,6 +71,7 @@ namespace test_og_net
         public void setpath()
         {
             InitilizeOnce.GetInstance().SetPath();
+            InitilizeOnce.GetInstance().Build();
         }
 
         [TestMethod]
