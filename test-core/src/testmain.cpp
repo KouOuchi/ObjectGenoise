@@ -1,22 +1,14 @@
-#define BOOST_TEST_MODULE testmain
+#include "gtest/gtest.h"
 
-#include "fixtures.h"
-
-struct TestCoreConfig
+//__declspec(dllexport) int PullInMyLibrary() { return 0; }
+int main(int argc, char** argv)
 {
-  TestCoreConfig()
-  {
-	  fixture_once();
-  }
-  ~TestCoreConfig()
-  {
+  ::testing::InitGoogleTest(&argc, argv);
+  // from gtest FAQ.
+  //int PullInMyLibrary();
+  //static int dummy = PullInMyLibrary();
 
-#ifdef _WINDOWS
-	  ::system("pause");
-#endif
 
-  }
-};
-
-BOOST_GLOBAL_FIXTURE( TestCoreConfig );
-
+  int result = RUN_ALL_TESTS();
+  return result;
+}

@@ -102,12 +102,10 @@ remove_definitions(-D_MBCS)
 #
 # cotire
 #
-add_definitions(-DCOTIRE_MINIMUM_NUMBER_OF_TARGET_SOURCES=1)
-set_directory_properties(PROPERTIES
-    COTIRE_PREFIX_HEADER_IGNORE_PATH 
-    "${PROJECT_SOURCE_DIR}"
-    )
-set_target_properties(core PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake;${CMAKE_MODULE_PATH}")
+include(cotire)
+cotire(${PROJECT_NAME})
+set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
 
 #
 # install

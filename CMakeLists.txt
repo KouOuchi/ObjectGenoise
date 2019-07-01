@@ -15,9 +15,6 @@ set(Boost_LIBRARY_DIR ${BOOST_ROOT}/lib64-msvc-14.0 CACHE PATH "" )
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo")
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake;${CMAKE_MODULE_PATH}")
-include(cotire) 
-
 project(OG)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/core)
@@ -26,3 +23,8 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/test-core)
 add_subdirectory(${CMAKE_SOURCE_DIR}/util/db-updater)
 add_subdirectory(${CMAKE_SOURCE_DIR}/test-og-net)
 
+#
+# cotire
+#
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake;${CMAKE_MODULE_PATH}")
+include(cotire)

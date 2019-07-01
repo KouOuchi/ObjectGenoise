@@ -89,16 +89,13 @@ remove_definitions(-D_MBCS)
 
 add_dependencies(og-net core)
 
-
 #
 # cotire
 #
-add_definitions(-DCOTIRE_MINIMUM_NUMBER_OF_TARGET_SOURCES=1)
-set_directory_properties(PROPERTIES
-    COTIRE_PREFIX_HEADER_IGNORE_PATH 
-    "${PROJECT_SOURCE_DIR}"
-    )
-set_target_properties(og-net PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake;${CMAKE_MODULE_PATH}")
+include(cotire)
+cotire(${PROJECT_NAME})
+set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
 
 set_target_properties(og-net PROPERTIES COMPILE_FLAGS "/clr /EHa")
 set_property(TARGET og-net PROPERTY OUTPUT_NAME "og.net")

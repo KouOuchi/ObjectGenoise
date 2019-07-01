@@ -1,10 +1,9 @@
 #include "fixtures.h"
 #include "utility.h"
-
-#ifdef TEST_OG_BASIC
+#include <gtest/gtest.h>
 
 // test boost posix_time
-BOOST_AUTO_TEST_CASE( basic_001 )
+TEST(basic, one)
 {
 #ifdef _WINDOWS
   og::core::CrtCheckMemory check;
@@ -17,7 +16,7 @@ BOOST_AUTO_TEST_CASE( basic_001 )
 
     pt::ptime t2(pt::time_from_string(t));
 
-    BOOST_REQUIRE(t2 == current_date_microseconds);
+    EXPECT_TRUE(t2 == current_date_microseconds);
   }
 }
 
@@ -32,6 +31,6 @@ BOOST_AUTO_TEST_CASE( basic_002 )
   //delete i;
 }
 */
-#endif
+
 
 

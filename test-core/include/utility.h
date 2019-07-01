@@ -3,7 +3,6 @@
 #ifdef _WINDOWS
 #include <boost/date_time.hpp>
 #include <crtdbg.h>
-#include <boost/test/unit_test.hpp>
 
 namespace og
 {
@@ -43,7 +42,8 @@ struct CrtCheckMemory
     if( _CrtMemDifference( &state3, &state1, &state2) )
     {
       _CrtMemDumpStatistics( &state3 );
-	  BOOST_FAIL("!!! Detected Memory Leak !!!");
+	  //"!!! Detected Memory Leak !!!"
+	  assert(false);
     }
   }
 };

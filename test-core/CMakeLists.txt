@@ -40,13 +40,14 @@ ELSE ()
    set(Boost_USE_STATIC_LIBS        ON)
    set(Boost_USE_MULTITHREADED      ON)
    set(Boost_USE_STATIC_RUNTIME     OFF)
-   find_package( Boost REQUIRED COMPONENTS iostreams log log_setup unit_test_framework zlib)
+   find_package( Boost REQUIRED COMPONENTS iostreams log log_setup zlib)
 
 ENDIF (UNIX)
 
 include_directories(
 	../core/include
     include
+    ../util/test-lib/include
     ${SOCI_SOURCE_DIR}/core
     ${SOCI_SOURCE_DIR}/backends
 	${Boost_INCLUDE_DIR}
@@ -55,6 +56,7 @@ include_directories(
 
 link_directories(
     ${Boost_LIBRARY_DIR}
+    ../util/test-lib/lib/
 )
 
 FILE(GLOB_RECURSE HDRS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
@@ -74,7 +76,7 @@ ELSE ()
     set(MyBoost_REGEX_LIBRARY optimized "boost_regex-vc140-mt-1_63.lib" debug "boost_regex-vc140-mt-gd-1_63.lib")
 
     # static libs
-    target_link_libraries(test-core core ${SQLITE3_LIBRARY} ${SOCI_CORE_LIBRARY} ${SOCI_SQLITE3_LIBRARY} ${Boost_ZLIB_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}  ${MyBoost_THREAD_LIBRARY} ${MyBoost_DATE_TIME_LIBRARY} ${MyBoost_SYSTEM_LIBRARY} ${MyBoost_FILESYSTEM_LIBRARY} ${MyBoost_CHRONO_LIBRARY} ${MyBoost_TIMER_LIBRARY} ${MyBoost_REGEX_LIBRARY})
+    target_link_libraries(test-core core gtest ${SQLITE3_LIBRARY} ${SOCI_CORE_LIBRARY} ${SOCI_SQLITE3_LIBRARY} ${Boost_ZLIB_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${MyBoost_THREAD_LIBRARY} ${MyBoost_DATE_TIME_LIBRARY} ${MyBoost_SYSTEM_LIBRARY} ${MyBoost_FILESYSTEM_LIBRARY} ${MyBoost_CHRONO_LIBRARY} ${MyBoost_TIMER_LIBRARY} ${MyBoost_REGEX_LIBRARY})
 
     set(CMAKE_EXE_LINKER_FLAGS
       "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
@@ -91,14 +93,19 @@ add_definitions(-DBOOST_MPL_LIMIT_LIST_SIZE=30)
 add_definitions(-DUNICODE -D_UNICOCE)
 remove_definitions(-D_MBCS)
 
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_SOURCE_DIR}/../util/test-lib/lib/"$(Configuration)"/gtest.dll
+    $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+set(CMAKE_EXE_LINKER_FLAGS
+  "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+
 #
 # cotire
 #
-#add_definitions(-DCOTIRE_MINIMUM_NUMBER_OF_TARGET_SOURCES=1)
-#set_directory_properties(PROPERTIES
-#    COTIRE_PREFIX_HEADER_IGNORE_PATH 
-#    "${PROJECT_SOURCE_DIR}"
-#    )
-#set_target_properties(test-core PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake;${CMAKE_MODULE_PATH}")
+include(cotire)
+cotire(${PROJECT_NAME})
+set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
 
 add_dependencies(test-core core)

@@ -8,7 +8,8 @@
 #include "og/og_session_relation.h"
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/test/unit_test.hpp>
+
+#include <gtest/gtest.h>
 
 namespace og
 {
@@ -22,17 +23,18 @@ struct og_session_relation_comparer
   static bool compare(og::og_session* session, og::og_session_relation_ptr _o1,
                       og::og_session_relation_ptr _o2)
   {
-    BOOST_REQUIRE_EQUAL(_o1->get_schema_relation_id(), _o2->get_schema_relation_id());
+    EXPECT_EQ(_o1->get_schema_relation_id(), _o2->get_schema_relation_id());
 
-    BOOST_REQUIRE_EQUAL(_o1->get_schema_relation_type(),
-                        _o2->get_schema_relation_type());
+    EXPECT_EQ(_o1->get_schema_relation_type(),
+              _o2->get_schema_relation_type());
 
-    optional<og::og_schema_relation_ptr> schm_rel = session->og_schema_->get_relation(
-          _o1->get_schema_relation_id());
+    optional<og::og_schema_relation_ptr> schm_rel =
+      session->og_schema_->get_relation(
+        _o1->get_schema_relation_id());
 
     if (!schm_rel.is_initialized())
     {
-      BOOST_FAIL("unexpected.");
+      EXPECT_TRUE(false);
     }
 
     list<boost::tuple<string, og_schema_parameter_ptr>> params;
@@ -48,7 +50,7 @@ struct og_session_relation_comparer
 
       switch (ptype)
       {
-	  case parameter_basetype_enum::integer:
+      case parameter_basetype_enum::integer:
       {
         list<int> o1val, o2val;
         _o1->get_parameter_values<int>(pname, &o1val);
@@ -57,7 +59,7 @@ struct og_session_relation_comparer
         for (oit1 = o1val.begin(), oit2 = o2val.begin();
              oit1 != o1val.end(); oit1++, oit2++)
         {
-          BOOST_REQUIRE_EQUAL(*oit1, *oit2);
+          EXPECT_EQ(*oit1, *oit2);
         }
       }
       break;
@@ -70,7 +72,7 @@ struct og_session_relation_comparer
         for (oit1 = o1val.begin(), oit2 = o2val.begin();
              oit1 != o1val.end(); oit1++, oit2++)
         {
-          BOOST_REQUIRE_EQUAL(*oit1, *oit2);
+          EXPECT_EQ(*oit1, *oit2);
         }
       }
       break;
@@ -83,17 +85,17 @@ struct og_session_relation_comparer
         for (oit1 = o1val.begin(), oit2 = o2val.begin();
              oit1 != o1val.end(); oit1++, oit2++)
         {
-          BOOST_REQUIRE_EQUAL(*oit1, *oit2);
+          EXPECT_EQ(*oit1, *oit2);
         }
       }
       break;
 
       default:
-        BOOST_FAIL("unexpected.");
+        EXPECT_TRUE(false);
 
       }
     }
-  return true;
+    return true;
   }
 
 };
@@ -103,17 +105,17 @@ struct og_session_object_comparer
   static bool compare(og::og_session* session, og::og_session_object_ptr _o1,
                       og::og_session_object_ptr _o2)
   {
-    BOOST_REQUIRE_EQUAL(_o1->get_schema_object_id(), _o2->get_schema_object_id());
+    EXPECT_EQ(_o1->get_schema_object_id(), _o2->get_schema_object_id());
 
-    BOOST_REQUIRE_EQUAL(_o1->get_schema_object_type(),
-                        _o2->get_schema_object_type());
+    EXPECT_EQ(_o1->get_schema_object_type(),
+                _o2->get_schema_object_type());
 
     optional<og::og_schema_object_ptr> schm_obj = session->og_schema_->get_object(
           _o1->get_schema_object_id());
 
     if (!schm_obj.is_initialized())
     {
-      BOOST_FAIL("unexpected.");
+      EXPECT_TRUE(false);
     }
 
     list<boost::tuple<string, og_schema_parameter_ptr>> params;
@@ -129,7 +131,7 @@ struct og_session_object_comparer
 
       switch (ptype)
       {
-	  case parameter_basetype_enum::integer:
+      case parameter_basetype_enum::integer:
       {
         list<int> o1val, o2val;
         _o1->get_parameter_values<int>(pname, &o1val);
@@ -138,7 +140,7 @@ struct og_session_object_comparer
         for (oit1 = o1val.begin(), oit2 = o2val.begin();
              oit1 != o1val.end(); oit1++, oit2++)
         {
-          BOOST_REQUIRE_EQUAL(*oit1, *oit2);
+          EXPECT_EQ(*oit1, *oit2);
         }
       }
       break;
@@ -151,7 +153,7 @@ struct og_session_object_comparer
         for (oit1 = o1val.begin(), oit2 = o2val.begin();
              oit1 != o1val.end(); oit1++, oit2++)
         {
-          BOOST_REQUIRE_EQUAL(*oit1, *oit2);
+          EXPECT_EQ(*oit1, *oit2);
         }
       }
       break;
@@ -164,17 +166,16 @@ struct og_session_object_comparer
         for (oit1 = o1val.begin(), oit2 = o2val.begin();
              oit1 != o1val.end(); oit1++, oit2++)
         {
-          BOOST_REQUIRE_EQUAL(*oit1, *oit2);
+          EXPECT_EQ(*oit1, *oit2);
         }
       }
       break;
 
       default:
-        BOOST_FAIL("unexpected.");
-
+        EXPECT_TRUE(false);
       }
     }
-  return true;
+    return true;
   }
 
 };

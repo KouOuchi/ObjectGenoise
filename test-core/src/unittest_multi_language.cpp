@@ -1,15 +1,12 @@
 #include "fixtures.h"
 #include "utility.h"
+#include <gtest/gtest.h>
 
 using namespace std;
 //using namespace og::core;
-#define TEST_OG_MULTI_LANGUAGE
-#ifdef TEST_OG_MULTI_LANGUAGE
-
-BOOST_FIXTURE_TEST_SUITE(multi_language, fixture_clean_session);
 
 // xml export
-BOOST_AUTO_TEST_CASE(multi_language_1000)
+TEST(multi_language, one)
 {
 #ifdef _WINDOWS
   // TODO: CrtCheckMemory detects memory leak in this test.
@@ -156,10 +153,7 @@ BOOST_AUTO_TEST_CASE(multi_language_1000)
   list<boost::tuple<string, og::og_schema_parameter_ptr>> __params_rel_after;
   reltest.get()->get_parameters(&__params_rel_after);
 
-  BOOST_REQUIRE_EQUAL(__params_p1.size(), __params_p1_after.size());
-  BOOST_REQUIRE_EQUAL(__params_rel.size(), __params_rel_after.size());
+  EXPECT_EQ(__params_p1.size(), __params_p1_after.size());
+  EXPECT_EQ(__params_rel.size(), __params_rel_after.size());
 }
 
-BOOST_AUTO_TEST_SUITE_END()
-
-#endif //TEST_OG_MULTI_LANGUAGE

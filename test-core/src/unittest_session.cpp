@@ -1,12 +1,11 @@
 #include "fixtures.h"
 #include "utility.h"
 #include "og_session_object_comparer.h"
+#include <gtest/gtest.h>
 
-#ifdef TEST_OG_SESSION
-BOOST_FIXTURE_TEST_SUITE(session, fixture_clean_session);
 
 // basic
-BOOST_AUTO_TEST_CASE( session_1000 )
+TEST(session, one )
 {
 #ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -29,13 +28,13 @@ BOOST_AUTO_TEST_CASE( session_1000 )
     og::og_session_object_ptr sesn_ptr = cleaned_session_.create_object(
                                            schm_ptr.get());
 
-    BOOST_REQUIRE(sesn_ptr->get_schema_object_id() == schm_ptr.get()->get_id());
-    BOOST_REQUIRE(sesn_ptr->get_schema_object_type() == schm_ptr.get()->get_type());
+    EXPECT_TRUE(sesn_ptr->get_schema_object_id() == schm_ptr.get()->get_id());
+    EXPECT_TRUE(sesn_ptr->get_schema_object_type() == schm_ptr.get()->get_type());
   }
 }
 
 // not found
-BOOST_AUTO_TEST_CASE( session_1001 )
+TEST( session, two )
 {
 #ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -70,12 +69,12 @@ BOOST_AUTO_TEST_CASE( session_1001 )
     list<og::og_session_object_ptr> sesn_obj_list;
     cleaned_session_.get_object_by_type(otype_list, &sesn_obj_list);
 
-    BOOST_REQUIRE(sesn_obj_list.size() == 2);
+    EXPECT_TRUE(sesn_obj_list.size() == 2);
     BOOST_FOREACH(og::og_session_object_ptr &r, sesn_obj_list)
     {
-      BOOST_REQUIRE(r->get_comment() == "hogehoge");
-      BOOST_REQUIRE(r->get_instance_name() == "v");
-      //BOOST_REQUIRE(r->get_revision() == "2");
+      EXPECT_TRUE(r->get_comment() == "hogehoge");
+      EXPECT_TRUE(r->get_instance_name() == "v");
+      //EXPECT_TRUE(r->get_revision() == "2");
     }
   }
 
@@ -87,18 +86,18 @@ BOOST_AUTO_TEST_CASE( session_1001 )
     list<og::og_session_object_ptr> sesn_obj_list;
     ses2.get_object_by_type(otype_list, &sesn_obj_list);
 
-    BOOST_REQUIRE(sesn_obj_list.size() == 2);
+    EXPECT_TRUE(sesn_obj_list.size() == 2);
     BOOST_FOREACH(og::og_session_object_ptr &r, sesn_obj_list)
     {
-      BOOST_REQUIRE(r->get_comment() == "hogehoge");
-      BOOST_REQUIRE(r->get_instance_name() == "v");
-      //BOOST_REQUIRE(r->get_revision() == "2");
+      EXPECT_TRUE(r->get_comment() == "hogehoge");
+      EXPECT_TRUE(r->get_instance_name() == "v");
+      //EXPECT_TRUE(r->get_revision() == "2");
     }
   }
 }
 
 // session relatoin basic test
-BOOST_AUTO_TEST_CASE( session_1002 )
+TEST( session, three )
 {
 #ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -135,29 +134,29 @@ BOOST_AUTO_TEST_CASE( session_1002 )
     og::og_session_object_ptr o1 = cleaned_session_.create_object(schm_obj1);
     og::og_session_object_ptr o2 = cleaned_session_.create_object(schm_obj2);
 
-    BOOST_REQUIRE((o1->validate_connect_to(o2,
+    EXPECT_TRUE((o1->validate_connect_to(o2,
                                            RELTYPE) & og::core::connection_validation_result_enum::valid) ==
                   og::core::connection_validation_result_enum::valid);
-    BOOST_REQUIRE((o2->validate_connect_to(o1,
+    EXPECT_TRUE((o2->validate_connect_to(o1,
                                            RELTYPE) & og::core::connection_validation_result_enum::invalid) ==
                   og::core::connection_validation_result_enum::invalid);
-    BOOST_REQUIRE((o1->validate_connect_to(o1,
+    EXPECT_TRUE((o1->validate_connect_to(o1,
                                            RELTYPE) & og::core::connection_validation_result_enum::invalid) ==
                   og::core::connection_validation_result_enum::invalid);
-    BOOST_REQUIRE((o2->validate_connect_to(o2,
+    EXPECT_TRUE((o2->validate_connect_to(o2,
                                            RELTYPE) & og::core::connection_validation_result_enum::invalid) ==
                   og::core::connection_validation_result_enum::invalid);
 
-    BOOST_REQUIRE((o1->validate_connect_from(o2,
+    EXPECT_TRUE((o1->validate_connect_from(o2,
                    RELTYPE) & og::core::connection_validation_result_enum::invalid) ==
                   og::core::connection_validation_result_enum::invalid);
-    BOOST_REQUIRE((o2->validate_connect_from(o1,
+    EXPECT_TRUE((o2->validate_connect_from(o1,
                    RELTYPE) & og::core::connection_validation_result_enum::valid) ==
                   og::core::connection_validation_result_enum::valid);
-    BOOST_REQUIRE((o1->validate_connect_from(o1,
+    EXPECT_TRUE((o1->validate_connect_from(o1,
                    RELTYPE) & og::core::connection_validation_result_enum::invalid) ==
                   og::core::connection_validation_result_enum::invalid);
-    BOOST_REQUIRE((o2->validate_connect_from(o2,
+    EXPECT_TRUE((o2->validate_connect_from(o2,
                    RELTYPE) & og::core::connection_validation_result_enum::invalid) ==
                   og::core::connection_validation_result_enum::invalid);
 
@@ -165,90 +164,90 @@ BOOST_AUTO_TEST_CASE( session_1002 )
 
     list<og::og_session_object_ptr> sesn_obj_list;
     o1->get_connected_object_to(&sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 1);
-    BOOST_REQUIRE((*(sesn_obj_list.begin()))->get_id() == o2->get_id());
+    EXPECT_TRUE(sesn_obj_list.size() == 1);
+    EXPECT_TRUE((*(sesn_obj_list.begin()))->get_id() == o2->get_id());
 
     sesn_obj_list.clear();
     o1->get_connected_object_from(&sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 0);
+    EXPECT_TRUE(sesn_obj_list.size() == 0);
 
     sesn_obj_list.clear();
     o2->get_connected_object_from(&sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 1);
-    BOOST_REQUIRE((*(sesn_obj_list.begin()))->get_id() == o1->get_id());
+    EXPECT_TRUE(sesn_obj_list.size() == 1);
+    EXPECT_TRUE((*(sesn_obj_list.begin()))->get_id() == o1->get_id());
 
     sesn_obj_list.clear();
     o2->get_connected_object_to(&sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 0);
+    EXPECT_TRUE(sesn_obj_list.size() == 0);
 
     sesn_obj_list.clear();
     o2->get_connected_object(&sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 1);
-    BOOST_REQUIRE((*(sesn_obj_list.begin()))->get_id() == o1->get_id());
+    EXPECT_TRUE(sesn_obj_list.size() == 1);
+    EXPECT_TRUE((*(sesn_obj_list.begin()))->get_id() == o1->get_id());
 
     sesn_obj_list.clear();
     o2->get_connected_object(reltype_list, &sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 1);
-    BOOST_REQUIRE((*(sesn_obj_list.begin()))->get_id() == o1->get_id());
+    EXPECT_TRUE(sesn_obj_list.size() == 1);
+    EXPECT_TRUE((*(sesn_obj_list.begin()))->get_id() == o1->get_id());
 
     sesn_obj_list.clear();
     o1->get_connected_object(&sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 1);
-    BOOST_REQUIRE((*(sesn_obj_list.begin()))->get_id() == o2->get_id());
+    EXPECT_TRUE(sesn_obj_list.size() == 1);
+    EXPECT_TRUE((*(sesn_obj_list.begin()))->get_id() == o2->get_id());
 
     sesn_obj_list.clear();
     o1->get_connected_object(reltype_list, &sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 1);
-    BOOST_REQUIRE((*(sesn_obj_list.begin()))->get_id() == o2->get_id());
+    EXPECT_TRUE(sesn_obj_list.size() == 1);
+    EXPECT_TRUE((*(sesn_obj_list.begin()))->get_id() == o2->get_id());
 
     list<og::og_session_relation_ptr> sesn_rel_list;
     cleaned_session_.get_relation_by_type(reltype_list, &sesn_rel_list);
-    BOOST_REQUIRE(sesn_rel_list.size() == 1);
+    EXPECT_TRUE(sesn_rel_list.size() == 1);
 
     sesn_rel_list.clear();
     cleaned_session_.get_relation_by_name(relname_list, &sesn_rel_list);
-    BOOST_REQUIRE(sesn_rel_list.size() == 1);
+    EXPECT_TRUE(sesn_rel_list.size() == 1);
 
     o1->disconnect(o2);
 
     o1->get_connected_object_to(&sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 0);
+    EXPECT_TRUE(sesn_obj_list.size() == 0);
 
     sesn_obj_list.clear();
     o1->get_connected_object_from(&sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 0);
+    EXPECT_TRUE(sesn_obj_list.size() == 0);
 
     sesn_obj_list.clear();
     o2->get_connected_object_from(&sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 0);
+    EXPECT_TRUE(sesn_obj_list.size() == 0);
 
     sesn_obj_list.clear();
     o2->get_connected_object_to(&sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 0);
+    EXPECT_TRUE(sesn_obj_list.size() == 0);
 
     sesn_obj_list.clear();
     o2->get_connected_object(&sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 0);
+    EXPECT_TRUE(sesn_obj_list.size() == 0);
 
     sesn_obj_list.clear();
     o2->get_connected_object(reltype_list, &sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 0);
+    EXPECT_TRUE(sesn_obj_list.size() == 0);
 
     sesn_obj_list.clear();
     o1->get_connected_object(&sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 0);
+    EXPECT_TRUE(sesn_obj_list.size() == 0);
 
     sesn_obj_list.clear();
     o1->get_connected_object(reltype_list, &sesn_obj_list);
-    BOOST_REQUIRE(sesn_obj_list.size() == 0);
+    EXPECT_TRUE(sesn_obj_list.size() == 0);
 
     sesn_rel_list.clear();
     cleaned_session_.get_relation_by_type(reltype_list, &sesn_rel_list);
-    BOOST_REQUIRE(sesn_rel_list.size() == 0);
+    EXPECT_TRUE(sesn_rel_list.size() == 0);
 
     sesn_rel_list.clear();
     cleaned_session_.get_relation_by_name(relname_list, &sesn_rel_list);
-    BOOST_REQUIRE(sesn_rel_list.size() == 0);
+    EXPECT_TRUE(sesn_rel_list.size() == 0);
   }
 }
 
@@ -258,12 +257,12 @@ BOOST_AUTO_TEST_CASE( session_1003 )
 {
   og::og_schema_object_ptr o(new og::og_schema_object(
                                cleaned_session_.schema().get()));
-  BOOST_REQUIRE_THROW( cleaned_session_.create_object(o), og::core::exception );
+  EXPECT_TRUE_THROW( cleaned_session_.create_object(o), og::core::exception );
 }
 #endif
 
 // connectable relation
-BOOST_AUTO_TEST_CASE( session_1004 )
+TEST( session, four )
 {
 #ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -310,49 +309,49 @@ BOOST_AUTO_TEST_CASE( session_1004 )
   // check connectable rel type
   list<string> con_type1;
   o1->get_connectable_relation_type_to(&con_type1);
-  BOOST_REQUIRE(con_type1.size() == 1);
-  BOOST_REQUIRE( RELTYPE1.compare(*con_type1.begin()) == 0 );
+  EXPECT_TRUE(con_type1.size() == 1);
+  EXPECT_TRUE( RELTYPE1.compare(*con_type1.begin()) == 0 );
 
   list<string> con_type2;
   o1->get_connectable_relation_type_from(&con_type2);
-  BOOST_REQUIRE(con_type2.size() == 0);
+  EXPECT_TRUE(con_type2.size() == 0);
 
   list<string> con_type3;
   o2->get_connectable_relation_type_to(&con_type3);
-  BOOST_REQUIRE(con_type3.size() == 0);
+  EXPECT_TRUE(con_type3.size() == 0);
 
   list<string> con_type4;
   o2->get_connectable_relation_type_from(&con_type4);
-  BOOST_REQUIRE(con_type4.size() == 1);
-  BOOST_REQUIRE( RELTYPE1.compare(*con_type4.begin()) == 0 );
+  EXPECT_TRUE(con_type4.size() == 1);
+  EXPECT_TRUE( RELTYPE1.compare(*con_type4.begin()) == 0 );
 
   // check connectable rel type and schema obj
   map<string, list<og::og_schema_object_ptr>> con_pair1;
   o1->get_connectable_to(&con_pair1);
-  BOOST_REQUIRE(con_pair1.size() == 1);
-  BOOST_REQUIRE( RELTYPE1.compare(con_pair1.begin()->first) == 0 );
-  BOOST_REQUIRE( con_pair1.find(RELTYPE1)->second.size() == 2 );
+  EXPECT_TRUE(con_pair1.size() == 1);
+  EXPECT_TRUE( RELTYPE1.compare(con_pair1.begin()->first) == 0 );
+  EXPECT_TRUE( con_pair1.find(RELTYPE1)->second.size() == 2 );
   for(list<og::og_schema_object_ptr>::iterator it = con_pair1.find(
         RELTYPE1)->second.begin();
       it != con_pair1.find(RELTYPE1)->second.end(); ++it)
   {
-    BOOST_REQUIRE( (*it)->get_id() == schm_obj2->get_id()
+    EXPECT_TRUE( (*it)->get_id() == schm_obj2->get_id()
                    || (*it)->get_id() == schm_obj4->get_id() );
   }
 
   map<string, list<og::og_schema_object_ptr>> con_pair2;
   o1->get_connectable_from(&con_pair2);
-  BOOST_REQUIRE(con_pair2.size() == 0);
+  EXPECT_TRUE(con_pair2.size() == 0);
 
   map<string, list<og::og_schema_object_ptr>> con_pair3;
   o2->get_connectable_to(&con_pair3);
-  BOOST_REQUIRE(con_pair3.size() == 0);
+  EXPECT_TRUE(con_pair3.size() == 0);
 
   map<string, list<og::og_schema_object_ptr>> con_pair4;
   o2->get_connectable_from(&con_pair4);
-  BOOST_REQUIRE(con_pair4.size() == 1);
-  BOOST_REQUIRE( RELTYPE1.compare(con_pair4.begin()->first) == 0 );
-  BOOST_REQUIRE( con_pair4.find(RELTYPE1)->second.size() == 1 );
+  EXPECT_TRUE(con_pair4.size() == 1);
+  EXPECT_TRUE( RELTYPE1.compare(con_pair4.begin()->first) == 0 );
+  EXPECT_TRUE( con_pair4.find(RELTYPE1)->second.size() == 1 );
   for(list<og::og_schema_object_ptr>::iterator it = con_pair4.find(
         RELTYPE1)->second.begin();
       it != con_pair4.find(RELTYPE1)->second.end(); ++it)
@@ -360,13 +359,13 @@ BOOST_AUTO_TEST_CASE( session_1004 )
     std::cout << (*it)->get_id() << std::endl;
     std::cout << schm_obj1->get_id() << std::endl;
 
-    BOOST_REQUIRE( (*it)->get_id() == schm_obj1->get_id() );
+    EXPECT_TRUE( (*it)->get_id() == schm_obj1->get_id() );
   }
 
 }
 
 // 2 schema relation
-BOOST_AUTO_TEST_CASE( session_1005 )
+TEST( session, five )
 {
 #ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -407,12 +406,12 @@ BOOST_AUTO_TEST_CASE( session_1005 )
   og::og_session_relation_ptr r1 = o1->connect_to(o2, RELTYPE1);
   og::og_session_relation_ptr r2 = o1->connect_to(o3, RELTYPE1);
 
-  BOOST_REQUIRE(RELTYPE1.compare( r1->get_schema_relation_type() ) == 0);
-  BOOST_REQUIRE(RELTYPE1.compare( r2->get_schema_relation_type() ) == 0);
+  EXPECT_TRUE(RELTYPE1.compare( r1->get_schema_relation_type() ) == 0);
+  EXPECT_TRUE(RELTYPE1.compare( r2->get_schema_relation_type() ) == 0);
 }
 
 // parameter test (integer)
-BOOST_AUTO_TEST_CASE(session_1006)
+TEST(session, seven)
 {
 #ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -463,16 +462,16 @@ BOOST_AUTO_TEST_CASE(session_1006)
     cleaned_session_.schema()->create_parameter("hoge_type2", "comment2",
         &type2, 3, 2, 4);
 
-  BOOST_REQUIRE_EQUAL(test1->get_comment(), "comment1");
-  BOOST_REQUIRE_EQUAL(test1->get_type(), "hoge_type1");
+  EXPECT_EQ(test1->get_comment(), "comment1");
+  EXPECT_EQ(test1->get_type(), "hoge_type1");
 
-  BOOST_REQUIRE_EQUAL(test2->get_comment(), "comment2");
-  BOOST_REQUIRE_EQUAL(test2->get_type(), "hoge_type2");
+  EXPECT_EQ(test2->get_comment(), "comment2");
+  EXPECT_EQ(test2->get_type(), "hoge_type2");
 
   list<boost::tuple<string, og::og_schema_parameter_ptr>> param_name_types0;
   p1->get_parameters(&param_name_types0);
 
-  BOOST_REQUIRE_EQUAL(param_name_types0.size(), 0);
+  EXPECT_EQ(param_name_types0.size(), 0);
 
   // apply parameter to schema_object
   p1->add_parameter_definition("H1", test1);
@@ -486,7 +485,7 @@ BOOST_AUTO_TEST_CASE(session_1006)
     list<boost::tuple<string, og::og_schema_parameter_ptr>> param_name_types1;
     p1->get_parameters(&param_name_types1);
 
-    BOOST_REQUIRE_EQUAL(param_name_types1.size(), 2);
+    EXPECT_EQ(param_name_types1.size(), 2);
 
     bool h1_hit = false;
     bool h2_hit = false;
@@ -504,11 +503,11 @@ BOOST_AUTO_TEST_CASE(session_1006)
       }
       else
       {
-        BOOST_FAIL("test failed.");
+        EXPECT_TRUE(false);
       }
     }
-    BOOST_REQUIRE_EQUAL(h1_hit, true);
-    BOOST_REQUIRE_EQUAL(h2_hit, true);
+    EXPECT_EQ(h1_hit, true);
+    EXPECT_EQ(h2_hit, true);
   }
 
   // session object test
@@ -520,37 +519,37 @@ BOOST_AUTO_TEST_CASE(session_1006)
     optional<og::og_session_object_ptr> o1_2 = cleaned_session_.get_object(
           o1->get_id());
 
-    if (!o1_2) { BOOST_FAIL("null"); }
+    if (!o1_2) { EXPECT_TRUE(false); }
 
     int h1;
     o1_2.get()->get_parameter_value<int>("H2", &h1);
-    BOOST_REQUIRE_EQUAL(h1, 2);
+    EXPECT_EQ(h1, 2);
 
     std::list<int> h2;
 
     o1_2.get()->get_parameter_values<int>("H2", &h2);
-    BOOST_REQUIRE_EQUAL(h2.size(), 3);
+    EXPECT_EQ(h2.size(), 3);
 
     BOOST_FOREACH(int &i, h2)
     {
-      BOOST_REQUIRE_EQUAL(i, 2);
+      EXPECT_EQ(i, 2);
     }
 
     h2.push_back(1);
 
     o1_2.get()->set_parameter_values<int>("H2", h2);
-    BOOST_REQUIRE_EQUAL(h2.size(), 4);
+    EXPECT_EQ(h2.size(), 4);
     h2.clear();
 
     o1_2.get()->get_parameter_values<int>("H2", &h2);
-    BOOST_REQUIRE_EQUAL(h2.size(), 4);
+    EXPECT_EQ(h2.size(), 4);
     int row = 0;
     BOOST_FOREACH(int &i, h2)
     {
-      if (row == 0) { BOOST_REQUIRE_EQUAL(i, 2); }
-      if (row == 1) { BOOST_REQUIRE_EQUAL(i, 2); }
-      if (row == 2) { BOOST_REQUIRE_EQUAL(i, 2); }
-      if (row == 3) { BOOST_REQUIRE_EQUAL(i, 1); }
+      if (row == 0) { EXPECT_EQ(i, 2); }
+      if (row == 1) { EXPECT_EQ(i, 2); }
+      if (row == 2) { EXPECT_EQ(i, 2); }
+      if (row == 3) { EXPECT_EQ(i, 1); }
       row++;
     }
   }
@@ -566,36 +565,36 @@ BOOST_AUTO_TEST_CASE(session_1006)
     optional<og::og_session_relation_ptr> o1_2 = cleaned_session_.get_relation(
           o1o2->get_id());
 
-    if (!o1_2) { BOOST_FAIL("null"); }
+    if (!o1_2) { EXPECT_TRUE(false); }
 
     int h1;
     o1_2.get()->get_parameter_value<int>("H3", &h1);
-    BOOST_REQUIRE_EQUAL(h1, 1);
+    EXPECT_EQ(h1, 1);
 
     std::list<int> h2;
     o1_2.get()->get_parameter_values<int>("H4", &h2);
-    BOOST_REQUIRE_EQUAL(h2.size(), 3);
+    EXPECT_EQ(h2.size(), 3);
 
     BOOST_FOREACH(int &i, h2)
     {
-      BOOST_REQUIRE_EQUAL(i, 2);
+      EXPECT_EQ(i, 2);
     }
 
     h2.push_back(3);
 
     o1_2.get()->set_parameter_values<int>("H4", h2);
-    BOOST_REQUIRE_EQUAL(h2.size(), 4);
+    EXPECT_EQ(h2.size(), 4);
 
     h2.clear();
     o1_2.get()->get_parameter_values<int>("H4", &h2);
-    BOOST_REQUIRE_EQUAL(h2.size(), 4);
+    EXPECT_EQ(h2.size(), 4);
     int row = 0;
     BOOST_FOREACH(int &i, h2)
     {
-      if (row == 0) { BOOST_REQUIRE_EQUAL(i, 2); }
-      if (row == 1) { BOOST_REQUIRE_EQUAL(i, 2); }
-      if (row == 2) { BOOST_REQUIRE_EQUAL(i, 2); }
-      if (row == 3) { BOOST_REQUIRE_EQUAL(i, 3); }
+      if (row == 0) { EXPECT_EQ(i, 2); }
+      if (row == 1) { EXPECT_EQ(i, 2); }
+      if (row == 2) { EXPECT_EQ(i, 2); }
+      if (row == 3) { EXPECT_EQ(i, 3); }
       row++;
     }
   }
@@ -603,7 +602,7 @@ BOOST_AUTO_TEST_CASE(session_1006)
 
 
 // parameter test (real)
-BOOST_AUTO_TEST_CASE(session_1007)
+TEST(session, eight)
 {
 #ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -654,16 +653,16 @@ BOOST_AUTO_TEST_CASE(session_1007)
     cleaned_session_.schema()->create_parameter("hoge_type2", "comment2",
         &type2, 3, 2, 4);
 
-  BOOST_REQUIRE_EQUAL(ptest1->get_comment(), "comment1");
-  BOOST_REQUIRE_EQUAL(ptest1->get_type(), "hoge_type1");
+  EXPECT_EQ(ptest1->get_comment(), "comment1");
+  EXPECT_EQ(ptest1->get_type(), "hoge_type1");
 
-  BOOST_REQUIRE_EQUAL(ptest2->get_comment(), "comment2");
-  BOOST_REQUIRE_EQUAL(ptest2->get_type(), "hoge_type2");
+  EXPECT_EQ(ptest2->get_comment(), "comment2");
+  EXPECT_EQ(ptest2->get_type(), "hoge_type2");
 
   list<boost::tuple<string, og::og_schema_parameter_ptr>> param_name_types0;
   p1->get_parameters(&param_name_types0);
 
-  BOOST_REQUIRE_EQUAL(param_name_types0.size(), 0);
+  EXPECT_EQ(param_name_types0.size(), 0);
 
   // apply parameter to schema_object
   p1->add_parameter_definition("H1", ptest1);
@@ -677,7 +676,7 @@ BOOST_AUTO_TEST_CASE(session_1007)
     list<boost::tuple<string, og::og_schema_parameter_ptr>> param_name_types1;
     p1->get_parameters(&param_name_types1);
 
-    BOOST_REQUIRE_EQUAL(param_name_types1.size(), 2);
+    EXPECT_EQ(param_name_types1.size(), 2);
 
     bool h1_hit = false;
     bool h2_hit = false;
@@ -695,11 +694,11 @@ BOOST_AUTO_TEST_CASE(session_1007)
       }
       else
       {
-        BOOST_FAIL("test failed.");
+        EXPECT_TRUE(false);
       }
     }
-    BOOST_REQUIRE_EQUAL(h1_hit, true);
-    BOOST_REQUIRE_EQUAL(h2_hit, true);
+    EXPECT_EQ(h1_hit, true);
+    EXPECT_EQ(h2_hit, true);
   }
 
   // session object test
@@ -711,20 +710,20 @@ BOOST_AUTO_TEST_CASE(session_1007)
     optional<og::og_session_object_ptr> o1_2 = cleaned_session_.get_object(
           o1->get_id());
 
-    if (!o1_2) { BOOST_FAIL("null"); }
+    if (!o1_2) { EXPECT_TRUE(false); }
 
     double h1;
     o1_2.get()->get_parameter_value<double>("H1", &h1);
-    BOOST_REQUIRE_EQUAL(h1, 1.1234);
+    EXPECT_EQ(h1, 1.1234);
 
     std::list<double> h2;
     o1_2.get()->get_parameter_values<double>("H2", &h2);
 
-    BOOST_REQUIRE_EQUAL(h2.size(), 3);
+    EXPECT_EQ(h2.size(), 3);
 
     BOOST_FOREACH(double &i, h2)
     {
-      BOOST_REQUIRE_EQUAL(i, 2.236);
+      EXPECT_EQ(i, 2.236);
     }
 
     h2.push_back(1.1234);
@@ -733,14 +732,14 @@ BOOST_AUTO_TEST_CASE(session_1007)
 
     h2.clear();
     o1_2.get()->get_parameter_values<double>("H2", &h2);
-    BOOST_REQUIRE_EQUAL(h2.size(), 4);
+    EXPECT_EQ(h2.size(), 4);
     int row = 0;
     BOOST_FOREACH(double &i, h2)
     {
-      if (row == 0) { BOOST_REQUIRE_EQUAL(i, 2.236); }
-      if (row == 1) { BOOST_REQUIRE_EQUAL(i, 2.236); }
-      if (row == 2) { BOOST_REQUIRE_EQUAL(i, 2.236); }
-      if (row == 3) { BOOST_REQUIRE_EQUAL(i, 1.1234); }
+      if (row == 0) { EXPECT_EQ(i, 2.236); }
+      if (row == 1) { EXPECT_EQ(i, 2.236); }
+      if (row == 2) { EXPECT_EQ(i, 2.236); }
+      if (row == 3) { EXPECT_EQ(i, 1.1234); }
       row++;
     }
 
@@ -757,20 +756,20 @@ BOOST_AUTO_TEST_CASE(session_1007)
     optional<og::og_session_relation_ptr> o1_2 = cleaned_session_.get_relation(
           o1o2->get_id());
 
-    if (!o1_2) { BOOST_FAIL("null"); }
+    if (!o1_2) { EXPECT_TRUE(false); }
 
     double h1;
     o1_2.get()->get_parameter_value<double>("H3", &h1);
-    BOOST_REQUIRE_EQUAL(h1, 1.141);
+    EXPECT_EQ(h1, 1.141);
 
     std::list<double> h2;
     o1_2.get()->get_parameter_values<double>("H4", &h2);
 
-    BOOST_REQUIRE_EQUAL(h2.size(), 3);
+    EXPECT_EQ(h2.size(), 3);
 
     BOOST_FOREACH(double &i, h2)
     {
-      BOOST_REQUIRE_EQUAL(i, 2.236);
+      EXPECT_EQ(i, 2.236);
     }
 
     h2.push_back(1.1234);
@@ -779,21 +778,21 @@ BOOST_AUTO_TEST_CASE(session_1007)
 
     h2.clear();
     o1_2.get()->get_parameter_values<double>("H4", &h2);
-    BOOST_REQUIRE_EQUAL(h2.size(), 4);
+    EXPECT_EQ(h2.size(), 4);
     int row = 0;
     BOOST_FOREACH(double &i, h2)
     {
-      if (row == 0) { BOOST_REQUIRE_EQUAL(i, 2.236); }
-      if (row == 1) { BOOST_REQUIRE_EQUAL(i, 2.236); }
-      if (row == 2) { BOOST_REQUIRE_EQUAL(i, 2.236); }
-      if (row == 3) { BOOST_REQUIRE_EQUAL(i, 1.1234); }
+      if (row == 0) { EXPECT_EQ(i, 2.236); }
+      if (row == 1) { EXPECT_EQ(i, 2.236); }
+      if (row == 2) { EXPECT_EQ(i, 2.236); }
+      if (row == 3) { EXPECT_EQ(i, 1.1234); }
       row++;
     }
   }
 }
 
 // parameter test text
-BOOST_AUTO_TEST_CASE(session_1008)
+TEST(session, nine)
 {
 #ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -846,16 +845,16 @@ BOOST_AUTO_TEST_CASE(session_1008)
     cleaned_session_.schema()->create_parameter("hoge_type2", "comment2",
         &ptype2, 3, 2, 4);
 
-  BOOST_REQUIRE_EQUAL(ptest1->get_comment(), "comment1");
-  BOOST_REQUIRE_EQUAL(ptest1->get_type(), "hoge_type1");
+  EXPECT_EQ(ptest1->get_comment(), "comment1");
+  EXPECT_EQ(ptest1->get_type(), "hoge_type1");
 
-  BOOST_REQUIRE_EQUAL(ptest2->get_comment(), "comment2");
-  BOOST_REQUIRE_EQUAL(ptest2->get_type(), "hoge_type2");
+  EXPECT_EQ(ptest2->get_comment(), "comment2");
+  EXPECT_EQ(ptest2->get_type(), "hoge_type2");
 
   list<boost::tuple<string, og::og_schema_parameter_ptr>> param_name_types0;
   p1->get_parameters(&param_name_types0);
 
-  BOOST_REQUIRE_EQUAL(param_name_types0.size(), 0);
+  EXPECT_EQ(param_name_types0.size(), 0);
 
   // apply parameter to schema_object
   p1->add_parameter_definition("H1", ptest1);
@@ -870,7 +869,7 @@ BOOST_AUTO_TEST_CASE(session_1008)
     list<boost::tuple<string, og::og_schema_parameter_ptr>> param_name_types1;
     p1->get_parameters(&param_name_types1);
 
-    BOOST_REQUIRE_EQUAL(param_name_types1.size(), 2);
+    EXPECT_EQ(param_name_types1.size(), 2);
 
     bool h1_hit = false;
     bool h2_hit = false;
@@ -888,11 +887,11 @@ BOOST_AUTO_TEST_CASE(session_1008)
       }
       else
       {
-        BOOST_FAIL("test failed.");
+        EXPECT_TRUE(false);
       }
     }
-    BOOST_REQUIRE_EQUAL(h1_hit, true);
-    BOOST_REQUIRE_EQUAL(h2_hit, true);
+    EXPECT_EQ(h1_hit, true);
+    EXPECT_EQ(h2_hit, true);
   }
 
   // session object test
@@ -904,11 +903,11 @@ BOOST_AUTO_TEST_CASE(session_1008)
     optional<og::og_session_object_ptr> o1_2 = cleaned_session_.get_object(
           o1->get_id());
 
-    if (!o1_2) { BOOST_FAIL("null"); }
+    if (!o1_2) { EXPECT_TRUE(false); }
 
     std::string h1;
     o1_2->get()->get_parameter_value<std::string>("H1", &h1);
-    BOOST_REQUIRE_EQUAL(h1, std::string("aaa"));
+    EXPECT_EQ(h1, std::string("aaa"));
 
     std::list<std::string> h2;
 
@@ -916,7 +915,7 @@ BOOST_AUTO_TEST_CASE(session_1008)
 
     BOOST_FOREACH(std::string &i, h2)
     {
-      BOOST_REQUIRE_EQUAL(i, "bar");
+      EXPECT_EQ(i, "bar");
     }
 
     h2.push_back("foo");
@@ -925,14 +924,14 @@ BOOST_AUTO_TEST_CASE(session_1008)
 
     h2.clear();
     o1_2.get()->get_parameter_values<std::string>("H2", &h2);
-    BOOST_REQUIRE_EQUAL(h2.size(), 4);
+    EXPECT_EQ(h2.size(), 4);
     int row = 0;
     BOOST_FOREACH(std::string &i, h2)
     {
-      if (row == 0) { BOOST_REQUIRE_EQUAL(i, "bar"); }
-      if (row == 1) { BOOST_REQUIRE_EQUAL(i, "bar"); }
-      if (row == 2) { BOOST_REQUIRE_EQUAL(i, "bar"); }
-      if (row == 3) { BOOST_REQUIRE_EQUAL(i, "foo"); }
+      if (row == 0) { EXPECT_EQ(i, "bar"); }
+      if (row == 1) { EXPECT_EQ(i, "bar"); }
+      if (row == 2) { EXPECT_EQ(i, "bar"); }
+      if (row == 3) { EXPECT_EQ(i, "foo"); }
       row++;
     }
   }
@@ -948,21 +947,21 @@ BOOST_AUTO_TEST_CASE(session_1008)
     optional<og::og_session_relation_ptr> o1_2 = cleaned_session_.get_relation(
           o1o2->get_id());
 
-    if (!o1_2) { BOOST_FAIL("null"); }
+    if (!o1_2) { EXPECT_TRUE(false); }
 
     std::string h1;
     o1_2->get()->get_parameter_value<std::string>("H3", &h1);
-    BOOST_REQUIRE_EQUAL(h1, std::string("foo"));
+    EXPECT_EQ(h1, std::string("foo"));
 
     std::list<std::string> h2;
 
     o1_2.get()->get_parameter_values<std::string>("H4", &h2);
 
-    BOOST_REQUIRE_EQUAL(h2.size(), 3);
+    EXPECT_EQ(h2.size(), 3);
 
     BOOST_FOREACH(std::string &i, h2)
     {
-      BOOST_REQUIRE_EQUAL(i, "bar");
+      EXPECT_EQ(i, "bar");
     }
 
     h2.push_back("foo");
@@ -971,21 +970,21 @@ BOOST_AUTO_TEST_CASE(session_1008)
 
     h2.clear();
     o1_2.get()->get_parameter_values<std::string>("H4", &h2);
-    BOOST_REQUIRE_EQUAL(h2.size(), 4);
+    EXPECT_EQ(h2.size(), 4);
     int row = 0;
     BOOST_FOREACH(std::string &i, h2)
     {
-      if (row == 0) { BOOST_REQUIRE_EQUAL(i, "bar"); }
-      if (row == 1) { BOOST_REQUIRE_EQUAL(i, "bar"); }
-      if (row == 2) { BOOST_REQUIRE_EQUAL(i, "bar"); }
-      if (row == 3) { BOOST_REQUIRE_EQUAL(i, "foo"); }
+      if (row == 0) { EXPECT_EQ(i, "bar"); }
+      if (row == 1) { EXPECT_EQ(i, "bar"); }
+      if (row == 2) { EXPECT_EQ(i, "bar"); }
+      if (row == 3) { EXPECT_EQ(i, "foo"); }
       row++;
     }
   }
 }
 
 // disconnect
-BOOST_AUTO_TEST_CASE( session_1100 )
+TEST( session, ten )
 {
 #ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -1023,11 +1022,11 @@ BOOST_AUTO_TEST_CASE( session_1100 )
   optional<og::og_session_relation_ptr> disconnected =
     cleaned_session_.get_relation(did);
 
-  BOOST_REQUIRE(!disconnected.is_initialized());
+  EXPECT_TRUE(!disconnected.is_initialized());
 }
 
 // COPY
-BOOST_AUTO_TEST_CASE( session_1111 )
+TEST( session, twelve )
 {
 #ifdef _WINDOWS
 //  og::core::CrtCheckMemory __check__;
@@ -1129,7 +1128,7 @@ BOOST_AUTO_TEST_CASE( session_1111 )
     copied->get_parameter_value<string>("foo1", &t);
     OG_LOG << t;
 
-    BOOST_REQUIRE(
+    EXPECT_TRUE(
       og::core::og_session_object_comparer::compare(&cleaned_session_, o1, copied));
   }
 
@@ -1137,7 +1136,7 @@ BOOST_AUTO_TEST_CASE( session_1111 )
   {
     og::og_session_object_ptr copied = o1->copy_object(
                                          og::core::connection_direction_enum::direction_to);
-    BOOST_REQUIRE(
+    EXPECT_TRUE(
       og::core::og_session_object_comparer::compare(&cleaned_session_, o1, copied));
 
     // childs : 1 object
@@ -1145,9 +1144,8 @@ BOOST_AUTO_TEST_CASE( session_1111 )
       list<og::og_session_object_ptr> childs;
       copied->get_connected_object_to(&childs);
 
-      BOOST_REQUIRE_EQUAL(1, childs.size());
-      BOOST_REQUIRE(
-        og::core::og_session_object_comparer::compare(&cleaned_session_, o2,
+      EXPECT_EQ(1, childs.size());
+      EXPECT_TRUE(og::core::og_session_object_comparer::compare(&cleaned_session_, o2,
             childs.front()));
     }
 
@@ -1157,11 +1155,11 @@ BOOST_AUTO_TEST_CASE( session_1111 )
           childs;
       copied->get_connected_to(&childs);
 
-      BOOST_REQUIRE_EQUAL(1, childs.size());
-      BOOST_REQUIRE(
+      EXPECT_EQ(1, childs.size());
+      EXPECT_TRUE(
         og::core::og_session_object_comparer::compare(&cleaned_session_, o2,
             childs.front().get<0>()));
-      BOOST_REQUIRE(
+      EXPECT_TRUE(
         og::core::og_session_relation_comparer::compare(&cleaned_session_, r1,
             childs.front().get<1>()));
     }
@@ -1170,7 +1168,7 @@ BOOST_AUTO_TEST_CASE( session_1111 )
     {
       list<og::og_session_object_ptr> parents;
       copied->get_connected_object_from(&parents);
-      BOOST_REQUIRE_EQUAL(0, parents.size());
+      EXPECT_EQ(0, parents.size());
     }
     // parents of copied : 0 (with relation)
     {
@@ -1178,7 +1176,7 @@ BOOST_AUTO_TEST_CASE( session_1111 )
           childs;
       copied->get_connected_from(&childs);
 
-      BOOST_REQUIRE_EQUAL(0, childs.size());
+      EXPECT_EQ(0, childs.size());
     }
 
     // childs of copied : 1 object
@@ -1186,8 +1184,8 @@ BOOST_AUTO_TEST_CASE( session_1111 )
       list<og::og_session_object_ptr> childs;
       copied->get_connected_object(&childs);
 
-      BOOST_REQUIRE_EQUAL(1, childs.size());
-      BOOST_REQUIRE(
+      EXPECT_EQ(1, childs.size());
+      EXPECT_TRUE(
         og::core::og_session_object_comparer::compare(&cleaned_session_, o2,
             childs.front()));
     }
@@ -1197,11 +1195,11 @@ BOOST_AUTO_TEST_CASE( session_1111 )
           childs;
       copied->get_connected(&childs);
 
-      BOOST_REQUIRE_EQUAL(1, childs.size());
-      BOOST_REQUIRE(
+      EXPECT_EQ(1, childs.size());
+      EXPECT_TRUE(
         og::core::og_session_object_comparer::compare(&cleaned_session_, o2,
             childs.front().get<0>()));
-      BOOST_REQUIRE(
+      EXPECT_TRUE(
         og::core::og_session_relation_comparer::compare(&cleaned_session_, r1,
             childs.front().get<1>()));
     }
@@ -1210,7 +1208,7 @@ BOOST_AUTO_TEST_CASE( session_1111 )
   {
     og::og_session_object_ptr copied = o2->copy_object(
                                          og::core::connection_direction_enum::direction_from);
-    BOOST_REQUIRE(
+    EXPECT_TRUE(
       og::core::og_session_object_comparer::compare(&cleaned_session_, o2, copied));
 
     // childs : 0 object
@@ -1218,7 +1216,7 @@ BOOST_AUTO_TEST_CASE( session_1111 )
       list<og::og_session_object_ptr> childs;
       copied->get_connected_object_to(&childs);
 
-      BOOST_REQUIRE_EQUAL(0, childs.size());
+      EXPECT_EQ(0, childs.size());
     }
     // childs of copied : 0 (with relation)
     {
@@ -1226,7 +1224,7 @@ BOOST_AUTO_TEST_CASE( session_1111 )
           childs;
       copied->get_connected_to(&childs);
 
-      BOOST_REQUIRE_EQUAL(0, childs.size());
+      EXPECT_EQ(0, childs.size());
     }
 
     // parents of copied : 1 object
@@ -1234,8 +1232,8 @@ BOOST_AUTO_TEST_CASE( session_1111 )
       list<og::og_session_object_ptr> parents;
       copied->get_connected_object_from(&parents);
 
-      BOOST_REQUIRE_EQUAL(1, parents.size());
-      BOOST_REQUIRE(
+      EXPECT_EQ(1, parents.size());
+      EXPECT_TRUE(
         og::core::og_session_object_comparer::compare(&cleaned_session_, o1,
             parents.front()));
     }
@@ -1245,11 +1243,11 @@ BOOST_AUTO_TEST_CASE( session_1111 )
           parents;
       copied->get_connected_from(&parents);
 
-      BOOST_REQUIRE_EQUAL(1, parents.size());
-      BOOST_REQUIRE(
+      EXPECT_EQ(1, parents.size());
+      EXPECT_TRUE(
         og::core::og_session_object_comparer::compare(&cleaned_session_, o1,
             parents.front().get<0>()));
-      BOOST_REQUIRE(
+      EXPECT_TRUE(
         og::core::og_session_relation_comparer::compare(&cleaned_session_, r1,
             parents.front().get<1>()));
     }
@@ -1259,8 +1257,8 @@ BOOST_AUTO_TEST_CASE( session_1111 )
       list<og::og_session_object_ptr> parents;
       copied->get_connected_object(&parents);
 
-      BOOST_REQUIRE_EQUAL(1, parents.size());
-      BOOST_REQUIRE(
+      EXPECT_EQ(1, parents.size());
+      EXPECT_TRUE(
         og::core::og_session_object_comparer::compare(&cleaned_session_, o1,
             parents.front()));
     }
@@ -1270,11 +1268,11 @@ BOOST_AUTO_TEST_CASE( session_1111 )
           childs;
       copied->get_connected(&childs);
 
-      BOOST_REQUIRE_EQUAL(1, childs.size());
-      BOOST_REQUIRE(
+      EXPECT_EQ(1, childs.size());
+      EXPECT_TRUE(
         og::core::og_session_object_comparer::compare(&cleaned_session_, o1,
             childs.front().get<0>()));
-      BOOST_REQUIRE(
+      EXPECT_TRUE(
         og::core::og_session_relation_comparer::compare(&cleaned_session_, r1,
             childs.front().get<1>()));
     }
@@ -1282,7 +1280,7 @@ BOOST_AUTO_TEST_CASE( session_1111 )
 }
 
 // delete
-BOOST_AUTO_TEST_CASE( session_1112 )
+TEST( session, thirteen )
 {
 #ifdef _WINDOWS
 //  og::core::CrtCheckMemory __check__;
@@ -1399,9 +1397,9 @@ BOOST_AUTO_TEST_CASE( session_1112 )
     boost::optional<og::og_session_relation_ptr> c3 = cleaned_session_.get_relation(
           rel_id);
 
-    BOOST_REQUIRE(!c1.is_initialized());
-    BOOST_REQUIRE(!c2.is_initialized());
-    BOOST_REQUIRE(!c3.is_initialized());
+    EXPECT_TRUE(!c1.is_initialized());
+    EXPECT_TRUE(!c2.is_initialized());
+    EXPECT_TRUE(!c3.is_initialized());
   }
   {
     og::og_session_object_ptr copied = o1->copy_object(
@@ -1425,9 +1423,9 @@ BOOST_AUTO_TEST_CASE( session_1112 )
     boost::optional<og::og_session_relation_ptr> c3 = cleaned_session_.get_relation(
           rel_id);
 
-    BOOST_REQUIRE(!c1.is_initialized());
-    BOOST_REQUIRE(c2.is_initialized());
-    BOOST_REQUIRE(!c3.is_initialized());
+    EXPECT_TRUE(!c1.is_initialized());
+    EXPECT_TRUE(c2.is_initialized());
+    EXPECT_TRUE(!c3.is_initialized());
   }
   {
     og::og_session_object_ptr copied = o1->copy_object(
@@ -1451,9 +1449,9 @@ BOOST_AUTO_TEST_CASE( session_1112 )
     boost::optional<og::og_session_relation_ptr> c3 = cleaned_session_.get_relation(
           rel_id);
 
-    BOOST_REQUIRE(!c1.is_initialized());
-    BOOST_REQUIRE(c2.is_initialized());
-    BOOST_REQUIRE(!c3.is_initialized());
+    EXPECT_TRUE(!c1.is_initialized());
+    EXPECT_TRUE(c2.is_initialized());
+    EXPECT_TRUE(!c3.is_initialized());
   }
 
   {
@@ -1479,9 +1477,9 @@ BOOST_AUTO_TEST_CASE( session_1112 )
     boost::optional<og::og_session_relation_ptr> c3 = cleaned_session_.get_relation(
           rel_id);
 
-	BOOST_REQUIRE(!c1.is_initialized());
-    BOOST_REQUIRE(!c2.is_initialized());
-    BOOST_REQUIRE(!c3.is_initialized());
+	EXPECT_TRUE(!c1.is_initialized());
+    EXPECT_TRUE(!c2.is_initialized());
+    EXPECT_TRUE(!c3.is_initialized());
   }
 
   {
@@ -1507,9 +1505,9 @@ BOOST_AUTO_TEST_CASE( session_1112 )
     boost::optional<og::og_session_relation_ptr> c3 = cleaned_session_.get_relation(
           rel_id);
 
-	BOOST_REQUIRE(!c1.is_initialized());
-    BOOST_REQUIRE(c2.is_initialized());
-    BOOST_REQUIRE(!c3.is_initialized());
+	EXPECT_TRUE(!c1.is_initialized());
+    EXPECT_TRUE(c2.is_initialized());
+    EXPECT_TRUE(!c3.is_initialized());
   }
   {
     og::og_session_object_ptr copied = o2->copy_object(
@@ -1534,12 +1532,10 @@ BOOST_AUTO_TEST_CASE( session_1112 )
     boost::optional<og::og_session_relation_ptr> c3 = cleaned_session_.get_relation(
           rel_id);
 
-	BOOST_REQUIRE(!c1.is_initialized());
-    BOOST_REQUIRE(c2.is_initialized());
-    BOOST_REQUIRE(!c3.is_initialized());
+	EXPECT_TRUE(!c1.is_initialized());
+    EXPECT_TRUE(c2.is_initialized());
+    EXPECT_TRUE(!c3.is_initialized());
   }
 
 }
 
-BOOST_AUTO_TEST_SUITE_END()
-#endif // TEST_OG_SESSION

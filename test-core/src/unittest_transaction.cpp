@@ -1,11 +1,12 @@
 #include "fixtures.h"
 #include "utility.h"
+#include <gtest/gtest.h>
 
-#ifdef TEST_OG_TRAN
 
-BOOST_FIXTURE_TEST_SUITE(tran, fixture_clean_session);
 
-BOOST_AUTO_TEST_CASE( transaction_1000 )
+
+
+TEST( transaction, one )
 {
 #ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -51,16 +52,16 @@ BOOST_AUTO_TEST_CASE( transaction_1000 )
     // check
     optional<og::og_schema_object_ptr> schm_obj1 = cleaned_session_.schema()->get_object(
         id);
-    BOOST_REQUIRE(schm_obj1.is_initialized());
+    EXPECT_TRUE(schm_obj1.is_initialized());
 
     list<og::og_schema_object_ptr> schm_children;
     schm_obj1.get()->get_connected_object_to(reltype_list, &schm_children);
-    BOOST_REQUIRE(schm_children.size() == 1);
-	BOOST_REQUIRE_EQUAL(schm_obj1->get()->get_comment(), "aaa");
+    EXPECT_TRUE(schm_children.size() == 1);
+	EXPECT_EQ(schm_obj1->get()->get_comment(), "aaa");
   }
 }
 
-BOOST_AUTO_TEST_CASE( transaction_1001 )
+TEST( transaction, two )
 {
 #ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -107,16 +108,16 @@ BOOST_AUTO_TEST_CASE( transaction_1001 )
     // check
     optional<og::og_schema_object_ptr> schm_obj1 = cleaned_session_.schema()->get_object(
         id);
-    BOOST_REQUIRE(!schm_obj1.is_initialized());
+    EXPECT_TRUE(!schm_obj1.is_initialized());
 
     optional<og::og_schema_object_ptr> schm_obj2 = cleaned_session_.schema()->get_object(
         child_id);
-    BOOST_REQUIRE(!schm_obj2.is_initialized());
+    EXPECT_TRUE(!schm_obj2.is_initialized());
   }
 }
 
 // parameter and transaction
-BOOST_AUTO_TEST_CASE(transaction_1002)
+TEST(transaction, three)
 {
 #ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -165,16 +166,16 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
     cleaned_session_.schema()->create_parameter("hoge_type2", "comment2",
         &type2, 3, 2, 4);
 
-  BOOST_REQUIRE_EQUAL(ptest1->get_comment(), "comment1");
-  BOOST_REQUIRE_EQUAL(ptest1->get_type(), "hoge_type1");
+  EXPECT_EQ(ptest1->get_comment(), "comment1");
+  EXPECT_EQ(ptest1->get_type(), "hoge_type1");
 
-  BOOST_REQUIRE_EQUAL(ptest2->get_comment(), "comment2");
-  BOOST_REQUIRE_EQUAL(ptest2->get_type(), "hoge_type2");
+  EXPECT_EQ(ptest2->get_comment(), "comment2");
+  EXPECT_EQ(ptest2->get_type(), "hoge_type2");
 
   list<boost::tuple<string, og::og_schema_parameter_ptr>> param_name_types0;
   p1->get_parameters(&param_name_types0);
 
-  BOOST_REQUIRE_EQUAL(param_name_types0.size(), 0);
+  EXPECT_EQ(param_name_types0.size(), 0);
 
   // apply parameter to schema_object
   p1->add_parameter_definition("H1", ptest1);
@@ -198,7 +199,7 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
     optional<og::og_session_object_ptr> o1_2 = cleaned_session_.get_object(oid);
 
     // confirm rollback(discard object creation)
-    BOOST_REQUIRE_EQUAL(o1_2.is_initialized(), false);
+    EXPECT_EQ(o1_2.is_initialized(), false);
   }
 
 
@@ -217,13 +218,13 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
     {
       optional<og::og_session_object_ptr> o1_2 = cleaned_session_.get_object(oid);
 
-      BOOST_REQUIRE_EQUAL(o1_2.is_initialized(), true);
+      EXPECT_EQ(o1_2.is_initialized(), true);
 
       double h1;
       o1_2.get()->get_parameter_value<double>("H2", &h1);
       // confirm rollback
-      BOOST_REQUIRE_EQUAL(h1, 2.236);
-	  BOOST_REQUIRE_EQUAL(o1_2.get()->get_comment(), "");
+      EXPECT_EQ(h1, 2.236);
+	  EXPECT_EQ(o1_2.get()->get_comment(), "");
     }
   }
 
@@ -243,13 +244,13 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
     {
       optional<og::og_session_object_ptr> o1_2 = cleaned_session_.get_object(oid);
 
-      BOOST_REQUIRE_EQUAL(o1_2.is_initialized(), true);
+      EXPECT_EQ(o1_2.is_initialized(), true);
 
       double h1;
       o1_2.get()->get_parameter_value<double>("H2", &h1);
       // confirm commit
-      BOOST_REQUIRE_EQUAL(h1, 2.236);
-	  BOOST_REQUIRE_EQUAL(o1_2.get()->get_comment(), "aaa");
+      EXPECT_EQ(h1, 2.236);
+	  EXPECT_EQ(o1_2.get()->get_comment(), "aaa");
 
     }
   }
@@ -268,7 +269,7 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
 
     list<og::og_session_object_ptr> connected;
     o1->get_connected_object(&connected);
-    BOOST_REQUIRE_EQUAL(connected.size(), 0);
+    EXPECT_EQ(connected.size(), 0);
   }
 
   // session relation test (implicit)
@@ -285,7 +286,7 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
 
     list<og::og_session_object_ptr> connected;
     o1->get_connected_object(&connected);
-    BOOST_REQUIRE_EQUAL(connected.size(), 0);
+    EXPECT_EQ(connected.size(), 0);
   }
 
     // session relation test (explicit)
@@ -303,8 +304,8 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
 
     list<og::og_session_object_ptr> connected;
     o1->get_connected_object(&connected);
-	BOOST_REQUIRE_EQUAL(connected.size(), 1);
-    BOOST_REQUIRE_EQUAL(o1o2.get()->get_comment(), "aaa");
+	EXPECT_EQ(connected.size(), 1);
+    EXPECT_EQ(o1o2.get()->get_comment(), "aaa");
   }
 
   // session object test (implicit)
@@ -328,7 +329,7 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
 	  
       o1o2_2.get()->get_parameter_value<double>("H3", &h1);
       // confirm rollback
-      BOOST_REQUIRE_EQUAL(h1, 1.414);
+      EXPECT_EQ(h1, 1.414);
     }
 
     {
@@ -344,7 +345,7 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
 	  
       o1o2_2.get()->get_parameter_value<double>("H3", &h1);
       // confirm rollback
-      BOOST_REQUIRE_EQUAL(h1, 1.414);
+      EXPECT_EQ(h1, 1.414);
     }
 
 	{
@@ -359,10 +360,9 @@ BOOST_AUTO_TEST_CASE(transaction_1002)
       double h1;
       o1o2.get()->get_parameter_value<double>("H3", &h1);
       // confirm commit
-      BOOST_REQUIRE_EQUAL(h1, 1.1234);
+      EXPECT_EQ(h1, 1.1234);
     }
   }
 
 }
-BOOST_AUTO_TEST_SUITE_END()
-#endif
+

@@ -1,15 +1,12 @@
 #include "fixtures.h"
 #include "utility.h"
+#include <gtest/gtest.h>
 
 using namespace std;
 //using namespace og::core;
 
-#ifdef TEST_OG_ETC
-
-BOOST_FIXTURE_TEST_SUITE(etc, fixture_clean_session);
-
 // xml export
-BOOST_AUTO_TEST_CASE(etc_1000_basic_import)
+TEST(etc, basic_import)
 {
 #ifdef _WINDOWS
   // TODO: CrtCheckMemory detects memory leak in this test.
@@ -149,12 +146,12 @@ BOOST_AUTO_TEST_CASE(etc_1000_basic_import)
   list<boost::tuple<string, og::og_schema_parameter_ptr>> __params_rel_after;
   reltest.get()->get_parameters(&__params_rel_after);
 
-  BOOST_REQUIRE_EQUAL(__params_p1.size(), __params_p1_after.size());
-  BOOST_REQUIRE_EQUAL(__params_rel.size(), __params_rel_after.size());
+  EXPECT_EQ(__params_p1.size(), __params_p1_after.size());
+  EXPECT_EQ(__params_rel.size(), __params_rel_after.size());
 }
 
 // xml export
-BOOST_AUTO_TEST_CASE(etc_1002_schema_verup)
+TEST(etc, schema_verup)
 {
 #ifdef _WINDOWS
   // TODO: CrtCheckMemory detects memory leak in this test.
@@ -314,12 +311,12 @@ BOOST_AUTO_TEST_CASE(etc_1002_schema_verup)
   list<og::og_session_object_ptr> prop_objs;
   cleaned_session_.get_object_by_type(prop_type, &prop_objs);
 
-  BOOST_REQUIRE_EQUAL(prop_objs.size(), 1);
+  EXPECT_EQ(prop_objs.size(), 1);
 
   og::og_session_object_ptr prop_obj =
     cleaned_session_.get_property_object();
 
-  BOOST_REQUIRE_EQUAL(prop_objs.front()->get_id(), prop_obj->get_id());
+  EXPECT_EQ(prop_objs.front()->get_id(), prop_obj->get_id());
 
   //"delete param definition" deletes all session's parameters
   p2->add_parameter_definition(string("add int"), ptest1);
@@ -335,13 +332,13 @@ BOOST_AUTO_TEST_CASE(etc_1002_schema_verup)
   cleaned_session_.schema()->export_to_file("schema_xml_catchup1.xml.gz");
 
   cleaned_session_.purge();
-  BOOST_REQUIRE_EQUAL(true,
+  EXPECT_EQ(true,
                       cleaned_session_.import_from_file("session_xml_catchup0.xml.gz"));
 
   list<og::og_session_object_ptr> sesn_objs;
   cleaned_session_.get_object_by_type(otype_list, &sesn_objs);
 
-  BOOST_REQUIRE_EQUAL(sesn_objs.size(), 3);
+  EXPECT_EQ(sesn_objs.size(), 3);
 
   for (list<og::og_session_object_ptr>::iterator it = sesn_objs.begin();
        it != sesn_objs.end(); it++)
@@ -350,7 +347,7 @@ BOOST_AUTO_TEST_CASE(etc_1002_schema_verup)
     {
       list<og::og_session_object_ptr> sesn_cons;
       (*it)->get_connected_object(&sesn_cons);
-      BOOST_REQUIRE_EQUAL(sesn_cons.size(), 2);
+      EXPECT_EQ(sesn_cons.size(), 2);
 
       {
         const string & sid = (*it)->get_schema_object_id();
@@ -360,7 +357,7 @@ BOOST_AUTO_TEST_CASE(etc_1002_schema_verup)
         list<boost::tuple<string, og::og_schema_parameter_ptr>> __params;
         ssidob.get()->get_parameters(&__params);
 
-        BOOST_REQUIRE_EQUAL(__params.size(), 6);
+        EXPECT_EQ(__params.size(), 6);
       }
 
       for (list<og::og_session_object_ptr>::iterator it2 = sesn_cons.begin();
@@ -372,7 +369,7 @@ BOOST_AUTO_TEST_CASE(etc_1002_schema_verup)
           cleaned_session_.schema()->get_object(
             it2->get()->get_schema_object_id())->get()->get_parameters(&__params2);
 
-          BOOST_REQUIRE_EQUAL(6, __params2.size());
+          EXPECT_EQ(6, __params2.size());
           it2->get()->set_parameter_value<int>("add int", 10);
           it2->get()->set_parameter_value<double>("add real", 1.4142);
           it2->get()->set_parameter_value<string>("add text", "hoge");
@@ -391,7 +388,7 @@ BOOST_AUTO_TEST_CASE(etc_1002_schema_verup)
           cleaned_session_.schema()->get_object(
             it2->get()->get_schema_object_id())->get()->get_parameters(&__params3);
 
-          BOOST_REQUIRE_EQUAL(2, __params3.size());
+          EXPECT_EQ(2, __params3.size());
         }
       }
     }
@@ -399,7 +396,7 @@ BOOST_AUTO_TEST_CASE(etc_1002_schema_verup)
 }
 
 // xml export
-BOOST_AUTO_TEST_CASE(etc_1003_schema_catchup)
+TEST(etc, schema_catchup)
 {
 #ifdef _WINDOWS
   // TODO: CrtCheckMemory detects memory leak in this test.
@@ -431,12 +428,12 @@ BOOST_AUTO_TEST_CASE(etc_1003_schema_catchup)
 
   bool res = cleaned_session_.catchup_schema("schema_xml_catchup1.xml.gz");
 
-  BOOST_REQUIRE_EQUAL(true, res);
+  EXPECT_EQ(true, res);
 
   list<og::og_session_object_ptr> sesn_objs;
   cleaned_session_.get_object_by_type(otype_list, &sesn_objs);
 
-  BOOST_REQUIRE_EQUAL(sesn_objs.size(), 3);
+  EXPECT_EQ(sesn_objs.size(), 3);
 
   for (list<og::og_session_object_ptr>::iterator it = sesn_objs.begin();
        it != sesn_objs.end(); it++)
@@ -445,7 +442,7 @@ BOOST_AUTO_TEST_CASE(etc_1003_schema_catchup)
     {
       list<og::og_session_object_ptr> sesn_cons;
       (*it)->get_connected_object(&sesn_cons);
-      BOOST_REQUIRE_EQUAL(sesn_cons.size(), 2);
+      EXPECT_EQ(sesn_cons.size(), 2);
 
       {
         const string & sid = (*it)->get_schema_object_id();
@@ -455,7 +452,7 @@ BOOST_AUTO_TEST_CASE(etc_1003_schema_catchup)
         list<boost::tuple<string, og::og_schema_parameter_ptr>> __params;
         ssidob.get()->get_parameters(&__params);
 
-        BOOST_REQUIRE_EQUAL(6, __params.size());
+        EXPECT_EQ(6, __params.size());
       }
 
       for (list<og::og_session_object_ptr>::iterator it2 = sesn_cons.begin();
@@ -467,7 +464,7 @@ BOOST_AUTO_TEST_CASE(etc_1003_schema_catchup)
           cleaned_session_.schema()->get_object(
             it2->get()->get_schema_object_id())->get()->get_parameters(&__params2);
 
-          BOOST_REQUIRE_EQUAL(6, __params2.size());
+          EXPECT_EQ(6, __params2.size());
           it2->get()->set_parameter_value<int>("add int", 10);
           it2->get()->set_parameter_value<double>("add real", 1.4142);
           it2->get()->set_parameter_value<string>("add text", "hoge");
@@ -486,7 +483,7 @@ BOOST_AUTO_TEST_CASE(etc_1003_schema_catchup)
           cleaned_session_.schema()->get_object(
             it2->get()->get_schema_object_id())->get()->get_parameters(&__params3);
 
-          BOOST_REQUIRE_EQUAL(2, __params3.size());
+          EXPECT_EQ(2, __params3.size());
         }
       }
     }
@@ -505,16 +502,14 @@ BOOST_AUTO_TEST_CASE(etc_1003_schema_catchup)
 
   og::og_schema_object_ptr schm_prop2 =
     cleaned_session_.schema()->get_property_object();
-  BOOST_REQUIRE_EQUAL(schm_prop2->get_revision(), "100");
+  EXPECT_EQ(schm_prop2->get_revision(), "100");
 
   schm_prop2->set_revision("101");
   cleaned_session_.catchup_schema("rev100.xml.gz");
 
   og::og_schema_object_ptr schm_prop3 =
     cleaned_session_.schema()->get_property_object();
-  BOOST_REQUIRE_EQUAL(schm_prop3->get_revision(), "101");
+  EXPECT_EQ(schm_prop3->get_revision(), "101");
 }
 
-BOOST_AUTO_TEST_SUITE_END()
 
-#endif //TEST_OG_ETC

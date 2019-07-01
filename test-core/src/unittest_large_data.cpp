@@ -1,12 +1,9 @@
 #include "fixtures.h"
 #include "utility.h"
-
-#ifdef TEST_OG_LARGE_DATA
-
-BOOST_FIXTURE_TEST_SUITE(large_data, fixture_clean_session);
+#include <gtest/gtest.h>
 
 // parameter test
-BOOST_AUTO_TEST_CASE(large_data_1001)
+TEST(large_data, one)
 {
 #ifdef _WINDOWS
   og::core::CrtCheckMemory __check__;
@@ -43,11 +40,11 @@ BOOST_AUTO_TEST_CASE(large_data_1001)
   oname_list.push_back(ONAME);
   list<og::og_schema_object_ptr> olist;
   cleaned_session_.schema()->get_object_by_name(oname_list, &olist);
-  BOOST_REQUIRE_EQUAL(olist.size(), 102);
+  EXPECT_EQ(olist.size(), 102);
   olist.clear();
 
   cleaned_session_.schema()->get_object_by_type(otype_list, &olist);
-  BOOST_REQUIRE_EQUAL(olist.size(), 102);
+  EXPECT_EQ(olist.size(), 102);
 
   og::og_schema_relation_ptr rel_ptr = p1->connect_to(p2, RELTYPE);
 
@@ -70,15 +67,15 @@ BOOST_AUTO_TEST_CASE(large_data_1001)
     //o1->sync();
 
     optional<og::og_session_object_ptr> o1_2 = cleaned_session_.get_object(o1->get_id());
-    if (!o1_2) { BOOST_FAIL("null"); }
+    if (!o1_2) { EXPECT_TRUE(false); }
 
     std::list<int> h1, h2, h3;
     o1_2.get()->get_parameter_values<int>("H1", &h1);
 
-    BOOST_REQUIRE_EQUAL(h1.size(), 1000);
+    EXPECT_EQ(h1.size(), 1000);
     BOOST_FOREACH(int &i, h1)
     {
-      BOOST_REQUIRE_EQUAL(i, 100);
+      EXPECT_EQ(i, 100);
     }
 
     for (int i = 0; i < 99; i++)
@@ -89,15 +86,13 @@ BOOST_AUTO_TEST_CASE(large_data_1001)
     o1_2.get()->set_parameter_values<int>("H1", h2);
 
     o1_2.get()->get_parameter_values<int>("H1", &h3);
-    BOOST_REQUIRE_EQUAL(h3.size(), 99);
+    EXPECT_EQ(h3.size(), 99);
     BOOST_FOREACH(int &i, h3)
     {
-      BOOST_REQUIRE_EQUAL(i, 200);
+      EXPECT_EQ(i, 200);
     }
   }
 
 
 
 }
-BOOST_AUTO_TEST_SUITE_END()
-#endif
