@@ -96,7 +96,7 @@ add_definitions(-D_DLL)
 #add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_definitions(-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS)
 add_definitions(-DBOOST_MPL_LIMIT_LIST_SIZE=30)
-add_definitions(-DUNICODE -D_UNICOCE)
+add_definitions(-DUNICODE -D_UNICODE)
 remove_definitions(-D_MBCS)
 
 #

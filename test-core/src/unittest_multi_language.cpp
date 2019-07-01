@@ -6,7 +6,7 @@ using namespace std;
 //using namespace og::core;
 
 // xml export
-TEST(multi_language, one)
+TEST(multi_lang, one)
 {
 #ifdef _WINDOWS
   // TODO: CrtCheckMemory detects memory leak in this test.
@@ -16,7 +16,9 @@ TEST(multi_language, one)
   // initialize db
   og::og_session cleaned_session_;
   
-  std::string mydb = "あ.db";
+  //std::string mydb("社会.db");//ABEND
+  std::string mydb("abc.db");
+
   fs::copy_file(SRC_DBPATH, mydb, fs::copy_option::overwrite_if_exists);
   cleaned_session_.open(mydb);
   cleaned_session_.build();
