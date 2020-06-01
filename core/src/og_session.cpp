@@ -141,8 +141,8 @@ void og_session::get_object_by_schema_object(list<og_schema_object_ptr>&
 }
 
 void og_session::get_object_by_parameter(string& _param_name,
-                                          og::core::parameter_value_variant& _value,
-                                          list<og_session_object_ptr>* _sesn_obj_list)
+    og::core::parameter_value_variant& _value,
+    list<og_session_object_ptr>* _sesn_obj_list)
 {
   list<og::core::session_object_ptr> objs;
   session_->get_object_by_parameter(_param_name, _value, &objs);
@@ -153,12 +153,13 @@ void og_session::get_object_by_parameter(string& _param_name,
 }
 
 void og_session::get_object_by_parameter_range(string& _param_name,
-                                          og::core::parameter_value_variant& _value_min,
-                                          og::core::parameter_value_variant& _value_max,
-                                          list<og_session_object_ptr>* _sesn_obj_list)
+    og::core::parameter_value_variant& _value_min,
+    og::core::parameter_value_variant& _value_max,
+    list<og_session_object_ptr>* _sesn_obj_list)
 {
   list<og::core::session_object_ptr> objs;
-  session_->get_object_by_parameter_range(_param_name, _value_min, _value_max, &objs);
+  session_->get_object_by_parameter_range(_param_name, _value_min, _value_max,
+                                          &objs);
 
   og_converter::convert
   <list<og::core::session_object_ptr>&, list<og_session_object_ptr>*>
@@ -280,6 +281,22 @@ og_session_object_ptr og_session::get_property_object()
   else
   {
     return og_session_object_ptr(new og_session_object(sesn_obj));
+  }
+}
+
+boost::optional<og_session_object_ptr> og_session::import_object_from_file(
+  string _path)
+{
+  boost::optional<og::core::session_object_ptr> ret =
+    session_->import_object_from_file(
+      _path);
+  if (ret.is_initialized())
+  {
+	  return boost::optional<og_session_object_ptr>(new og_session_object(ret.get()));
+  }
+  else
+  {
+    return boost::optional<og_session_object_ptr>();
   }
 }
 

@@ -63,6 +63,7 @@ public:
   void get_connectable_relation_type_from(list<string>* _rel_type_list);
   void get_connectable_to(map<string, list<schema_object_ptr> >* _rel_type_map);
   void get_connectable_from(map<string, list<schema_object_ptr> >* _rel_type_map);
+  void export_to_recursively(string _path);
   // relation ends.
 
   ///////////////////////////////

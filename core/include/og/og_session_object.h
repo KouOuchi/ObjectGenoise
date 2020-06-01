@@ -51,6 +51,7 @@ public:
   OG_COREAPI og_session_object_ptr copy_object();
   OG_COREAPI og_session_object_ptr copy_object(og::core::connection_direction_enum
       _direction);
+  OG_COREAPI void export_to_recursively(string _path);
 
   ///////////////////////////////
   // relation

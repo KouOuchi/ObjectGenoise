@@ -579,6 +579,10 @@ void session_object::get_connected_to(list<string>& _rel_type_list,
 {
   session_->get_connected_to(id_, _rel_type_list, _sesn_obj_list);
 }
+void session_object::export_to_recursively(string _path)
+{
+  session_->export_object_to_recursively(id_, _path);
+}
 
 } //namespace core;
 } //namespace og;

@@ -243,10 +243,117 @@ bool session::import_object(session_object_ptr _sesn_obj,
   return true;
 }
 
+bool session::import_object_as_new(session_object_ptr _sesn_obj,
+                                   const ptree& _param_elm)
+{
+  transaction tran(*this);
+
+  string id;
+  get_sequence(&id);
+  _sesn_obj->set_id(id);
+
+  // declare insert target and current schema's target
+  map<string, list<parameter_value_variant>> params_file;
+
+  // get xml values
+  import_parameter(_param_elm, &params_file);
+
+  //insert record
+  insert_object(_sesn_obj);
+
+  // declare and get current parameters
+  list<boost::tuple<string, schema_parameter_ptr>> param_name_types;
+  _sesn_obj->get_schema_object()->get_parameters(&param_name_types);
+
+  for (list<boost::tuple<string, schema_parameter_ptr>>::iterator pit =
+         param_name_types.begin();
+       pit != param_name_types.end(); pit++)
+  {
+    map<string, list<parameter_value_variant>>::iterator fit =
+        params_file.find(pit->get<0>());
+
+    if (fit == params_file.end())
+    {
+      // not found. parameter may be created as new.
+      insert_object_parameter_by_default(_sesn_obj, *pit);
+    }
+    else
+    {
+      // fonud.
+      insert_object_parameter_with_arg(_sesn_obj, *pit, fit->second);
+    }
+  }
+
+  tran.commit();
+  return true;
+}
+
 bool session::import_relation(session_relation_ptr _sesn_rel,
                               const ptree& _param_elm)
 {
   transaction tran(*this);
+
+  // declare insert target
+  map<string, list<parameter_value_variant>> params;
+
+  // get xml values
+  import_parameter(_param_elm, &params);
+
+  // check revision up or not
+  //int schema_rev = boost::lexical_cast<int>
+  //                 (_sesn_rel->get_schema_relation()->get_revision());
+  //int session_rev = boost::lexical_cast<int>
+  //                  (_sesn_rel->get_revision());
+
+  //if (schema_rev > session_rev)
+  //{
+  //}
+  //else
+  //{
+
+  //}
+
+  //insert record
+  insert_relation(_sesn_rel);
+
+  list<boost::tuple<string, schema_parameter_ptr>> param_name_types;
+  _sesn_rel->get_schema_relation()->get_parameters(&param_name_types);
+
+  for (list<boost::tuple<string, schema_parameter_ptr>>::iterator pit
+       = param_name_types.begin(); pit != param_name_types.end(); pit++)
+  {
+    map<string, list<parameter_value_variant>>::iterator fit =
+        params.find(pit->get<0>());
+
+    if (fit == params.end())
+    {
+      // not found. parameter may be created as new.
+      insert_relation_parameter_by_default(_sesn_rel, *pit);
+    }
+    else
+    {
+      // fonud.
+      insert_relation_parameter_with_arg(_sesn_rel, *pit, fit->second);
+    }
+
+  }
+
+  tran.commit();
+  return true;
+}
+
+bool session::import_relation_as_new(session_relation_ptr _sesn_rel,
+                                     const ptree& _param_elm)
+{
+  transaction tran(*this);
+
+  //create sequence
+  int id_seed;
+  *(soci_session_.get()) << "INSERT INTO session_relation_seq VALUES(NULL)";
+  *(soci_session_.get()) << "SELECT MAX(id_seed) FROM session_relation_seq",
+                         soci::into(id_seed);
+  string id(SESSION_RELATION_ID_PREFIX + boost::lexical_cast<string>(id_seed));
+  _sesn_rel->set_id(id);
 
   // declare insert target
   map<string, list<parameter_value_variant>> params;
@@ -628,16 +735,16 @@ void session::get_object_by_schema_object(list<schema_object_ptr>&
 }
 
 void session::get_object_by_parameter(string& _param_name,
-                                          parameter_value_variant& _value,
-                                          list<session_object_ptr>* _sesn_obj_list)
+                                      parameter_value_variant& _value,
+                                      list<session_object_ptr>* _sesn_obj_list)
 {
 
 }
 
 void session::get_object_by_parameter_range(string& _param_name,
-                                          parameter_value_variant& _value_min,
-                                          parameter_value_variant& _value_max,
-                                          list<session_object_ptr>* _sesn_obj_list)
+    parameter_value_variant& _value_min,
+    parameter_value_variant& _value_max,
+    list<session_object_ptr>* _sesn_obj_list)
 {
 
 }
@@ -2061,6 +2168,136 @@ void session::get_connected_to(string _from_id, list<string>& _rel_type_list,
     , &id_list, &rel_list);
 
   get_object_relation(id_list, rel_list, _sesn_objrel_list);
+}
+
+void session::export_object_to_recursively(string _id, string _path)
+{
+  // Create XML document
+  boost::property_tree::ptree pt;
+  ptree& pt_1 = pt.add("og.session", "");
+
+  // session object and relation
+  list<session_object_ptr> sesn_obj_list;
+  list<session_relation_ptr> sesn_rel_list;
+  auto obj = get_object(_id);
+  if (!obj.is_initialized()) { return; }
+
+  sesn_obj_list.push_back(obj.get());
+  object_to_recursively(obj.get(), sesn_obj_list, sesn_rel_list);
+
+  BOOST_FOREACH(const session_object_ptr& s, sesn_obj_list)
+  {
+    // serialize
+    serializer<session_object_ptr>::serialize(pt_1, s);
+  }
+  BOOST_FOREACH(const session_relation_ptr& s, sesn_rel_list)
+  {
+    // serialize
+    serializer<session_relation_ptr>::serialize(pt_1, s);
+  }
+
+  xml_stream().write_to_file(_path, pt);
+}
+
+void session::object_to_recursively(session_object_ptr _obj,
+                                    list<session_object_ptr>& _objs, list<session_relation_ptr>& _rels)
+{
+  list<boost::tuple<session_object_ptr, session_relation_ptr>> from_objs;
+  _obj.get()->get_connected_to(&from_objs);
+  for (list<boost::tuple<session_object_ptr, session_relation_ptr>>::iterator it =
+         from_objs.begin();
+       it != from_objs.end(); it++)
+  {
+    _objs.push_back(it->get<0>());
+    _rels.push_back(it->get<1>());
+
+    object_to_recursively(it->get<0>(), _objs, _rels);
+  }
+}
+
+boost::optional<session_object_ptr> session::import_object_from_file(
+  string _path)
+{
+  boost::optional<session_object_ptr> ret;
+
+  fs::path imp(_path);
+
+  boost::system::error_code error;
+  const bool result = fs::exists(imp, error);
+  if (!result || error)
+  {
+    OG_LOG << "import object file is not found:" << _path;
+    return ret;
+  }
+
+  boost::property_tree::ptree pt;
+  xml_stream().read_from_file(_path, &pt);
+
+  int count_object = 0;
+  // session object
+  bool first = true;
+  BOOST_FOREACH(ptree::value_type & child,
+                pt.get_child("og.session.objects"))
+  {
+    OG_LOG << "import session object:" << count_object++;
+
+    session_object_ptr sesn_obj(new session_object(this));
+
+    // deserialize
+    if (serializer<session_object_ptr>::deserialize(child, sesn_obj))
+    {
+      import_object_as_new(sesn_obj, child.second);
+      if (first)
+      {
+        first = false;
+        ret.reset(sesn_obj);
+      }
+    }
+  }
+
+  // session relation
+  int count_relation = 0;
+  BOOST_FOREACH(ptree::value_type & child,
+                pt.get_child("og.session.relations"))
+  {
+    OG_LOG << "import session relation:" << count_relation++;
+
+    session_relation_ptr sesn_rel(new session_relation(this));
+
+    // deserialize
+    if (serializer<session_relation_ptr>::deserialize(child, sesn_rel))
+    {
+      boost::optional<schema_relation_ptr> schm_rel =
+        schema_->get_relation(sesn_rel->get_schema_relation_id());
+
+      if (schm_rel.is_initialized())
+      {
+        if (schm_rel.get()->get_type().compare(schema::schema_property_object_type_) ==
+            0)
+        {
+          list<string> prep;
+          list<schema_relation_ptr> schm_rels;
+          prep.push_back(schema::schema_property_object_type_);
+
+          schema_->get_relation_by_type(prep, &schm_rels);
+          sesn_rel->set_schema_relation(schm_rels.front());
+        }
+
+        // check from/to
+        boost::optional<session_object_ptr> sesn_from =
+          get_object(sesn_rel->get_from_id());
+        boost::optional<session_object_ptr> sesn_to =
+          get_object(sesn_rel->get_to_id());
+
+        if (sesn_from.is_initialized() && sesn_to.is_initialized())
+        {
+          if (!import_relation_as_new(sesn_rel, child.second)) { continue; }
+        }
+      }
+    }
+  }
+
+  return ret;
 }
 
 } // namespace core;

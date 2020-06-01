@@ -33,6 +33,7 @@ public:
   ///////////////////////////////
   bool import_from_file(string _path);
   void export_to_file(string _path);
+  void export_object_to_recursively(string _id, string _path);
   bool catchup_schema(string _path);
   bool reload_schema(string _path, string _sess_tmp);
   OG_COREAPI void build();
@@ -88,6 +89,9 @@ public:
 
   bool import_object(session_object_ptr _sesn_obj,
                      const ptree& _param_elm);
+  bool import_object_as_new(session_object_ptr _sesn_obj,
+	  const ptree& _param_elm);
+  boost::optional<session_object_ptr> import_object_from_file(string _path);
   // object end
 
   ///////////////////////////////
@@ -125,6 +129,8 @@ public:
   void disconnect(string _rel_id, map<string, session_parameter_ptr>* _param_map);
   bool import_relation(session_relation_ptr _sesn_rel,
                        const ptree& _param_elm);
+  bool import_relation_as_new(session_relation_ptr _sesn_rel,
+	  const ptree& _param_elm);
 
   // relation end
 
@@ -248,6 +254,8 @@ private:
   // worker method
   void import_parameter(const ptree& _param_elm,
                         map<string, list<parameter_value_variant>>* _params);
+
+  void object_to_recursively(session_object_ptr _obj, list<session_object_ptr>& _objs, list<session_relation_ptr>& _rels);
 
 };
 

@@ -111,8 +111,9 @@ void og_session_object::get_connected_object_to(list<string>& _rel_type_list,
 //           _sesn_obj_ptr->session_object_ptr_);
 //}
 
-og::core::connection_validation_result_enum og_session_object::validate_connect_to(og_session_object_ptr _sesn_obj_ptr,
-    string _rel_type)
+og::core::connection_validation_result_enum
+og_session_object::validate_connect_to(og_session_object_ptr _sesn_obj_ptr,
+                                       string _rel_type)
 {
   return session_object_ptr_->validate_connect_to(
            _sesn_obj_ptr->session_object_ptr_, _rel_type);
@@ -123,7 +124,8 @@ og::core::connection_validation_result_enum og_session_object::validate_connect_
 //  return session_object_ptr_->validate_connect_from(
 //           _sesn_obj_ptr->session_object_ptr_);
 //}
-og::core::connection_validation_result_enum og_session_object::validate_connect_from(og_session_object_ptr
+og::core::connection_validation_result_enum
+og_session_object::validate_connect_from(og_session_object_ptr
     _sesn_obj_ptr, string _rel_type)
 {
   return session_object_ptr_->validate_connect_from(
@@ -288,69 +290,80 @@ void og_session_object::get_connected(
   list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>*
   _sesn_obj_rel_list)
 {
-  list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>> obj_rels;
+  list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>>
+      obj_rels;
   session_object_ptr_->get_connected(&obj_rels);
 
   og_converter::convert
   <list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>>&, list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>*>
-  (obj_rels, _sesn_obj_rel_list);
+      (obj_rels, _sesn_obj_rel_list);
 }
 
 void og_session_object::get_connected(list<string>& _rel_type_list,
                                       list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>*
                                       _sesn_obj_rel_list)
 {
-  list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>> obj_rels;
+  list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>>
+      obj_rels;
   session_object_ptr_->get_connected(_rel_type_list, &obj_rels);
 
   og_converter::convert
   <list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>>&, list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>*>
-  (obj_rels, _sesn_obj_rel_list);
+      (obj_rels, _sesn_obj_rel_list);
 }
 
 void og_session_object::get_connected_from(
   list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>*
   _sesn_obj_rel_list)
 {
-  list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>> obj_rels;
+  list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>>
+      obj_rels;
   session_object_ptr_->get_connected_from(&obj_rels);
 
   og_converter::convert
   <list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>>&, list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>*>
-  (obj_rels, _sesn_obj_rel_list);
+      (obj_rels, _sesn_obj_rel_list);
 }
 void og_session_object::get_connected_from(list<string>& _rel_type_list,
     list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>*
     _sesn_obj_rel_list)
 {
-  list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>> obj_rels;
+  list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>>
+      obj_rels;
   session_object_ptr_->get_connected_from(_rel_type_list, &obj_rels);
 
   og_converter::convert
   <list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>>&, list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>*>
-  (obj_rels, _sesn_obj_rel_list);
+      (obj_rels, _sesn_obj_rel_list);
 }
 void og_session_object::get_connected_to(
   list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>*
   _sesn_obj_rel_list)
 {
-  list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>> obj_rels;
+  list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>>
+      obj_rels;
   session_object_ptr_->get_connected_to(&obj_rels);
 
   og_converter::convert
   <list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>>&, list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>*>
-  (obj_rels, _sesn_obj_rel_list);
+      (obj_rels, _sesn_obj_rel_list);
 }
 void og_session_object::get_connected_to(list<string>& _rel_type_list,
     list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>*
     _sesn_obj_rel_list)
 {
-  list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>> obj_rels;
+  list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>>
+      obj_rels;
   session_object_ptr_->get_connected_to(_rel_type_list, &obj_rels);
 
   og_converter::convert
   <list<boost::tuple<og::core::session_object_ptr, og::core::session_relation_ptr>>&, list<boost::tuple<og_session_object_ptr, og_session_relation_ptr>>*>
-  (obj_rels, _sesn_obj_rel_list);
+      (obj_rels, _sesn_obj_rel_list);
+}
+
+void og_session_object::export_to_recursively(std::string _param_name)
+{
+  session_object_ptr_->export_to_recursively(_param_name);
 }
 
 } // namespace og;
