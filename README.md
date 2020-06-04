@@ -226,7 +226,6 @@ And support files :
 ObjectGenoise depends on the following package
 ### [boost]
 - version 1.63
--
 ### [soci]
 - version 3.3.2
 - CMake variables in SOCI secsion:
@@ -290,17 +289,20 @@ Sets test architecture to x64. Open test explorer and click Run All.
 And then rebuild the project, you can see test items in test explorer.
 
 ## Version and History
-0.84  * Update all CMakefile.txt to improve link boost's libraries.
-0.83  * Add CMake scripts.
-0.81  * runtime version is changed from 8.1 to 10.xxx
-0.80  * boost 1.64 + VS2015 support.
-0.77  * add global object, schema property.
+- 0.87  * Export/Import from top-level session object and its children recursively.
+        * Set gzip filter to default
+- 0.85  * Fix CMakefile.txt
+- 0.84  * Update all CMakefile.txt to improve link boost's libraries.
+- 0.83  * Add CMake scripts.
+- 0.81  * runtime version is changed from 8.1 to 10.xxx
+- 0.80  * boost 1.64 + VS2015 support.
+- 0.77  * add global object, schema property.
       * enhancement : catchup_schema checks revision of schema property.
       * catched up soci 3_2_3
-0.6.1 add : schema catchup
+- 0.6.1 add : schema catchup
       add : copy_object
-0.4.0 internal release
-0.0.1 initial revision
+- 0.4.0 internal release
+- 0.0.1 initial revision
 
 ## Licenses and Authors
   * Licensed under the [Boost Software License 1.0]
