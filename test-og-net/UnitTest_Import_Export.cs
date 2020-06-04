@@ -282,5 +282,124 @@ namespace test_og_net
 
             }
         }
+
+        [TestMethod]
+        public void import_1001()
+        {
+            og.net.OGSession cleaned_session_ = new OGSession();
+            cleaned_session_.open(TestInitializer.DBPATH);
+            cleaned_session_.purge();
+            cleaned_session_.schema().purge();
+
+            List<string> otype_list = new List<string>();
+            otype_list.Add(OTYPE1);
+            otype_list.Add(OTYPE2);
+
+            List<string> rel_type_list = new List<string>();
+            rel_type_list.Add(RELTYPE);
+
+            OGSchemaObject p1 = cleaned_session_.schema().create_object(OTYPE1,
+                                          ONAME);
+            OGSchemaObject p2 = cleaned_session_.schema().create_object(OTYPE2,
+                                          ONAME);
+            OGSchemaObject p2a = cleaned_session_.schema().create_object(OTYPE2a,
+                                          ONAMEa);
+            OGSchemaObject p2b = cleaned_session_.schema().create_object(OTYPE2b,
+                                          ONAMEb);
+
+            OGSchemaRelation rel_ptr = p1.connect_to(p2, RELTYPE);
+            OGSchemaRelation rel_ptr_a = p2.connect_to(p2a, RELTYPEa);
+            OGSchemaRelation rel_ptr_b = p2.connect_to(p2b, RELTYPEb);
+
+            OGInteger type1 = new OGInteger(1, 1, 3, 1, 3);
+            OGInteger type2 = new OGInteger(2, 1, 3, 1, 3);
+            OGReal type3 = new OGReal(1.141, 1.0, 3.0, 1.0, 3.0);
+            OGReal type4 = new OGReal(2.236, 1.0, 3.0, 1.0, 3.0);
+            OGText type5 = new OGText("foo", 1, 1, 1, 1);
+            OGText type6 = new OGText("bar", 1, 1, 1, 1);
+
+            OGInteger type_new1 = new OGInteger(100, 1, 3, 1, 3);
+            OGReal type_new2 = new OGReal(123.4, 1.0, 3.0, 1.0, 3.0);
+            OGText type_new3 = new OGText("new", 1, 1, 1, 1);
+
+            // array size is set to 1 implicitly
+
+            OGSchemaParameter ptest1 =
+              cleaned_session_.schema().create_parameter_interger("hoge_type1", "comment1",
+                  type1);
+            OGSchemaParameter ptest3 =
+              cleaned_session_.schema().create_parameter_real("hoge_type3", "comment1",
+                  type3);
+            OGSchemaParameter ptest5 =
+              cleaned_session_.schema().create_parameter_text("hoge_type5", "comment1",
+                  type5);
+
+            // array size is set to 3 explicitly
+            OGSchemaParameter ptest2 =
+              cleaned_session_.schema().create_parameter_interger("hoge_type2", "comment2",
+                  type2, 3, 2, 4);
+            OGSchemaParameter ptest4 =
+              cleaned_session_.schema().create_parameter_real("hoge_type4", "comment2",
+                  type4, 3, 2, 4);
+            OGSchemaParameter ptest6 =
+              cleaned_session_.schema().create_parameter_text("hoge_type6", "comment2",
+                  type6, 3, 2, 4);
+
+            OGSchemaParameter ptest_new1 =
+              cleaned_session_.schema().create_parameter_interger("hoge_type_new1", "comment8",
+                  type_new1, 3, 2, 4);
+            OGSchemaParameter ptest_new2 =
+              cleaned_session_.schema().create_parameter_real("hoge_type_new2", "comment8",
+                  type_new2, 3, 2, 4);
+            OGSchemaParameter ptest_new3 =
+              cleaned_session_.schema().create_parameter_text("hoge_type_new3", "comment8",
+                  type_new3, 3, 2, 4);
+
+            // apply parameter to schema_object
+            p1.add_parameter_definition("H1", ptest1);
+            //p1.add_parameter_definition("H3", ptest3); // delete param
+            p1.add_parameter_definition("H5", ptest5);
+
+            p1.add_parameter_definition("new1", ptest_new1);
+            p1.add_parameter_definition("new2", ptest_new2);
+            p1.add_parameter_definition("new3", ptest_new3);
+            System.Diagnostics.Debug.WriteLine("revision:"+ p1.get_revision());
+            //p1.set_revision("1");
+            System.Diagnostics.Debug.WriteLine("revision:" + p1.get_revision());
+
+            p2.add_parameter_definition("H2", ptest2);
+            p2a.add_parameter_definition("H4", ptest4);
+            p2b.add_parameter_definition("H6", ptest6);
+
+            // apply parameter to schema_relation
+            rel_ptr.add_parameter_definition("I1", ptest1);
+            rel_ptr.add_parameter_definition("I3", ptest3);
+            rel_ptr.add_parameter_definition("I5", ptest5);
+
+            rel_ptr_a.add_parameter_definition("I2", ptest2);
+            rel_ptr_b.add_parameter_definition("I4", ptest4);
+
+            OGSessionObject res =
+                cleaned_session_.import_object_from_file("exp1.aaa");
+
+            Assert.IsTrue(res != null);
+            Assert.AreEqual(res.get_id(), "SESN_O_3");
+
+            {
+                List<string> types = new List<string>() { OTYPE1 };
+
+                var objs1 = cleaned_session_.get_object_by_type(types);
+
+                Assert.AreEqual(objs1.Count, 1);
+                Assert.AreEqual(objs1[0].get_parameter_value_integer("H1"), 99);
+
+                Assert.AreEqual(objs1[0].get_parameter_value_text("H5"), "x");
+
+                Assert.AreEqual(objs1[0].get_parameter_value_integer("new1"), 100);
+                Assert.AreEqual(objs1[0].get_parameter_value_real("new2"), 123.4);
+                Assert.AreEqual(objs1[0].get_parameter_value_text("new3"), "new");
+            }
+
+       }
     }
 }
