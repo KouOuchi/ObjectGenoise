@@ -34,6 +34,7 @@ public:
   void export_to_file(String^ _path);
   void purge();
   void build();
+  /*Nullable*/OGSessionObject^ import_object_from_file(String^ _path);
 
   // file io and management ends.
 

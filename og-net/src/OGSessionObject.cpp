@@ -524,6 +524,14 @@ List<bool>^ OGSessionObject::get_parameter_values_bool(String^ _param_name)
   return _value;
 }
 
+void OGSessionObject::export_to_recursively(String^ _path)
+{
+  std::string p;
+  OGConverter::convert_clr_to_std<String, std::string>(_path, &p);
+
+  og_session_object_->export_to_recursively(p);
+}
+
 
 }
 }

@@ -246,7 +246,7 @@ bool session::import_object(session_object_ptr _sesn_obj,
 bool session::import_object_as_new(session_object_ptr _sesn_obj,
                                    const ptree& _param_elm)
 {
-  transaction tran(*this);
+//  transaction tran(*this);
 
   string id;
   get_sequence(&id);
@@ -284,7 +284,7 @@ bool session::import_object_as_new(session_object_ptr _sesn_obj,
     }
   }
 
-  tran.commit();
+//  tran.commit();
   return true;
 }
 
@@ -345,7 +345,7 @@ bool session::import_relation(session_relation_ptr _sesn_rel,
 bool session::import_relation_as_new(session_relation_ptr _sesn_rel,
                                      const ptree& _param_elm)
 {
-  transaction tran(*this);
+//  transaction tran(*this);
 
   //create sequence
   int id_seed;
@@ -400,7 +400,7 @@ bool session::import_relation_as_new(session_relation_ptr _sesn_rel,
 
   }
 
-  tran.commit();
+//  tran.commit();
   return true;
 }
 

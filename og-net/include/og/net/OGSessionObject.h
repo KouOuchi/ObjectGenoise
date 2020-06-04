@@ -73,6 +73,7 @@ public:
   void delete_object(OGConnectionDirection _dir);
   OGSessionObject^ copy_object();
   OGSessionObject^ copy_object(OGConnectionDirection _dir);
+  void export_to_recursively(String^ _path);
 
   List<OGSessionObject^>^ get_connected_object();
   List<OGSessionObject^>^ get_connected_object(List<String^>^ _rel_type_List);

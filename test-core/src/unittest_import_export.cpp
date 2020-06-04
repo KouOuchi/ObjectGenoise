@@ -382,10 +382,15 @@ BOOST_AUTO_TEST_CASE(import_export_1000_import)
     BOOST_REQUIRE_EQUAL(s_.c_str(), "y");
   }
 
+  // transaction
+  og::og_transaction tran1(cleaned_session_);
+
   boost::optional<og::og_session_object_ptr> res2 =
 	  cleaned_session_.import_object_from_file(string("export1.aaa"));
   BOOST_REQUIRE_EQUAL(true, res2.is_initialized());
   BOOST_REQUIRE_NE(sesn_o1_id, res2.get()->get_id()); // unmatch because env was *not* empty
+
+  tran1.commit();
 
   {
     std::list<string> types;
@@ -404,6 +409,32 @@ BOOST_AUTO_TEST_CASE(import_export_1000_import)
     BOOST_REQUIRE_EQUAL(s2_.c_str(), "y");
   }
 
+  // transaction
+  og::og_transaction tran2(cleaned_session_);
+
+  boost::optional<og::og_session_object_ptr> res3 =
+	  cleaned_session_.import_object_from_file(string("export1.aaa"));
+  BOOST_REQUIRE_EQUAL(true, res2.is_initialized());
+
+  tran2.rollback();
+
+
+  {
+	  std::list<string> types;
+	  types.push_back(OTYPE2b);
+
+	  std::list<og::og_session_object_ptr> objs1;
+	  cleaned_session_.get_object_by_type(types, &objs1);
+
+	  BOOST_REQUIRE_EQUAL(objs1.size(), 2);
+	  string s_;
+	  objs1.begin()->get()->get_parameter_value("H6", &s_);
+	  BOOST_REQUIRE_EQUAL(s_.c_str(), "y");
+
+	  string s2_;
+	  std::next(objs1.begin())->get()->get_parameter_value("H6", &s2_);
+	  BOOST_REQUIRE_EQUAL(s2_.c_str(), "y");
+  }
 }
 BOOST_AUTO_TEST_SUITE_END()
 

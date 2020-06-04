@@ -376,6 +376,23 @@ OGSessionObject^ OGSession::get_property_object()
   }
 }
 
+OGSessionObject^ OGSession::import_object_from_file(String^ _path)
+{
+  std::string str;
+  OGConverter::convert_clr_to_std<String, std::string>(_path, &str);
+
+  boost::optional<og::og_session_object_ptr> ret =
+    og_session_->import_object_from_file(str);
+  if (ret.is_initialized())
+  {
+    return gcnew OGSessionObject(OGSharedPtr<og::og_session_object>(ret.get()));
+  }
+  else
+  {
+    return nullptr;
+  }
+}
+
 
 } // namespace net
 } // namespace og
