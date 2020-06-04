@@ -80,17 +80,17 @@ public:
                                    list<session_object_ptr>* _sesn_obj_list);
 
   void get_object_by_parameter(string& _param_name,
-                                          parameter_value_variant& _value,
-                                          list<session_object_ptr>* _sesn_obj_list);
+                               parameter_value_variant& _value,
+                               list<session_object_ptr>* _sesn_obj_list);
   void get_object_by_parameter_range(string& _param_name,
-                                          parameter_value_variant& _value_min,
-                                          parameter_value_variant& _value_max,
-                                          list<session_object_ptr>* _sesn_obj_list);
+                                     parameter_value_variant& _value_min,
+                                     parameter_value_variant& _value_max,
+                                     list<session_object_ptr>* _sesn_obj_list);
 
   bool import_object(session_object_ptr _sesn_obj,
                      const ptree& _param_elm);
-  bool import_object_as_new(session_object_ptr _sesn_obj,
-	  const ptree& _param_elm);
+  string import_object_as_new(session_object_ptr _sesn_obj,
+                                          const ptree& _param_elm);
   boost::optional<session_object_ptr> import_object_from_file(string _path);
   // object end
 
@@ -130,7 +130,7 @@ public:
   bool import_relation(session_relation_ptr _sesn_rel,
                        const ptree& _param_elm);
   bool import_relation_as_new(session_relation_ptr _sesn_rel,
-	  const ptree& _param_elm);
+                              const ptree& _param_elm);
 
   // relation end
 
@@ -169,7 +169,7 @@ public:
         list<int> items;
         _session_base->get_parameter_values<int>(param, &items);
         int index = 0;
-        BOOST_FOREACH(const int& item , items)
+        BOOST_FOREACH(const int& item, items)
         {
           ptree& ichild = items_child.add("item", "");
           ichild.put("<xmlattr>.index", index++);
@@ -255,7 +255,8 @@ private:
   void import_parameter(const ptree& _param_elm,
                         map<string, list<parameter_value_variant>>* _params);
 
-  void object_to_recursively(session_object_ptr _obj, list<session_object_ptr>& _objs, list<session_relation_ptr>& _rels);
+  void object_to_recursively(session_object_ptr _obj,
+                             list<session_object_ptr>& _objs, list<session_relation_ptr>& _rels);
 
 };
 

@@ -243,8 +243,8 @@ bool session::import_object(session_object_ptr _sesn_obj,
   return true;
 }
 
-bool session::import_object_as_new(session_object_ptr _sesn_obj,
-                                   const ptree& _param_elm)
+string session::import_object_as_new(session_object_ptr _sesn_obj,
+                                     const ptree& _param_elm)
 {
 //  transaction tran(*this);
 
@@ -285,7 +285,7 @@ bool session::import_object_as_new(session_object_ptr _sesn_obj,
   }
 
 //  tran.commit();
-  return true;
+  return id;
 }
 
 bool session::import_relation(session_relation_ptr _sesn_rel,
@@ -2222,6 +2222,8 @@ boost::optional<session_object_ptr> session::import_object_from_file(
 
   fs::path imp(_path);
 
+  map<string, string> oid_map;
+
   boost::system::error_code error;
   const bool result = fs::exists(imp, error);
   if (!result || error)
@@ -2246,7 +2248,12 @@ boost::optional<session_object_ptr> session::import_object_from_file(
     // deserialize
     if (serializer<session_object_ptr>::deserialize(child, sesn_obj))
     {
-      import_object_as_new(sesn_obj, child.second);
+      string old_id = sesn_obj->get_id();
+      string new_id =
+        import_object_as_new(sesn_obj, child.second);
+
+      oid_map.insert(std::make_pair(old_id, new_id));
+
       if (first)
       {
         first = false;
@@ -2282,6 +2289,16 @@ boost::optional<session_object_ptr> session::import_object_from_file(
           schema_->get_relation_by_type(prep, &schm_rels);
           sesn_rel->set_schema_relation(schm_rels.front());
         }
+
+        // get mapped oid
+        map<string, string>::iterator from_it = oid_map.find(sesn_rel->get_from_id());
+        map<string, string>::iterator to_it = oid_map.find(sesn_rel->get_to_id());
+        if (from_it == oid_map.end() || to_it == oid_map.end())
+        {
+          continue;
+        }
+		sesn_rel->set_from_id(from_it->second);
+		sesn_rel->set_to_id(to_it->second);
 
         // check from/to
         boost::optional<session_object_ptr> sesn_from =
