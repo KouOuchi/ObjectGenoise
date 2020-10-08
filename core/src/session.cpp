@@ -19,7 +19,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
 
-#include <sqlite3/soci-sqlite3.h>
+#include <soci/sqlite3/soci-sqlite3.h>
 
 namespace og
 {
@@ -103,6 +103,11 @@ void session::open(string _connection_string)
 
   // enable foreign key
   set_foreign_key(true);
+
+  *soci_session_ << "PRAGMA temp_store = MEMORY";
+  *soci_session_ << "PRAGMA synchronous = OFF";
+  *soci_session_ << "PRAGMA journal_mode = MEMORY";
+  *soci_session_ << "PRAGMA cache_size = 100000";
 
   // set session
   schema_->initialize(this);

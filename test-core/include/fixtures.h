@@ -26,8 +26,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/foreach.hpp>
 
-#include "soci.h"
-#include "sqlite3/soci-sqlite3.h"
+#include "soci/soci.h"
+#include "soci/sqlite3/soci-sqlite3.h"
 
 #include "og/og_session.h"
 #include "og/og_schema_object.h"

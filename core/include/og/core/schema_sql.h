@@ -26,8 +26,8 @@ std::string schema_sql =
 "CREATE TABLE schema_object"
 "("
 "	id_ TEXT NOT NULL,"
-"	name TEXT NOT NULL,"
-"	type TEXT,"
+"	name TEXT,"
+"	type TEXT NOT NULL,"
 "	comment TEXT,"
 "	revision TEXT NOT NULL,"
 "	create_date TEXT NOT NULL,"
@@ -372,6 +372,14 @@ std::string schema_sql =
 "	CONSTRAINT PK_session_relation_seq PRIMARY KEY (id_seed)"
 ")"
 ";"
+""
+"CREATE INDEX IF NOT EXISTS schema_object_name_index ON schema_object(name);"
+"CREATE INDEX IF NOT EXISTS schema_object_type_index ON schema_object(type);"
+"CREATE INDEX IF NOT EXISTS schema_relation_name_index ON schema_relation(name);"
+"CREATE INDEX IF NOT EXISTS schema_relation_type_index ON schema_relation(type);"
+"CREATE INDEX IF NOT EXISTS session_object_name_index ON session_object(name);"
+"CREATE INDEX IF NOT EXISTS session_relation_name_index ON session_relation(name);"
+""
 ;
 }
 }

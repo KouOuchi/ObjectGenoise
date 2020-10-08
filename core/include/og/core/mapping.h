@@ -19,7 +19,7 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include <soci.h>
+#include <soci/soci.h>
 
 namespace soci
 {

@@ -2,7 +2,7 @@
 #include "og/core/base.h"
 #include <boost/tuple/tuple.hpp>
 
-#include <soci.h>
+#include <soci/soci.h>
 
 namespace og
 {

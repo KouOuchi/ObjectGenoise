@@ -50,8 +50,8 @@ ENDIF (UNIX)
 include_directories(
     include
     ${Boost_INCLUDE_DIR}
-    ${SOCI_SOURCE_DIR}/core
-    ${SOCI_SOURCE_DIR}/backends
+    ${SOCI_SOURCE_DIR}/include
+    ${SOCI_BUILD_DIR}/include
     ${SQLITE3_SOURCE_DIR}
 )
 

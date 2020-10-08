@@ -1,7 +1,7 @@
 #include "og/core/transaction.h"
 #include "og/core/session.h"
 
-#include "soci.h"
+#include "soci/soci.h"
 
 namespace og
 {

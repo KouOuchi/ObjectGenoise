@@ -47,8 +47,8 @@ ENDIF (UNIX)
 include_directories(
 	../core/include
     include
-    ${SOCI_SOURCE_DIR}/core
-    ${SOCI_SOURCE_DIR}/backends
+    ${SOCI_SOURCE_DIR}/include
+    ${SOCI_BUILD_DIR}/include
 	${Boost_INCLUDE_DIR}
     ${SQLITE3_SOURCE_DIR}
 )

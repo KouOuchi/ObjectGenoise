@@ -8,7 +8,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <soci.h>
+#include <soci/soci.h>
 #include <algorithm>
 
 namespace og

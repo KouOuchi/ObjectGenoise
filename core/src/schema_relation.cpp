@@ -1,8 +1,8 @@
 #include "og/core/schema_relation.h"
 #include "og/core/schema.h"
 
-#include <soci.h>
-#include <sqlite3/soci-sqlite3.h>
+#include <soci/soci.h>
+#include <soci/sqlite3/soci-sqlite3.h>
 
 namespace og
 {

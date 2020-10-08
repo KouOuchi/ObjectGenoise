@@ -33,20 +33,6 @@ namespace test_og_net
 #else
             string config = "release";
 #endif
-            string boost =
-               string.Format("{0}/stage/lib",
-                System.Environment.GetEnvironmentVariable("BOOST"));
-
-            string soci =
-               string.Format("{0}/{1}/bin64",
-                System.Environment.GetEnvironmentVariable("SOCI"),
-                config);
-
-            string path = System.Environment.GetEnvironmentVariable("PATH");
-            System.Environment.SetEnvironmentVariable(
-                "PATH",
-                path + ";" + boost + ";" + soci,
-                    EnvironmentVariableTarget.Process);
         }
     }
 

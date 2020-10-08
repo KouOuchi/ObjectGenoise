@@ -1,7 +1,7 @@
 #include "og/core/schema_object.h"
 #include "og/core/schema.h"
 
-#include <soci.h>
+#include <soci/soci.h>
 #include <algorithm>
 
 namespace og
