@@ -1,6 +1,6 @@
 # ObjectGenoise
 
-ObjectGenoise is a ORM, database middle ware and C++/.Net library.
+ObjectGenoise is a ORM, database middle ware and C++/.Net library. 
 
 ## Technical Overview
 
@@ -227,11 +227,10 @@ ObjectGenoise depends on the following package
 ### [boost]
 - version 1.63
 ### [soci]
-- version 3.3.2
+- version 4.0.0
 - CMake variables in SOCI secsion:
 ```
 SOCI_SQLITE3
-SOCI_STATIC
 ```
 - CMake variables in WITH secsion:
 ```
@@ -289,6 +288,8 @@ Sets test architecture to x64. Open test explorer and click Run All.
 And then rebuild the project, you can see test items in test explorer.
 
 ## Version and History
+- 0.88  * use SOCI 4.0. 
+        * Add some pragma after connect to sqllite database.
 - 0.87  * Export/Import from top-level session object and its children recursively.
         * Set gzip filter to default
 - 0.85  * Fix CMakefile.txt
