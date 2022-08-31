@@ -1,12 +1,12 @@
 # ObjectGenoise
 
-ObjectGenoise is a ORM, database middle ware and C++/.Net library. 
+ObjectGenoise is an ORM, SQLite3 middle ware and C++/.Net library using [SOCI]. 
 
 ## Technical Overview
 
 ### ObjectGenoise has 2 features:
-- schema : `schema' means a definition of class.
-- session : `session' means an instance of class.
+- schema : a definition of class.
+- session : an instance of class.
 ```
    features
        | Schema                | Session
@@ -32,8 +32,9 @@ ObjectGenoise is a ORM, database middle ware and C++/.Net library.
 ```
 
 ### Relation Operatoins : connect, disconnect and copy_object.
-- SessionObject can has the other classes. This relationship of compositoin is called SessionRelation.
-- SessionRelation can also hold parameters.
+- SessionObject holds parameters.
+- SessionObject can have relationship of the other classes. The relationship is described as SessionRelation.
+- SessionRelation also holds parameters.
 - SessionRelation has an direction. The direction is used while retrieving SessionObjects.
 ```
 usage of connect and copy
@@ -225,9 +226,9 @@ And support files :
 ## Prerequisite
 ObjectGenoise depends on the following package
 ### [boost]
-- version 1.63
-### [soci]
-- version 4.0.0
+- version 1.80
+### [SOCI]
+- version 4.0.3
 - CMake variables in SOCI secsion:
 ```
 SOCI_SQLITE3
@@ -254,19 +255,11 @@ SQLITE_ENABLE_JSON1
 
 *** Step.1 Configure CMake Parameters
 
-You need 3 environment variable as follows :
-- BOOST
-- SOCI
-- SQLITE3
-
-If you get headers and libraries and set the variables to environment, you can see them :
-```sh
-> set BOOST
-BOOST=c:\path\to\boost
-> set SOCI
-SOCI=c:\path\to\soci
-> set SQLITE3
-SQLITE3=c:\path\to\sqlite3
+If you get headers and libraries about dependencies, you can modify belows with cmake :
+```
+- SOCI_SOURCE_DIR / SOCI_BUILD_DIR
+- SQLITE3_SOURCE_DIR / SQLITE3_BUILD_DIR
+- Boost_INCLUDE_DIR
 ```
 
 *** Step.2 run CMake
@@ -288,6 +281,7 @@ Sets test architecture to x64. Open test explorer and click Run All.
 And then rebuild the project, you can see test items in test explorer.
 
 ## Version and History
+- 0.89  * use SOCI 4.0.3 and BOOST 1.80.0. Add c++17 option.
 - 0.88  * use SOCI 4.0. 
         * Add some pragma after connect to sqllite database.
 - 0.87  * Export/Import from top-level session object and its children recursively.
@@ -299,7 +293,7 @@ And then rebuild the project, you can see test items in test explorer.
 - 0.80  * boost 1.64 + VS2015 support.
 - 0.77  * add global object, schema property.
       * enhancement : catchup_schema checks revision of schema property.
-      * catched up soci 3_2_3
+      * catched up SOCI 3_2_3
 - 0.6.1 add : schema catchup
       add : copy_object
 - 0.4.0 internal release
@@ -316,7 +310,7 @@ And then rebuild the project, you can see test items in test explorer.
 for C, C++, C++/CLI, Objective?C, C#, and Java Source Code
 - [Google C++ Style Guid]
 
-[soci]:http://soci.sourceforge.net/
+[SOCI]:http://soci.sourceforge.net/
 [boost]:http://www.boost.org/
 [Enterprise Architect]:http://www.sparxsystems.com/products/ea/index.html
 [PupSQLite]:https://www.eonet.ne.jp/~pup/software.html

@@ -1522,10 +1522,16 @@ bool session::catchup_schema(string _path)
     return true;
   }
 
-  char* tempdir = getenv("TEMP");
+  char* tempdir = nullptr;
+  size_t sz = 0;
+  if (!_dupenv_s(&tempdir, &sz, "TEMP") == 0 && tempdir != nullptr)
+  {
+    throw og::core::exception() << exception_message("schema file is not found.");
+  }
   stringstream session_tempname, schema_tempname;
   session_tempname << tempdir << "/SESSION-%%%%-%%%%-%%%%-%%%%.xml.gz";
   schema_tempname << tempdir << "/SCHEMA-%%%%-%%%%-%%%%-%%%%.xml.gz";
+  free(tempdir);
   fs::path session_temp = fs::unique_path(session_tempname.str());
   fs::path schema_temp = fs::unique_path(schema_tempname.str());
 
@@ -2302,8 +2308,8 @@ boost::optional<session_object_ptr> session::import_object_from_file(
         {
           continue;
         }
-		sesn_rel->set_from_id(from_it->second);
-		sesn_rel->set_to_id(to_it->second);
+        sesn_rel->set_from_id(from_it->second);
+        sesn_rel->set_to_id(to_it->second);
 
         // check from/to
         boost::optional<session_object_ptr> sesn_from =

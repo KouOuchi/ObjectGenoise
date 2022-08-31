@@ -10,7 +10,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 #
 IF (UNIX)
    add_definitions(-DBOOST_ALL_DYN_LINK -DBOOST_LOG_DYN_LINK)
-   SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC -fpermissive -std=c++0x")
+   SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC -fpermissive -std=c++17")
    link_directories($Boost_LIBRARY_DIR)
 
    #set(Boost_USE_STATIC_LIBS        ON)
@@ -43,7 +43,7 @@ ELSE ()
    set(Boost_USE_STATIC_LIBS        ON)
    set(Boost_USE_MULTITHREADED      ON)
    set(Boost_USE_STATIC_RUNTIME     OFF)
-   find_package( Boost REQUIRED COMPONENTS iostreams log log_setup zlib)
+   find_package( Boost 1.80.0 REQUIRED COMPONENTS iostreams log log_setup zlib)
 
 ENDIF (UNIX)
 
@@ -66,15 +66,15 @@ IF (UNIX)
     add_library(core STATIC ${HDRS} ${SRCS})
 ELSE ()
     add_library(core SHARED ${HDRS} ${SRCS})
-
+	
     # shared libs
-    set(MyBoost_THREAD_LIBRARY optimized "boost_thread-vc140-mt-1_63.lib" debug "boost_thread-vc140-mt-gd-1_63.lib")
-    set(MyBoost_DATE_TIME_LIBRARY optimized "boost_date_time-vc140-mt-1_63.lib" debug "boost_date_time-vc140-mt-gd-1_63.lib")
-    set(MyBoost_SYSTEM_LIBRARY optimized "boost_system-vc140-mt-1_63.lib" debug "boost_system-vc140-mt-gd-1_63.lib")
-    set(MyBoost_FILESYSTEM_LIBRARY optimized "boost_filesystem-vc140-mt-1_63.lib" debug "boost_filesystem-vc140-mt-gd-1_63.lib")
-    set(MyBoost_CHRONO_LIBRARY optimized "boost_chrono-vc140-mt-1_63.lib" debug "boost_chrono-vc140-mt-gd-1_63.lib")
-    set(MyBoost_TIMER_LIBRARY optimized "boost_timer-vc140-mt-1_63.lib" debug "boost_timer-vc140-mt-gd-1_63.lib")
-    set(MyBoost_REGEX_LIBRARY optimized "boost_regex-vc140-mt-1_63.lib" debug "boost_regex-vc140-mt-gd-1_63.lib")
+    set(MyBoost_THREAD_LIBRARY optimized "boost_thread-vc140-mt-x64-1_80.lib" debug "boost_thread-vc140-mt-gd-x64-1_80.lib")
+    set(MyBoost_DATE_TIME_LIBRARY optimized "boost_date_time-vc140-mt-x64-1_80.lib" debug "boost_date_time-vc140-mt-gd-x64-1_80.lib")
+    set(MyBoost_SYSTEM_LIBRARY optimized "boost_system-vc140-mt-x64-1_80.lib" debug "boost_system-vc140-mt-gd-x64-1_80.lib")
+    set(MyBoost_FILESYSTEM_LIBRARY optimized "boost_filesystem-vc140-mt-x64-1_80.lib" debug "boost_filesystem-vc140-mt-gd-x64-1_80.lib")
+    set(MyBoost_CHRONO_LIBRARY optimized "boost_chrono-vc140-mt-x64-1_80.lib" debug "boost_chrono-vc140-mt-gd-x64-1_80.lib")
+    set(MyBoost_TIMER_LIBRARY optimized "boost_timer-vc140-mt-x64-1_80.lib" debug "boost_timer-vc140-mt-gd-x64-1_80.lib")
+    set(MyBoost_REGEX_LIBRARY optimized "boost_regex-vc140-mt-x64-1_80.lib" debug "boost_regex-vc140-mt-gd-x64-1_80.lib")
 
     target_link_libraries(core ${SQLITE3_LIBRARY} ${SOCI_CORE_LIBRARY} ${SOCI_SQLITE3_LIBRARY} ${Boost_ZLIB_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${MyBoost_THREAD_LIBRARY} ${MyBoost_DATE_TIME_LIBRARY} ${MyBoost_SYSTEM_LIBRARY} ${MyBoost_FILESYSTEM_LIBRARY} ${MyBoost_CHRONO_LIBRARY} ${MyBoost_TIMER_LIBRARY} ${MyBoost_REGEX_LIBRARY})
 
@@ -131,35 +131,35 @@ install (TARGETS core CONFIGURATIONS RelWithDebInfo
     )
 
 install (FILES 
-    "${Boost_LIBRARY_DIR}/boost_thread-vc140-mt-gd-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_date_time-vc140-mt-gd-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_system-vc140-mt-gd-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_filesystem-vc140-mt-gd-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_chrono-vc140-mt-gd-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_timer-vc140-mt-gd-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_regex-vc140-mt-gd-1_63.dll"
+    "${Boost_LIBRARY_DIR}/boost_thread-vc140-mt-gd-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_date_time-vc140-mt-gd-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_system-vc140-mt-gd-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_filesystem-vc140-mt-gd-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_chrono-vc140-mt-gd-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_timer-vc140-mt-gd-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_regex-vc140-mt-gd-x64-1_80.dll"
     DESTINATION "${CMAKE_BINARY_DIR}/SDK/Debug/bin/"
     CONFIGURATIONS Debug
 )
 install (FILES
-    "${Boost_LIBRARY_DIR}/boost_thread-vc140-mt-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_date_time-vc140-mt-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_system-vc140-mt-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_filesystem-vc140-mt-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_chrono-vc140-mt-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_timer-vc140-mt-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_regex-vc140-mt-1_63.dll"
+    "${Boost_LIBRARY_DIR}/boost_thread-vc140-mt-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_date_time-vc140-mt-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_system-vc140-mt-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_filesystem-vc140-mt-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_chrono-vc140-mt-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_timer-vc140-mt-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_regex-vc140-mt-x64-1_80.dll"
     DESTINATION "${CMAKE_BINARY_DIR}/SDK/Release/bin/"
     CONFIGURATIONS Release
 )
 install (FILES
-    "${Boost_LIBRARY_DIR}/boost_thread-vc140-mt-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_date_time-vc140-mt-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_system-vc140-mt-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_filesystem-vc140-mt-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_chrono-vc140-mt-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_timer-vc140-mt-1_63.dll"
-    "${Boost_LIBRARY_DIR}/boost_regex-vc140-mt-1_63.dll"
+    "${Boost_LIBRARY_DIR}/boost_thread-vc140-mt-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_date_time-vc140-mt-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_system-vc140-mt-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_filesystem-vc140-mt-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_chrono-vc140-mt-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_timer-vc140-mt-x64-1_80.dll"
+    "${Boost_LIBRARY_DIR}/boost_regex-vc140-mt-x64-1_80.dll"
     DESTINATION "${CMAKE_BINARY_DIR}/SDK/RelWithDebInfo/bin/"
     CONFIGURATIONS RelWithDebInfo
 )

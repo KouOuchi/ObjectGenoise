@@ -11,8 +11,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 IF (UNIX)
    add_definitions(-DBOOST_ALL_DYN_LINK -DBOOST_LOG_DYN_LINK)
-   SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC -fpermissive -std=c++0x")
-   link_directories($ENV{BOOST}/stage/x64/lib)
+   SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC -fpermissive -std=c++17")
+   link_directories($Boost_Library_Dir)
 
    #set(Boost_USE_STATIC_LIBS        ON)
    #set(Boost_USE_MULTITHREADED      ON)

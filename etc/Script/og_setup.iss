@@ -1,12 +1,12 @@
 ﻿#define MyAppSetupName 'ObjectGenoise'
-#define MyAppVersion '0.88' 
+#define MyAppVersion '0.89' 
 
 [Setup]
 AppId=ObjectGenoise
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppSetupName} {#MyAppVersion}
-AppCopyright=Copyright ｩ Division Engineering 2017
+AppCopyright=Copyright ｩ Division Engineering 2022
 VersionInfoCompany=Division Engineering
 AppPublisher=Division Engineering
 ;AppPublisherURL=http://...
