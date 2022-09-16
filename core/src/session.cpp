@@ -21,6 +21,10 @@
 
 #include <soci/sqlite3/soci-sqlite3.h>
 
+#ifndef OG_LOG_STDERR
+#include<ConsoleApi.h>
+#endif
+
 namespace og
 {
 namespace core
@@ -34,6 +38,9 @@ namespace fs = boost::filesystem;
 session::session(void) :
   soci_session_(new soci::session()),
   schema_(new schema())
+#ifndef OG_LOG_STDERR
+  , console_(false)
+#endif
 {
 }
 
@@ -99,7 +106,28 @@ void session::initialize_sqlite_sequence(string _tbl)
 
 void session::open(string _connection_string)
 {
+#ifndef OG_LOG_STDERR
+  char* env_value;
+  size_t len;
+  errno_t err = _dupenv_s(&env_value, &len, "OG_OUTPUT");
+  if (!err && len > 0 && strcmp(env_value, "1") == 0)
+  {
+    AllocConsole();
+
+    freopen("CONIN$", "r", stdin);
+    freopen("CONOUT$", "w", stdout);
+    freopen("CONOUT$", "w", stderr);
+
+    free(env_value);
+  }
+
+#endif
+
+  OG_LOG << "open soci_session : " << _connection_string;
+
   soci_session_->open(soci::sqlite3, _connection_string);
+
+  OG_LOG << "set_forreign_key()";
 
   // enable foreign key
   set_foreign_key(true);
@@ -109,12 +137,21 @@ void session::open(string _connection_string)
   *soci_session_ << "PRAGMA journal_mode = MEMORY";
   *soci_session_ << "PRAGMA cache_size = 100000";
 
+  OG_LOG << "schema_->initialize(this)";
+
   // set session
   schema_->initialize(this);
 }
 void session::close()
 {
   soci_session_->close();
+
+#ifndef OG_LOG_STDERR
+  if (console_)
+  {
+    FreeConsole();
+  }
+#endif
 }
 
 void session::purge(bool _delete_schema_property_object)
