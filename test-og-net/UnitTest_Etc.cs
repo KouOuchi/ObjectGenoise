@@ -63,6 +63,13 @@ namespace test_og_net
         [TestInitialize]
         public void setpath()
         {
+            string path = System.Environment.GetEnvironmentVariable("PATH");
+            string boost_path = System.Environment.GetEnvironmentVariable("BOOST");
+
+            System.Environment.SetEnvironmentVariable("PATH", path + ";" + boost_path + @"\lib64-msvc-14.0",
+                EnvironmentVariableTarget.Process);
+
+
             InitilizeOnce.GetInstance().SetPath();
         }
 
