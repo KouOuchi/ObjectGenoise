@@ -2322,10 +2322,22 @@ boost::optional<session_object_ptr> session::import_object_from_file(
     // deserialize
     if (serializer<session_relation_ptr>::deserialize(child, sesn_rel))
     {
-      boost::optional<schema_relation_ptr> schm_rel =
-        schema_->get_relation(sesn_rel->get_schema_relation_id());
+      bool schema_ok = false;
+      bool schema_rel_ok = false;
+      auto schema = sesn_rel->get_schema_relation();
+      boost::optional<schema_relation_ptr> schm_rel;
 
-      if (schm_rel.is_initialized())
+      if (schema)
+      {
+        schema_ok = true;
+        schm_rel = schema_->get_relation(sesn_rel->get_schema_relation_id());
+        if (schm_rel.is_initialized())
+        {
+          schema_rel_ok = true;
+        }
+      }
+
+      if (schema_ok && schema_rel_ok)
       {
         if (schm_rel.get()->get_type().compare(schema::schema_property_object_type_) ==
             0)

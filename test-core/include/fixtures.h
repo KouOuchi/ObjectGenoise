@@ -1,5 +1,5 @@
 #pragma once
-
+#define TEST_ALL 1
 //#undef TEST_ALL
 //#define TEST_ALL
 //#define TEST_OG_BASIC 1
@@ -8,7 +8,7 @@
 //#define TEST_OG_TRAN 1
 //#define TEST_OG_ETC 1
 //#define TEST_OG_LARGE_DATA 1
-#define TEST_OG_IMPORT_EXPORT 1
+//#define TEST_OG_IMPORT_EXPORT 1
 
 #ifdef TEST_ALL
 #define TEST_OG_BASIC 1
@@ -17,7 +17,7 @@
 #define TEST_OG_TRAN 1
 #define TEST_OG_ETC 1
 #define TEST_OG_LARGE_DATA 1
-#define TEST_IMPORT_EXPOR 1
+#define TEST_IMPORT_EXPORT 1
 //#define TEST_REQUIRE_THROW 1
 #endif
 
