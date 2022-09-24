@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #define TEST_ALL 1
 //#undef TEST_ALL
 //#define TEST_ALL
@@ -17,7 +17,7 @@
 #define TEST_OG_TRAN 1
 #define TEST_OG_ETC 1
 #define TEST_OG_LARGE_DATA 1
-#define TEST_IMPORT_EXPORT 1
+#define TEST_OG_IMPORT_EXPORT 1
 //#define TEST_REQUIRE_THROW 1
 #endif
 
@@ -40,7 +40,10 @@
 #include <exception>
 #include <boost/filesystem.hpp>
 
-#define DBPATH "../../sql/og.db"
+#define DBPATH u8"../../sql/ドキュメント/社会og.db"
+//#define DBPATH u8"D:/git/ObjectGenoise/sql/ドキュメント/og.db"
+//#define DBPATH u8"D:\\git\\ObjectGenoise\\sql\\ドキュメント\\og.db"
+
 #define SRC_DBPATH "../../sql/og_src.db"
 
 namespace pt = boost::posix_time;
@@ -67,18 +70,20 @@ struct fixture_once
     BOOST_TEST_MESSAGE("test-core global setup");
     og::og_session cleaned_session_;
 
-    const fs::path path(SRC_DBPATH); // �R�s�[��
-    const fs::path dest(DBPATH); // �R�s�[��
+    const fs::path path(SRC_DBPATH); // コピー元
+    const fs::path dest(DBPATH); // コピー先
 
-    try {
-        fs::copy_file(path, dest, fs::copy_option::overwrite_if_exists);
+    try
+    {
+      fs::copy_file(path, dest, fs::copy_option::overwrite_if_exists);
     }
-    catch (fs::filesystem_error& ex) {
-        std::cout << ex.what() << std::endl;
-        throw;
+    catch (fs::filesystem_error& ex)
+    {
+      std::cout << ex.what() << std::endl;
+      throw;
     }
 
-	cleaned_session_.open(DBPATH);
+    cleaned_session_.open(DBPATH);
     cleaned_session_.build();
   }
 

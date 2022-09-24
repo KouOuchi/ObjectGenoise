@@ -26,10 +26,10 @@ OGSchema^ OGSession::schema()
 
 void OGSession::open(String^ _connection_string)
 {
-  std::string str;
-  OGConverter::convert_clr_to_std<String, std::string>(_connection_string, &str);
-
-  og_session_->open(str);
+  Encoding^ u8 = Encoding::UTF8;
+  cli::array<unsigned char>^ bytes = u8->GetBytes(_connection_string);
+  pin_ptr<unsigned char> pinnedPtr = &bytes[0];
+  og_session_->open(std::string((char*)pinnedPtr));
 }
 
 void OGSession::close()
@@ -39,17 +39,19 @@ void OGSession::close()
 
 bool OGSession::import_from_file(String^ _path)
 {
-  std::string str;
-  OGConverter::convert_clr_to_std<String, std::string>(_path, &str);
+  Encoding^ u8 = Encoding::UTF8;
+  cli::array<unsigned char>^ bytes = u8->GetBytes(_path);
+  pin_ptr<unsigned char> pinnedPtr = &bytes[0];
 
-  return og_session_->import_from_file(str);
+  return og_session_->import_from_file(std::string((char*)pinnedPtr));
 }
 void OGSession::export_to_file(String^ _path)
 {
-  std::string str;
-  OGConverter::convert_clr_to_std<String, std::string>(_path, &str);
+  Encoding^ u8 = Encoding::UTF8;
+  cli::array<unsigned char>^ bytes = u8->GetBytes(_path);
+  pin_ptr<unsigned char> pinnedPtr = &bytes[0];
 
-  og_session_->export_to_file(str);
+  og_session_->export_to_file(std::string((char*)pinnedPtr));
 }
 
 void OGSession::purge()
@@ -378,11 +380,12 @@ OGSessionObject^ OGSession::get_property_object()
 
 OGSessionObject^ OGSession::import_object_from_file(String^ _path)
 {
-  std::string str;
-  OGConverter::convert_clr_to_std<String, std::string>(_path, &str);
+  Encoding^ u8 = Encoding::UTF8;
+  cli::array<unsigned char>^ bytes = u8->GetBytes(_path);
+  pin_ptr<unsigned char> pinnedPtr = &bytes[0];
 
   boost::optional<og::og_session_object_ptr> ret =
-    og_session_->import_object_from_file(str);
+    og_session_->import_object_from_file(std::string((char*)pinnedPtr));
   if (ret.is_initialized())
   {
     return gcnew OGSessionObject(OGSharedPtr<og::og_session_object>(ret.get()));

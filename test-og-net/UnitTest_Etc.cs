@@ -6,12 +6,25 @@ using System.IO;
 
 namespace test_og_net
 {
+    public class EnvBuilder
+    {
+        public void Build()
+        {
+            string path = System.Environment.GetEnvironmentVariable("PATH");
+            string boost_path = System.Environment.GetEnvironmentVariable("BOOST");
+
+            System.Environment.SetEnvironmentVariable("PATH", path + ";" + boost_path + @"\lib64-msvc-14.0",
+                EnvironmentVariableTarget.Process);
+
+        }
+    }
+
     public class InitilizeOnce
     {
         private static InitilizeOnce instance = null;
-        public static InitilizeOnce GetInstance()
+        public static InitilizeOnce GetInstance(bool recreate = false)
         {
-            if(instance == null)
+            if(recreate || instance == null)
             {
                 instance = new InitilizeOnce();
             }
@@ -26,20 +39,14 @@ namespace test_og_net
             cleaned_session_.open(TestInitializer.DBPATH);
             cleaned_session_.build();
         }
-        public void SetPath()
-        {
-#if DEBUG
-            string config = "debug";
-#else
-            string config = "release";
-#endif
-        }
     }
 
     public class TestInitializer
     {
-        public const string DBPATH = "../../../../sql/og.db";
+//        public static string DBPATH = @"D:\git\ObjectGenoise\sql\ドキュメント\社会og.db";
+        public static string DBPATH = @"../../../../sql/ドキュメント\社会og.db";
         public const string DBPATH_SRC = "../../../../sql/og_src.db";
+
         public og.net.OGSession initialize()
         {
             InitilizeOnce.GetInstance();
@@ -63,14 +70,8 @@ namespace test_og_net
         [TestInitialize]
         public void setpath()
         {
-            string path = System.Environment.GetEnvironmentVariable("PATH");
-            string boost_path = System.Environment.GetEnvironmentVariable("BOOST");
-
-            System.Environment.SetEnvironmentVariable("PATH", path + ";" + boost_path + @"\lib64-msvc-14.0",
-                EnvironmentVariableTarget.Process);
-
-
-            InitilizeOnce.GetInstance().SetPath();
+            new EnvBuilder().Build();
+            InitilizeOnce.GetInstance();
         }
 
         [TestMethod]
@@ -471,9 +472,9 @@ namespace test_og_net
             string OTYPE1 = "Document2002from";
             string OTYPE2 = "Document2002a to";
             string OTYPE3 = "Document2002b to";
-            string RELTYPE1 = "Document2002rel";
-            string RELTYPE2 = "Document2002rel";
-            string ONAME = "Dcument-Name2002";
+//            string RELTYPE1 = "Document2002rel";
+//            string RELTYPE2 = "Document2002rel";
+//            string ONAME = "Dcument-Name2002";
             List<string> otype_list = new List<string>();
             otype_list.Add(OTYPE1);
             otype_list.Add(OTYPE2);

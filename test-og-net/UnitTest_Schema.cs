@@ -11,7 +11,8 @@ namespace test_og_net
         [TestInitialize]
         public void setpath()
         {
-            InitilizeOnce.GetInstance().SetPath();
+            new EnvBuilder().Build();
+            InitilizeOnce.GetInstance();
         }
 
         void _check_OGSchemaObject(OGSchemaObject _soptr, string _oid, string _otype,

@@ -125,7 +125,7 @@
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>rem XCOPY.EXE /E /Y "$(SolutionDir)bin\$(Configuration)" "$(TargetDir)"
+    <PostBuildEvent>XCOPY.EXE /E /Y "$(SolutionDir)bin\$(Configuration)"\* "$(TargetDir)"
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

@@ -526,12 +526,12 @@ List<bool>^ OGSessionObject::get_parameter_values_bool(String^ _param_name)
 
 void OGSessionObject::export_to_recursively(String^ _path)
 {
-  std::string p;
-  OGConverter::convert_clr_to_std<String, std::string>(_path, &p);
+  Encoding^ u8 = Encoding::UTF8;
+  cli::array<unsigned char>^ bytes = u8->GetBytes(_path);
+  pin_ptr<unsigned char> pinnedPtr = &bytes[0];
 
-  og_session_object_->export_to_recursively(p);
+  og_session_object_->export_to_recursively((char*)pinnedPtr);
 }
-
 
 }
 }

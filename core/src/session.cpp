@@ -18,11 +18,14 @@
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/locale.hpp>
 
 #include <soci/sqlite3/soci-sqlite3.h>
 
 #ifndef OG_LOG_STDERR
 #include<ConsoleApi.h>
+#include<Windows.h>
+#include<iostream>
 #endif
 
 namespace og
@@ -42,6 +45,12 @@ session::session(void) :
   , console_(false)
 #endif
 {
+  // Get the default locale
+  std::locale loc = boost::locale::generator().generate("");
+  // Set the global locale to loc
+  std::locale::global(loc);
+  // Make boost.filesystem use it by default
+  fs::path::imbue(std::locale());
 }
 
 session::~session()
@@ -112,6 +121,7 @@ void session::open(string _connection_string)
   errno_t err = _dupenv_s(&env_value, &len, "OG_OUTPUT");
   if (!err && len > 0 && strcmp(env_value, "1") == 0)
   {
+    SetConsoleOutputCP(CP_UTF8);
     AllocConsole();
 
     freopen("CONIN$", "r", stdin);
@@ -121,11 +131,19 @@ void session::open(string _connection_string)
     free(env_value);
   }
 
+
+  std::ofstream o;
+  o.open("log_u8.txt");
+  o << std::string(_connection_string);
+  o.close();
 #endif
 
   OG_LOG << "open soci_session : " << _connection_string;
 
-  soci_session_->open(soci::sqlite3, _connection_string);
+  // build path
+  fs::path file_path(_connection_string);
+
+  soci_session_->open(soci::sqlite3, file_path.string().c_str());
 
   OG_LOG << "set_forreign_key()";
 

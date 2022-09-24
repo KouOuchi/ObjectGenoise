@@ -1,10 +1,14 @@
-#include "fixtures.h"
+﻿#include "fixtures.h"
 #include "utility.h"
 
+#include <boost/locale.hpp>
 using namespace std;
 //using namespace og::core;
 
 #ifdef TEST_OG_IMPORT_EXPORT
+
+//#define exp_file "export1.aaa"
+#define exp_file u8"社会export1.aaa" 
 
 BOOST_FIXTURE_TEST_SUITE(import_export, fixture_clean_session);
 
@@ -18,6 +22,8 @@ BOOST_AUTO_TEST_CASE(import_export_1000_basic)
   // TODO: CrtCheckMemory detects memory leak in this test.
   //og::core::CrtCheckMemory __check__;
 #endif
+
+  fixture_once();
 
   // initialize db
   og::og_session cleaned_session_;
@@ -167,10 +173,19 @@ BOOST_AUTO_TEST_CASE(import_export_1000_basic)
   {
     std::cout << "type:" <<
               o->get_schema_object_type() << " name:" <<
-              o->get_schema_object_name() << std::endl;
+              o->get_schema_object_name() << " id:" <<
+              o->get_schema_object_id() << std::endl;
+  }
+  {
+    std::list<og::og_schema_object_ptr> slist;
+    cleaned_session_.schema()->get_object(&slist);
+    for (auto o : slist)
+    {
+      std::cout << "schem id:" << o->get_id() << std::endl;
+    }
   }
 
-  o1->export_to_recursively(string("export1.aaa"));
+  o1->export_to_recursively(exp_file);
 }
 
 // xml export
@@ -306,13 +321,24 @@ BOOST_AUTO_TEST_CASE(import_export_1000_import)
   /// setup schema done
   ///////////////////////////////////////////////////////////
 
+  {
+    std::list<og::og_schema_object_ptr> slist;
+    cleaned_session_.schema()->get_object(&slist);
+    for (auto o : slist)
+    {
+      std::cout << "schem id:" << o->get_id() << std::endl;
+    }
+  }
+
   boost::optional<og::og_session_object_ptr> res =
-    cleaned_session_.import_object_from_file(string("export1.aaa"));
+    cleaned_session_.import_object_from_file(exp_file);
 
   BOOST_REQUIRE_EQUAL(true, res.is_initialized());
-  BOOST_REQUIRE_EQUAL(sesn_o1_id, res.get()->get_id()); // match because env was empty
+  BOOST_REQUIRE_EQUAL(sesn_o1_id,
+                      res.get()->get_id()); // match because env was empty
 
   {
+    // schema dump
     std::list<og::og_session_object_ptr> objs1;
     cleaned_session_.get_object(&objs1);
 
@@ -386,9 +412,10 @@ BOOST_AUTO_TEST_CASE(import_export_1000_import)
   og::og_transaction tran1(cleaned_session_);
 
   boost::optional<og::og_session_object_ptr> res2 =
-	  cleaned_session_.import_object_from_file(string("export1.aaa"));
+    cleaned_session_.import_object_from_file(exp_file);
   BOOST_REQUIRE_EQUAL(true, res2.is_initialized());
-  BOOST_REQUIRE_NE(sesn_o1_id, res2.get()->get_id()); // unmatch because env was *not* empty
+  BOOST_REQUIRE_NE(sesn_o1_id,
+                   res2.get()->get_id()); // unmatch because env was *not* empty
 
   tran1.commit();
 
@@ -413,27 +440,27 @@ BOOST_AUTO_TEST_CASE(import_export_1000_import)
   og::og_transaction tran2(cleaned_session_);
 
   boost::optional<og::og_session_object_ptr> res3 =
-	  cleaned_session_.import_object_from_file(string("export1.aaa"));
+    cleaned_session_.import_object_from_file(exp_file);
   BOOST_REQUIRE_EQUAL(true, res2.is_initialized());
 
   tran2.rollback();
 
 
   {
-	  std::list<string> types;
-	  types.push_back(OTYPE2b);
+    std::list<string> types;
+    types.push_back(OTYPE2b);
 
-	  std::list<og::og_session_object_ptr> objs1;
-	  cleaned_session_.get_object_by_type(types, &objs1);
+    std::list<og::og_session_object_ptr> objs1;
+    cleaned_session_.get_object_by_type(types, &objs1);
 
-	  BOOST_REQUIRE_EQUAL(objs1.size(), 2);
-	  string s_;
-	  objs1.begin()->get()->get_parameter_value("H6", &s_);
-	  BOOST_REQUIRE_EQUAL(s_.c_str(), "y");
+    BOOST_REQUIRE_EQUAL(objs1.size(), 2);
+    string s_;
+    objs1.begin()->get()->get_parameter_value("H6", &s_);
+    BOOST_REQUIRE_EQUAL(s_.c_str(), "y");
 
-	  string s2_;
-	  std::next(objs1.begin())->get()->get_parameter_value("H6", &s2_);
-	  BOOST_REQUIRE_EQUAL(s2_.c_str(), "y");
+    string s2_;
+    std::next(objs1.begin())->get()->get_parameter_value("H6", &s2_);
+    BOOST_REQUIRE_EQUAL(s2_.c_str(), "y");
   }
 }
 BOOST_AUTO_TEST_SUITE_END()

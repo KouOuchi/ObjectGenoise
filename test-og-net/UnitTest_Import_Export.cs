@@ -9,10 +9,14 @@ namespace test_og_net
     [TestClass]
     public class UnitTest_ImportExport
     {
+        private const string exp_file = "社会.exp";
+
+
         [TestInitialize]
         public void setpath()
         {
-            InitilizeOnce.GetInstance().SetPath();
+            new EnvBuilder().Build();
+            InitilizeOnce.GetInstance(true);
         }
 
         string OTYPE1 = "Document2002from";
@@ -119,7 +123,7 @@ namespace test_og_net
             o2a.set_parameter_value_real("H4", 9.99);
             o2b.set_parameter_value_text("H6", "y");
 
-            o1.export_to_recursively("exp1.aaa");
+            o1.export_to_recursively(exp_file);
         }
 
         [TestMethod]
@@ -197,8 +201,9 @@ namespace test_og_net
             rel_ptr_a.add_parameter_definition("I2", ptest2);
             rel_ptr_b.add_parameter_definition("I4", ptest4);
 
+            Assert.IsTrue(File.Exists(exp_file));
             OGSessionObject res =
-                cleaned_session_.import_object_from_file("exp1.aaa");
+                cleaned_session_.import_object_from_file(exp_file);
 
             Assert.IsTrue(res != null);
             Assert.AreEqual(res.get_id(), "SESN_O_3");
@@ -249,7 +254,7 @@ namespace test_og_net
             OGTransaction tran1 = new OGTransaction(cleaned_session_);
 
             OGSessionObject res1 =
-                cleaned_session_.import_object_from_file("exp1.aaa");
+                cleaned_session_.import_object_from_file(exp_file);
 
             Assert.IsTrue(res1 != null);
 
@@ -267,7 +272,7 @@ namespace test_og_net
             // transaction
             OGTransaction tran2 = new OGTransaction(cleaned_session_);
             OGSessionObject res2 =
-                cleaned_session_.import_object_from_file("exp1.aaa");
+                cleaned_session_.import_object_from_file(exp_file);
 
             Assert.IsTrue(res2 != null);
             tran2.rollback();
@@ -380,7 +385,7 @@ namespace test_og_net
             rel_ptr_b.add_parameter_definition("I4", ptest4);
 
             OGSessionObject res =
-                cleaned_session_.import_object_from_file("exp1.aaa");
+                cleaned_session_.import_object_from_file(exp_file);
 
             Assert.IsTrue(res != null);
             Assert.AreEqual(res.get_id(), "SESN_O_3");
