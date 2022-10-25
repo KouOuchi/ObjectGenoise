@@ -22,7 +22,7 @@
 
 #include <soci/sqlite3/soci-sqlite3.h>
 
-#ifndef OG_LOG_STDERR
+#ifdef OG_LOG_STDERR
 #include<ConsoleApi.h>
 #include<Windows.h>
 #include<iostream>
@@ -41,7 +41,7 @@ namespace fs = boost::filesystem;
 session::session(void) :
   soci_session_(new soci::session()),
   schema_(new schema())
-#ifndef OG_LOG_STDERR
+#ifdef OG_LOG_STDERR
   , console_(false)
 #endif
 {
@@ -115,7 +115,7 @@ void session::initialize_sqlite_sequence(string _tbl)
 
 void session::open(string _connection_string)
 {
-#ifndef OG_LOG_STDERR
+#ifdef OG_LOG_STDERR
   char* env_value;
   size_t len;
   errno_t err = _dupenv_s(&env_value, &len, "OG_OUTPUT");
@@ -164,7 +164,7 @@ void session::close()
 {
   soci_session_->close();
 
-#ifndef OG_LOG_STDERR
+#ifdef OG_LOG_STDERR
   if (console_)
   {
     FreeConsole();

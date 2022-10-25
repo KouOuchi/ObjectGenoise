@@ -258,7 +258,7 @@ private:
   void object_to_recursively(session_object_ptr _obj,
                              list<session_object_ptr>& _objs, list<session_relation_ptr>& _rels);
 
-#ifndef OG_LOG_STDERR
+#ifdef OG_LOG_STDERR
   bool console_;
 #endif
 };
