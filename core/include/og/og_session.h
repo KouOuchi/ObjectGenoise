@@ -34,7 +34,7 @@ public:
   ///////////////////////////////
   OG_COREAPI bool import_from_file(string _path);
   OG_COREAPI void export_to_file(string _path);
-  OG_COREAPI bool catchup_schema(string _path);
+  OG_COREAPI bool catchup_schema(string _path, string _tempdir);
   OG_COREAPI bool reload_schema(string _path, string _sesn_path);
   OG_COREAPI boost::optional<og_session_object_ptr> import_object_from_file(string _path);
 

@@ -429,7 +429,7 @@ BOOST_AUTO_TEST_CASE(etc_1003_schema_catchup)
   cleaned_session_.schema()->import_from_file("schema_xml_catchup0.xml.gz");
   cleaned_session_.import_from_file("session_xml_catchup0.xml.gz");
 
-  bool res = cleaned_session_.catchup_schema("schema_xml_catchup1.xml.gz");
+  bool res = cleaned_session_.catchup_schema("schema_xml_catchup1.xml.gz", /*temp dir*/".");
 
   BOOST_REQUIRE_EQUAL(true, res);
 
@@ -501,14 +501,14 @@ BOOST_AUTO_TEST_CASE(etc_1003_schema_catchup)
   cleaned_session_.schema()->export_to_file("rev100.xml.gz");
 
   schm_prop->set_revision("99");
-  cleaned_session_.catchup_schema("rev100.xml.gz");
+  cleaned_session_.catchup_schema("rev100.xml.gz", /*temp dir*/".");
 
   og::og_schema_object_ptr schm_prop2 =
     cleaned_session_.schema()->get_property_object();
   BOOST_REQUIRE_EQUAL(schm_prop2->get_revision(), "100");
 
   schm_prop2->set_revision("101");
-  cleaned_session_.catchup_schema("rev100.xml.gz");
+  cleaned_session_.catchup_schema("rev100.xml.gz", /*temp dir*/".");
 
   og::og_schema_object_ptr schm_prop3 =
     cleaned_session_.schema()->get_property_object();

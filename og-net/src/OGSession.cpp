@@ -358,10 +358,15 @@ void OGSession::disconnect(String^ _rel_id)
 
 bool OGSession::catchup_schema(String^ _path)
 {
-  std::string str;
-  OGConverter::convert_clr_to_std<String, std::string>(_path, &str);
+  Encoding^ u8 = Encoding::UTF8;
+  cli::array<unsigned char>^ bytes_path = u8->GetBytes(_path);
+  pin_ptr<unsigned char> file_path = &bytes_path[0];
 
-  return og_session_->catchup_schema(str);
+  String^ tempdir = System::IO::Path::GetTempPath();
+  cli::array<unsigned char>^ bytes_temp_dir = u8->GetBytes(tempdir);
+  pin_ptr<unsigned char> tempdir_str = &bytes_temp_dir[0];
+
+  return og_session_->catchup_schema((const char*)file_path, (const char*)tempdir_str);
 }
 
 OGSessionObject^ OGSession::get_property_object()

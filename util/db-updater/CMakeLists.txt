@@ -100,6 +100,9 @@ set_directory_properties(PROPERTIES
     )
 set_target_properties(db-updater PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
 
+set_target_properties(db-updater PROPERTIES COMPILE_FLAGS "/clr /EHa")
+set_property(TARGET db-updater PROPERTY OUTPUT_NAME "db-updater")
+
 #
 # install
 #

@@ -1224,13 +1224,13 @@ bool session::import_from_file(string _path)
   boost::property_tree::ptree pt;
   xml_stream().read_from_file(_path, &pt);
 
+  OG_LOG << "import session object.";
+
   int count_object = 0;
   // session object
   BOOST_FOREACH(ptree::value_type & child,
                 pt.get_child("og.session.objects"))
   {
-    OG_LOG << "import session object:" << count_object++;
-
     session_object_ptr sesn_obj(new session_object(this));
 
     // deserialize
@@ -1252,57 +1252,78 @@ bool session::import_from_file(string _path)
           sesn_obj->set_schema_object(schm_objs.front());
         }
 
-        if (!import_object(sesn_obj, child.second)) { continue; }
+        if (!import_object(sesn_obj, child.second))
+        {
+          continue;
+        }
+        else
+        {
+          count_object++;
+        }
       }
     }
   }
 
-  // session relation
-  int count_relation = 0;
-  BOOST_FOREACH(ptree::value_type & child,
-                pt.get_child("og.session.relations"))
+  OG_LOG << "imported session objects:" << count_object;
+
+  auto pt_og_session_relations = pt.get_child_optional("og.session.relations");
+  if (pt_og_session_relations.is_initialized())
   {
-    OG_LOG << "import session relation:" << count_relation++;
-
-    session_relation_ptr sesn_rel(new session_relation(this));
-
-    // deserialize
-    if (serializer<session_relation_ptr>::deserialize(child, sesn_rel))
+    // session relation
+    int count_relation = 0;
+    BOOST_FOREACH(ptree::value_type & child,
+                  pt_og_session_relations.get())
     {
-      boost::optional<schema_relation_ptr> schm_rel =
-        schema_->get_relation(sesn_rel->get_schema_relation_id());
+      OG_LOG << "import session relation:" << count_relation++;
 
-      if (schm_rel.is_initialized())
+      session_relation_ptr sesn_rel(new session_relation(this));
+
+      // deserialize
+      if (serializer<session_relation_ptr>::deserialize(child, sesn_rel))
       {
-        if (schm_rel.get()->get_type().compare(schema::schema_property_object_type_) ==
-            0)
+        boost::optional<schema_relation_ptr> schm_rel =
+          schema_->get_relation(sesn_rel->get_schema_relation_id());
+
+        if (schm_rel.is_initialized())
         {
-          list<string> prep;
-          list<schema_relation_ptr> schm_rels;
-          prep.push_back(schema::schema_property_object_type_);
+          if (schm_rel.get()->get_type().compare(schema::schema_property_object_type_) ==
+              0)
+          {
+            list<string> prep;
+            list<schema_relation_ptr> schm_rels;
+            prep.push_back(schema::schema_property_object_type_);
 
-          schema_->get_relation_by_type(prep, &schm_rels);
-          sesn_rel->set_schema_relation(schm_rels.front());
-        }
+            schema_->get_relation_by_type(prep, &schm_rels);
+            sesn_rel->set_schema_relation(schm_rels.front());
+          }
 
-        // check from/to
-        boost::optional<session_object_ptr> sesn_from =
-          get_object(sesn_rel->get_from_id());
-        boost::optional<session_object_ptr> sesn_to =
-          get_object(sesn_rel->get_to_id());
+          // check from/to
+          boost::optional<session_object_ptr> sesn_from =
+            get_object(sesn_rel->get_from_id());
+          boost::optional<session_object_ptr> sesn_to =
+            get_object(sesn_rel->get_to_id());
 
-        if (sesn_from.is_initialized() && sesn_to.is_initialized())
-        {
-          if (!import_relation(sesn_rel, child.second)) { continue; }
+          if (sesn_from.is_initialized() && sesn_to.is_initialized())
+          {
+            if (!import_relation(sesn_rel, child.second)) { continue; }
+          }
         }
       }
     }
+  }
+  else
+  {
+    OG_LOG << "import session relation is skipped.";
   }
 
   if (get_property_object() == nullptr)
   {
     OG_LOG << "building property.";
     build_property_object();
+  }
+  else
+  {
+    OG_LOG << "building property is skipped.";
   }
 
   return true;
@@ -1550,7 +1571,7 @@ void session::sync_relation_parameter(
   }
 }
 
-bool session::catchup_schema(string _path)
+bool session::catchup_schema(string _path, string _tempdir)
 {
   OG_LOG << "catchup_schema start.";
 
@@ -1577,16 +1598,16 @@ bool session::catchup_schema(string _path)
     return true;
   }
 
-  char* tempdir = nullptr;
-  size_t sz = 0;
-  if (!_dupenv_s(&tempdir, &sz, "TEMP") == 0 && tempdir != nullptr)
-  {
-    throw og::core::exception() << exception_message("schema file is not found.");
-  }
   stringstream session_tempname, schema_tempname;
-  session_tempname << tempdir << "/SESSION-%%%%-%%%%-%%%%-%%%%.xml.gz";
-  schema_tempname << tempdir << "/SCHEMA-%%%%-%%%%-%%%%-%%%%.xml.gz";
-  free(tempdir);
+  session_tempname << _tempdir << "/SESSION-%%%%-%%%%-%%%%-%%%%.xml.gz";
+  schema_tempname << _tempdir << "/SCHEMA-%%%%-%%%%-%%%%-%%%%.xml.gz";
+
+  OG_LOG << "temp dir : " << _tempdir;
+
+  fs::path temp_dir(_tempdir);
+
+  OG_LOG << "check temp dir : " << (fs::is_directory(temp_dir) ? "ok" : "ng");
+
   fs::path session_temp = fs::unique_path(session_tempname.str());
   fs::path schema_temp = fs::unique_path(schema_tempname.str());
 

@@ -281,6 +281,11 @@ Sets test architecture to x64. Open test explorer and click Run All.
 And then rebuild the project, you can see test items in test explorer.
 
 ## Version and History
+- 0.93  * Update : db-update project is converted to CLR
+        * Fix : catchup_schema() function supports localized temp dir name.
+        * Add : Support VS2019.
+- 0.92  * Fix : Supress useless debug log file creation.
+- 0.90  * Fix : Support localized db name.
 - 0.89  * use SOCI 4.0.3 and BOOST 1.80.0. Add c++17 option.
 - 0.88  * use SOCI 4.0. 
         * Add some pragma after connect to sqllite database.
@@ -301,7 +306,7 @@ And then rebuild the project, you can see test items in test explorer.
 
 ## Licenses and Authors
   * Licensed under the [Boost Software License 1.0]
-  * Copyright &copy; 2014-2016 Kou Ouchi <kou.ouchi@division-engineering.com>
+  * Copyright &copy; 2014-2022 Kou Ouchi <kou.ouchi@division-engineering.com>
 
 ## Related Information
 - [Enterprise Architect] : Data Modeling editor. "CodeEngineering" function can generates DDL of various DataBase Systems.

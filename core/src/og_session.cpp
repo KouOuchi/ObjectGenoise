@@ -62,9 +62,9 @@ void og_session::export_to_file(string _path)
 {
   session_->export_to_file(_path);
 }
-bool og_session::catchup_schema(string _path)
+bool og_session::catchup_schema(string _path, string _tempdir)
 {
-  return session_->catchup_schema(_path);
+  return session_->catchup_schema(_path, _tempdir);
 }
 bool og_session::reload_schema(string _path, string _sesn_path)
 {

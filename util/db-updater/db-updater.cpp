@@ -1,16 +1,17 @@
 #include <iostream>
 #include <sstream>
-#include <boost/filesystem.hpp>
 #include <exception>
 
 #include "og/og_session.h"
 
 using namespace std;
-using namespace boost::filesystem;
+using namespace System;
+using namespace System::Security;
+using namespace System::IO;
 
 void PrintUsage(string mes)
 {
-  cout << "db-updater(20170405)" << endl;
+  cout << "db-updater(20221103)" << endl;
   cout << "usage: [db file] [schema file]" << endl;
   cout << endl;
   cout << mes << endl;
@@ -25,15 +26,16 @@ int main(int argc, char* argv[])
     exit(1);
   }
 
-  path db(argv[1]);
-  path schema(argv[2]);
+  System::String^ db = gcnew System::String(argv[1]);
+  System::String^ schema = gcnew System::String(argv[2]);
+  System::Text::Encoding^ u8 = System::Text::Encoding::UTF8;
 
-  if (!exists(db))
+  if (!File::Exists(db))
   {
     PrintUsage("arg 0 is not exists.");
     exit(1);
   }
-  if (!exists(schema))
+  if (!File::Exists(schema))
   {
     PrintUsage("arg 1 is not exists.");
     exit(1);
@@ -43,6 +45,10 @@ int main(int argc, char* argv[])
 
   try
   {
+    System::String^ arg1str = gcnew System::String(argv[1]);
+    cli::array<unsigned char>^ bytes_arg1 = u8->GetBytes(arg1str);
+    pin_ptr<unsigned char> args1Ptr = &bytes_arg1[0];
+
     session.open(argv[1]);
   }
   catch (exception e)
@@ -56,33 +62,45 @@ int main(int argc, char* argv[])
 
   try
   {
-	  if (argc == 3)
-	  {
-		  if (session.catchup_schema(argv[2]))
-		  {
-			  PrintUsage("Catchup schemea success.");
-			  exit(0);
-		  }
-		  else
-		  {
-			  PrintUsage("Chatchup schema failure.");
-			  exit(1);
-		  }
-	  }
-	  else
-	  {
-		  if (session.reload_schema(argv[2], argv[3]))
-		  {
-			  PrintUsage("Catchup schemea success.");
-			  exit(0);
-		  }
-		  else
-		  {
-			  PrintUsage("Chatchup schema failure.");
-			  exit(1);
-		  }
+    System::String^ arg2str = gcnew System::String(argv[2]);
+    cli::array<unsigned char>^ bytes_arg2 = u8->GetBytes(arg2str);
+    pin_ptr<unsigned char> args2Ptr = &bytes_arg2[0];
 
-	  }
+    if (argc == 3)
+    {
+      System::String^ tempdir = Path::GetTempPath();
+
+      cli::array<unsigned char>^ bytes_temp = u8->GetBytes(tempdir);
+      pin_ptr<unsigned char> tmpdir_Ptr = &bytes_temp[0];
+
+      if (session.catchup_schema((const char*)args2Ptr, (const char*)tmpdir_Ptr))
+      {
+        PrintUsage("Catchup schemea success.");
+        exit(0);
+      }
+      else
+      {
+        PrintUsage("Chatchup schema failure.");
+        exit(1);
+      }
+    }
+    else
+    {
+      System::String^ arg3str = gcnew System::String(argv[3]);
+      cli::array<unsigned char>^ bytes_arg3 = u8->GetBytes(arg3str);
+      pin_ptr<unsigned char> args3Ptr = &bytes_arg3[0];
+
+      if (session.reload_schema((const char*)args2Ptr, (const char*)args3Ptr))
+      {
+        PrintUsage("Catchup schemea success.");
+        exit(0);
+      }
+      else
+      {
+        PrintUsage("Chatchup schema failure.");
+        exit(1);
+      }
+    }
   }
   catch (exception e)
   {
