@@ -56,19 +56,22 @@ link_directories(
 FILE(GLOB_RECURSE HDRS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 FILE(GLOB_RECURSE SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
+set(BOOST_LIB_PREFIX_RELEASE vc142-mt-x64-1_80)
+set(BOOST_LIB_PREFIX_DEBUG vc142-mt-gd-x64-1_80)
+
 IF (UNIX)
     add_executable(db-updater ${HDRS} ${SRCS})
 ELSE ()
     add_executable(db-updater ${HDRS} ${SRCS})
 
     # shared libs
-    set(MyBoost_THREAD_LIBRARY optimized "boost_thread-vc140-mt-x64-1_80.lib" debug "boost_thread-vc140-mt-gd-x64-1_80.lib")
-    set(MyBoost_DATE_TIME_LIBRARY optimized "boost_date_time-vc140-mt-x64-1_80.lib" debug "boost_date_time-vc140-mt-gd-x64-1_80.lib")
-    set(MyBoost_SYSTEM_LIBRARY optimized "boost_system-vc140-mt-x64-1_80.lib" debug "boost_system-vc140-mt-gd-x64-1_80.lib")
-    set(MyBoost_FILESYSTEM_LIBRARY optimized "boost_filesystem-vc140-mt-x64-1_80.lib" debug "boost_filesystem-vc140-mt-gd-x64-1_80.lib")
-    set(MyBoost_CHRONO_LIBRARY optimized "boost_chrono-vc140-mt-x64-1_80.lib" debug "boost_chrono-vc140-mt-gd-x64-1_80.lib")
-    set(MyBoost_TIMER_LIBRARY optimized "boost_timer-vc140-mt-x64-1_80.lib" debug "boost_timer-vc140-mt-gd-x64-1_80.lib")
-    set(MyBoost_REGEX_LIBRARY optimized "boost_regex-vc140-mt-x64-1_80.lib" debug "boost_regex-vc140-mt-gd-x64-1_80.lib")
+    set(MyBoost_THREAD_LIBRARY optimized "boost_thread-${BOOST_LIB_PREFIX_RELEASE}.lib" debug "boost_thread-${BOOST_LIB_PREFIX_DEBUG}.lib")
+    set(MyBoost_DATE_TIME_LIBRARY optimized "boost_date_time-${BOOST_LIB_PREFIX_RELEASE}.lib" debug "libboost_date_time-${BOOST_LIB_PREFIX_DEBUG}.lib")
+    set(MyBoost_SYSTEM_LIBRARY optimized "boost_system-${BOOST_LIB_PREFIX_RELEASE}.lib" debug "boost_system-${BOOST_LIB_PREFIX_DEBUG}.lib")
+    set(MyBoost_FILESYSTEM_LIBRARY optimized "boost_filesystem-${BOOST_LIB_PREFIX_RELEASE}.lib" debug "boost_filesystem-${BOOST_LIB_PREFIX_DEBUG}.lib")
+    set(MyBoost_CHRONO_LIBRARY optimized "boost_chrono-${BOOST_LIB_PREFIX_RELEASE}.lib" debug "boost_chrono-${BOOST_LIB_PREFIX_DEBUG}.lib")
+    set(MyBoost_TIMER_LIBRARY optimized "boost_timer-${BOOST_LIB_PREFIX_RELEASE}.lib" debug "libboost_timer-${BOOST_LIB_PREFIX_DEBUG}.lib")
+    set(MyBoost_REGEX_LIBRARY optimized "boost_regex-${BOOST_LIB_PREFIX_RELEASE}.lib" debug "libboost_regex-${BOOST_LIB_PREFIX_DEBUG}.lib")
 
     target_link_libraries(db-updater core ${SQLITE3_LIBRARY} ${SOCI_CORE_LIBRARY} ${SOCI_SQLITE3_LIBRARY} ${Boost_ZLIB_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${MyBoost_THREAD_LIBRARY} ${MyBoost_DATE_TIME_LIBRARY} ${MyBoost_SYSTEM_LIBRARY} ${MyBoost_FILESYSTEM_LIBRARY} ${MyBoost_CHRONO_LIBRARY} ${MyBoost_TIMER_LIBRARY} ${MyBoost_REGEX_LIBRARY})
 

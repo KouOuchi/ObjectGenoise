@@ -43,13 +43,15 @@ schema_relation_ptr schema_object::connect_to(schema_object_ptr _to,
 schema_relation_ptr schema_object::connect_from(schema_object_ptr _from,
     string _rel_type, multiplicity& _from_mul, multiplicity& _to_mul)
 {
-  return schema_->create_relation(_rel_type,  "", _from->get_id(), id_, _from_mul, _to_mul);
+  return schema_->create_relation(_rel_type,  "", _from->get_id(), id_, _from_mul,
+                                  _to_mul);
 }
 
 schema_relation_ptr schema_object::connect_to(schema_object_ptr _to,
     string _rel_type, multiplicity& _from_mul, multiplicity& _to_mul)
 {
-  return schema_->create_relation(_rel_type,  "", id_, _to->get_id(), _from_mul, _to_mul);
+  return schema_->create_relation(_rel_type,  "", id_, _to->get_id(), _from_mul,
+                                  _to_mul);
 }
 
 void schema_object::disconnect()
@@ -181,7 +183,11 @@ void schema_object::get_connected_object(list<string>& _rel_type_list,
 
   _schm_object_list->splice(_schm_object_list->end(), list1);
   _schm_object_list->splice(_schm_object_list->end(), list2);
-  std::unique(_schm_object_list->begin(), _schm_object_list->end(), &equals);
+
+  list<schema_object_ptr>::iterator result =
+    std::unique(_schm_object_list->begin(), _schm_object_list->end(), &equals);
+
+  _schm_object_list->erase(result, _schm_object_list->end());
 }
 
 void schema_object::get_connected_object_to(list<schema_object_ptr>*

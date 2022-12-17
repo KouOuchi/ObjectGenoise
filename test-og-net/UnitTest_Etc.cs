@@ -13,7 +13,7 @@ namespace test_og_net
             string path = System.Environment.GetEnvironmentVariable("PATH");
             string boost_path = System.Environment.GetEnvironmentVariable("BOOST");
 
-            System.Environment.SetEnvironmentVariable("PATH", path + ";" + boost_path + @"\lib64-msvc-14.0",
+            System.Environment.SetEnvironmentVariable("PATH", path + ";" + boost_path + @"\lib64-msvc-14.2",
                 EnvironmentVariableTarget.Process);
 
         }

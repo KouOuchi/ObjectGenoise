@@ -241,7 +241,11 @@ void session_object::get_connected_object(list<string>& _rel_type_list,
   _sesn_obj_list->clear();
   _sesn_obj_list->splice(_sesn_obj_list->end(), sesn_obj_list1);
   _sesn_obj_list->splice(_sesn_obj_list->end(), sesn_obj_list2);
-  std::unique(_sesn_obj_list->begin(), _sesn_obj_list->end(), &equals);
+
+  list<session_object_ptr>::iterator result =
+    std::unique(_sesn_obj_list->begin(), _sesn_obj_list->end(), &equals);
+
+  _sesn_obj_list->erase(result, _sesn_obj_list->end());
 }
 
 bool session_object::equals(const session_object_ptr& _x,

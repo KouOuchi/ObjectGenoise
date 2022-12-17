@@ -40,7 +40,7 @@ ELSE ()
    set(Boost_USE_STATIC_LIBS        ON)
    set(Boost_USE_MULTITHREADED      ON)
    set(Boost_USE_STATIC_RUNTIME     OFF)
-   find_package( Boost 1.80.0 REQUIRED COMPONENTS iostreams log log_setup unit_test_framework zlib)
+   find_package(Boost 1.80.0 REQUIRED COMPONENTS iostreams log log_setup unit_test_framework zlib)
 
 ENDIF (UNIX)
 
@@ -60,19 +60,22 @@ link_directories(
 FILE(GLOB_RECURSE HDRS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
 FILE(GLOB_RECURSE SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
+set(BOOST_LIB_PREFIX_RELEASE vc142-mt-x64-1_80)
+set(BOOST_LIB_PREFIX_DEBUG vc142-mt-gd-x64-1_80)
+
 IF (UNIX)
     add_executable(test-core ${HDRS} ${SRCS})
 ELSE ()
     add_executable(test-core ${HDRS} ${SRCS})
 
-    set(MyBoost_THREAD_LIBRARY optimized "boost_thread-vc140-mt-x64-1_80.lib" debug "boost_thread-vc140-mt-gd-x64-1_80.lib")
-    set(MyBoost_DATE_TIME_LIBRARY optimized "boost_date_time-vc140-mt-x64-1_80.lib" debug "boost_date_time-vc140-mt-gd-x64-1_80.lib")
-    set(MyBoost_SYSTEM_LIBRARY optimized "boost_system-vc140-mt-x64-1_80.lib" debug "boost_system-vc140-mt-gd-x64-1_80.lib")
-    set(MyBoost_FILESYSTEM_LIBRARY optimized "boost_filesystem-vc140-mt-x64-1_80.lib" debug "boost_filesystem-vc140-mt-gd-x64-1_80.lib")
-    set(MyBoost_CHRONO_LIBRARY optimized "boost_chrono-vc140-mt-x64-1_80.lib" debug "boost_chrono-vc140-mt-gd-x64-1_80.lib")
-    set(MyBoost_TIMER_LIBRARY optimized "boost_timer-vc140-mt-x64-1_80.lib" debug "boost_timer-vc140-mt-gd-x64-1_80.lib")
-    set(MyBoost_REGEX_LIBRARY optimized "boost_regex-vc140-mt-x64-1_80.lib" debug "boost_regex-vc140-mt-gd-x64-1_80.lib")
-    set(MyBoost_LOCALE_LIBRARY optimized "boost_locale-vc140-mt-x64-1_80.lib" debug "boost_locale-vc140-mt-gd-x64-1_80.lib")
+    set(MyBoost_THREAD_LIBRARY optimized "boost_thread-${BOOST_LIB_PREFIX_RELEASE}.lib" debug "boost_thread-${BOOST_LIB_PREFIX_DEBUG}.lib")
+    set(MyBoost_DATE_TIME_LIBRARY optimized "boost_date_time-${BOOST_LIB_PREFIX_RELEASE}.lib" debug "libboost_date_time-${BOOST_LIB_PREFIX_DEBUG}.lib")
+    set(MyBoost_SYSTEM_LIBRARY optimized "boost_system-${BOOST_LIB_PREFIX_RELEASE}.lib" debug "boost_system-${BOOST_LIB_PREFIX_DEBUG}.lib")
+    set(MyBoost_FILESYSTEM_LIBRARY optimized "boost_filesystem-${BOOST_LIB_PREFIX_RELEASE}.lib" debug "boost_filesystem-${BOOST_LIB_PREFIX_DEBUG}.lib")
+    set(MyBoost_CHRONO_LIBRARY optimized "boost_chrono-${BOOST_LIB_PREFIX_RELEASE}.lib" debug "boost_chrono-${BOOST_LIB_PREFIX_DEBUG}.lib")
+    set(MyBoost_TIMER_LIBRARY optimized "boost_timer-${BOOST_LIB_PREFIX_RELEASE}.lib" debug "libboost_timer-${BOOST_LIB_PREFIX_DEBUG}.lib")
+    set(MyBoost_REGEX_LIBRARY optimized "boost_regex-${BOOST_LIB_PREFIX_RELEASE}.lib" debug "libboost_regex-${BOOST_LIB_PREFIX_DEBUG}.lib")
+    set(MyBoost_LOCALE_LIBRARY optimized "boost_locale-${BOOST_LIB_PREFIX_RELEASE}.lib" debug "libboost_locale-${BOOST_LIB_PREFIX_DEBUG}.lib")
 
     # static libs
     target_link_libraries(test-core core ${SQLITE3_LIBRARY} ${SOCI_CORE_LIBRARY} ${SOCI_SQLITE3_LIBRARY} ${Boost_ZLIB_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}  ${MyBoost_THREAD_LIBRARY} ${MyBoost_DATE_TIME_LIBRARY} ${MyBoost_SYSTEM_LIBRARY} ${MyBoost_FILESYSTEM_LIBRARY} ${MyBoost_CHRONO_LIBRARY} ${MyBoost_TIMER_LIBRARY} ${MyBoost_REGEX_LIBRARY} ${MyBoost_LOCALE_LIBRARY})

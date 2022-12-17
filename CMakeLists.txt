@@ -10,7 +10,7 @@ set(SOCI_SQLITE3_LIBRARY optimized ${SOCI_BUILD_DIR}/lib/Release/libsoci_sqlite3
 set(SQLITE3_SOURCE_DIR "d:/git/ObjectGenoise.Resources/sqlite-amalgamation-3220000/src" CACHE PATH "")
 set(SQLITE3_BUILD_DIR "d:/git/ObjectGenoise.Resources/sqlite-amalgamation-3220000/build" CACHE PATH "")
 set(SQLITE3_LIBRARY optimized ${SQLITE3_BUILD_DIR}/Release/sqlite3.lib debug ${SQLITE3_BUILD_DIR}/Debug/sqlite3.lib)
-set(Boost_LIBRARY_DIR ${Boost_Root}/lib64-msvc-14.0 CACHE PATH "")
+set(Boost_LIBRARY_DIR ${Boost_Root}/lib64-msvc-14.2 CACHE PATH "")
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo")
 
