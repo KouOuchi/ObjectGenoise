@@ -281,7 +281,6 @@ Sets test architecture to x64. Open test explorer and click Run All.
 And then rebuild the project, you can see test items in test explorer.
 
 ## Release History
-- 0.96  * FIX : set NAN and INF to 0.0 on parameter modification. 
 - 0.95  * FIX : when setting parameter to NAN or INF(double type), throw og::core::exception
         * FIX : exception throwing test is enabled at default
         * DEL : unused test from both test-core and test-og-net
