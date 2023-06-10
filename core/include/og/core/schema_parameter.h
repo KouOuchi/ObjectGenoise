@@ -82,15 +82,17 @@ struct parameter_value_converter
     }
   }
 
-  void parameter_check(parameter_value_variant _val)
+  void parameter_check(parameter_value_variant& _val)
   {
     if (_val.type() == typeid(double))
     {
       double v = boost::get<double>(_val);
       if (std::isnan(v) || std::isinf(v))
       {
-        throw og::core::exception() <<
-                                    exception_message("nan or inf value(double) is not allowed.");
+//        throw og::core::exception() <<
+//                                    exception_message("nan or inf value(double) is not allowed.");
+          parameter_value_variant zero(0.0);
+          _val.swap(zero);
       }
     }
   }
