@@ -81,6 +81,7 @@ public:
 
     set_parameter_values(_param_name, vs);
   }
+
   template <typename T>
   void set_parameter_values(std::string _param_name, list<T>& _values)
   {

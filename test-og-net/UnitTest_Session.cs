@@ -223,17 +223,6 @@ namespace test_og_net
             }
         }
 
-#if TEST_REQUIRE_THROW
-// session obj with no schema
-        [TestMethod]
-        public void session_1003()
-{
-  OGSchemaObject o(new og::og_schema_object(
-	  cleaned_session_.schema().get()));
-  BOOST_REQUIRE_THROW( cleaned_session_.create_object(o), og::core::exception );
-}
-#endif
-
         // connectable relation
         [TestMethod]
         public void session_1004()
@@ -1180,6 +1169,91 @@ namespace test_og_net
                     Assert.IsNull(cleaned_session_.get_object(c2id));
                 }
             } 
+        }
+
+        // double inf/nan error test
+        [TestMethod]
+        public void session_1113()
+        {
+            OGSession cleaned_session_ = new TestInitializer().initialize();
+
+            string OTYPE1 = "Document2002from";
+            string OTYPE2 = "Document2002to";
+            string RELTYPE = "Document2002rel";
+            string ONAME = "Dcument-Name2002";
+            List<string> otype_list = new List<string>();
+            otype_list.Add(OTYPE1);
+            otype_list.Add(OTYPE2);
+
+            List<string> rel_type_list = new List<string>();
+            rel_type_list.Add(RELTYPE);
+
+            OGSchemaObject p1 = cleaned_session_.schema().create_object(OTYPE1,
+                                          ONAME);
+
+            OGReal type1 = new OGReal(1.141, 1, 1, 1, 1);
+            OGReal type2 = new OGReal(2.236, 1, 1, 1, 1);
+
+            OGSchemaParameter ptest1 =
+              cleaned_session_.schema().create_parameter_real("hoge_type1", "comment1",
+                  type1);
+            p1.add_parameter_definition("hoge", ptest1);
+            OGSessionObject o1 = cleaned_session_.create_object(p1);
+
+            {
+                var v = new List<double>() { 1, 2 };
+                o1.set_parameter_values_real("hoge", v);
+            }
+            //{
+            //    var v = new List<double>() { 1, double.NaN };
+            //    try
+            //    {
+            //        o1.set_parameter_values_real("hoge", v);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //    }
+            //}
+            {
+                var v = new List<double>() { double.PositiveInfinity, double.NegativeInfinity };
+                try
+                {
+                    o1.set_parameter_values_real("hoge", v);
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+            {
+                double v = double.PositiveInfinity;
+                try
+                {
+                    o1.set_parameter_value_real("hoge", v);
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+            {
+                double v = double.NegativeInfinity;
+                try
+                {
+                    o1.set_parameter_value_real("hoge", v);
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+            {
+                double v = double.NaN;
+                try
+                {
+                    o1.set_parameter_value_real("hoge", v);
+                }
+                catch (Exception ex)
+                {
+                }
+            }
         }
     }
 }

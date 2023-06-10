@@ -1,5 +1,5 @@
 ﻿#define MyAppSetupName 'ObjectGenoise'
-#define MyAppVersion '0.93' 
+#define MyAppVersion '0.95' 
 
 [Setup]
 AppId=ObjectGenoise
@@ -30,6 +30,10 @@ ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 ;InfoBeforeFile=Eula.rtf
 DirExistsWarning=no
+
+; sign
+SignTool=MsSign $f
+SignedUninstaller=yes
 
 [Languages]
 ;Name: "en"; MessagesFile: "compiler:Default.isl"

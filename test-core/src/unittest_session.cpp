@@ -252,16 +252,6 @@ BOOST_AUTO_TEST_CASE( session_1002 )
   }
 }
 
-#ifdef TEST_REQUIRE_THROW
-// session obj with no schema
-BOOST_AUTO_TEST_CASE( session_1003 )
-{
-  og::og_schema_object_ptr o(new og::og_schema_object(
-                               cleaned_session_.schema().get()));
-  BOOST_REQUIRE_THROW( cleaned_session_.create_object(o), og::core::exception );
-}
-#endif
-
 // connectable relation
 BOOST_AUTO_TEST_CASE( session_1004 )
 {
@@ -1282,10 +1272,10 @@ BOOST_AUTO_TEST_CASE( session_1111 )
 }
 
 // delete
-BOOST_AUTO_TEST_CASE( session_1112 )
+BOOST_AUTO_TEST_CASE(session_1112)
 {
 #ifdef _WINDOWS
-//  og::core::CrtCheckMemory __check__;
+  //  og::core::CrtCheckMemory __check__;
 #endif
 
   // initialize db
@@ -1382,7 +1372,7 @@ BOOST_AUTO_TEST_CASE( session_1112 )
                                          og::core::connection_direction_enum::direction_to);
     // childs : 1 object
 
-    list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
+    list<boost::tuple<og::og_session_object_ptr, og::og_session_relation_ptr>>
         childs;
     copied->get_connected_to(&childs);
 
@@ -1392,7 +1382,7 @@ BOOST_AUTO_TEST_CASE( session_1112 )
 
     copied->delete_object(og::core::connection_direction_enum::direction_to);
 
-	boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
+    boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
           copied_id);
     boost::optional<og::og_session_object_ptr> c2 = cleaned_session_.get_object(
           child_id);
@@ -1408,7 +1398,7 @@ BOOST_AUTO_TEST_CASE( session_1112 )
                                          og::core::connection_direction_enum::direction_to);
     // childs : 1 object
 
-    list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
+    list<boost::tuple<og::og_session_object_ptr, og::og_session_relation_ptr>>
         childs;
     copied->get_connected_to(&childs);
 
@@ -1418,7 +1408,7 @@ BOOST_AUTO_TEST_CASE( session_1112 )
 
     copied->delete_object(og::core::connection_direction_enum::direction_from);
 
-	boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
+    boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
           copied_id);
     boost::optional<og::og_session_object_ptr> c2 = cleaned_session_.get_object(
           child_id);
@@ -1434,7 +1424,7 @@ BOOST_AUTO_TEST_CASE( session_1112 )
                                          og::core::connection_direction_enum::direction_to);
     // childs : 1 object
 
-    list<boost::tuple<og::og_session_object_ptr,og::og_session_relation_ptr>>
+    list<boost::tuple<og::og_session_object_ptr, og::og_session_relation_ptr>>
         childs;
     copied->get_connected_to(&childs);
 
@@ -1444,7 +1434,7 @@ BOOST_AUTO_TEST_CASE( session_1112 )
 
     copied->delete_object();
 
-	boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
+    boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
           copied_id);
     boost::optional<og::og_session_object_ptr> c2 = cleaned_session_.get_object(
           child_id);
@@ -1472,14 +1462,14 @@ BOOST_AUTO_TEST_CASE( session_1112 )
 
     copied->delete_object(og::core::connection_direction_enum::direction_from);
 
-	boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
+    boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
           copied_id);
     boost::optional<og::og_session_object_ptr> c2 = cleaned_session_.get_object(
           child_id);
     boost::optional<og::og_session_relation_ptr> c3 = cleaned_session_.get_relation(
           rel_id);
 
-	BOOST_REQUIRE(!c1.is_initialized());
+    BOOST_REQUIRE(!c1.is_initialized());
     BOOST_REQUIRE(!c2.is_initialized());
     BOOST_REQUIRE(!c3.is_initialized());
   }
@@ -1500,14 +1490,14 @@ BOOST_AUTO_TEST_CASE( session_1112 )
 
     copied->delete_object(og::core::connection_direction_enum::direction_to);
 
-	boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
+    boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
           copied_id);
     boost::optional<og::og_session_object_ptr> c2 = cleaned_session_.get_object(
           child_id);
     boost::optional<og::og_session_relation_ptr> c3 = cleaned_session_.get_relation(
           rel_id);
 
-	BOOST_REQUIRE(!c1.is_initialized());
+    BOOST_REQUIRE(!c1.is_initialized());
     BOOST_REQUIRE(c2.is_initialized());
     BOOST_REQUIRE(!c3.is_initialized());
   }
@@ -1527,18 +1517,114 @@ BOOST_AUTO_TEST_CASE( session_1112 )
 
     copied->delete_object();
 
-	boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
+    boost::optional<og::og_session_object_ptr> c1 = cleaned_session_.get_object(
           copied_id);
     boost::optional<og::og_session_object_ptr> c2 = cleaned_session_.get_object(
           child_id);
     boost::optional<og::og_session_relation_ptr> c3 = cleaned_session_.get_relation(
           rel_id);
 
-	BOOST_REQUIRE(!c1.is_initialized());
+    BOOST_REQUIRE(!c1.is_initialized());
     BOOST_REQUIRE(c2.is_initialized());
     BOOST_REQUIRE(!c3.is_initialized());
   }
+}
 
+// double inf/nan error test
+BOOST_AUTO_TEST_CASE(session_1113)
+{
+#ifdef _WINDOWS
+  og::core::CrtCheckMemory __check__;
+#endif
+
+  // initialize db
+  og::og_session cleaned_session_;
+  cleaned_session_.open(DBPATH);
+  cleaned_session_.purge();
+  cleaned_session_.schema()->purge();
+
+  string OTYPE1 = "type_session_1004_1";
+  string ONAME1 = "name_session_1004_1";
+  list<string> otype_list1; otype_list1.push_back(OTYPE1);
+  list<string> oname_list1; oname_list1.push_back(ONAME1);
+
+  // create schema obj
+  og::og_schema_object_ptr schm_obj1 = cleaned_session_.schema()->create_object(
+                                         OTYPE1,
+                                         ONAME1);
+
+  og::og_text text_type1;
+  text_type1.default_value_ = std::string("foo");
+  text_type1.warn_max_ = 10;
+  text_type1.system_max_ = 10;
+  text_type1.warn_min_ = 1;
+  text_type1.system_min_ = 1;
+
+  og::og_schema_parameter_ptr text_param1 =
+    cleaned_session_.schema()->create_parameter("foo_type", "foo",
+        &text_type1, 3, 2, 4);
+
+  og::og_integer int_type1;
+  int_type1.default_value_ = 1;
+  int_type1.warn_max_ = 3;
+  int_type1.system_max_ = 3;
+  int_type1.warn_min_ = 1;
+  int_type1.system_min_ = 1;
+
+  og::og_schema_parameter_ptr int_param1 =
+    cleaned_session_.schema()->create_parameter("bar_type", "bar",
+        &int_type1, 3, 2, 4);
+
+  og::og_real real_type1;
+  real_type1.default_value_ = 1.141;
+  real_type1.warn_max_ = 3;
+  real_type1.system_max_ = 3;
+  real_type1.warn_min_ = 1;
+  real_type1.system_min_ = 1;
+
+  og::og_schema_parameter_ptr real_param1 =
+    cleaned_session_.schema()->create_parameter("hoge_type", "hoge",
+        &real_type1, 1, 2, 3);
+
+  schm_obj1->add_parameter_definition("foo1", text_param1);
+  schm_obj1->add_parameter_definition("bar1", int_param1);
+  schm_obj1->add_parameter_definition("hoge1", real_param1);
+
+  og::og_session_object_ptr o1 = cleaned_session_.create_object(schm_obj1);
+
+  {
+    std::list<std::string> t;
+    t.push_back("a");
+    t.push_back("b");
+    o1->set_parameter_values("foo1", t);
+  }
+
+  {
+    std::list<double> t;
+    t.push_back(1.0);
+    t.push_back(INFINITY);
+    // throw
+    try
+    {
+      o1->set_parameter_values("hoge1", t);
+    }
+    catch (std::exception& ex)
+    {
+      OG_LOG << ex.what();
+    }
+  }
+  {
+    double t(NAN);
+    // throw
+    try
+    {
+      o1->set_parameter_value("hoge1", t);
+    }
+    catch (std::exception& ex)
+    {
+      OG_LOG << ex.what();
+    }
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END()

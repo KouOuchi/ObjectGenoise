@@ -18,7 +18,6 @@
 #define TEST_OG_ETC 1
 #define TEST_OG_LARGE_DATA 1
 #define TEST_OG_IMPORT_EXPORT 1
-//#define TEST_REQUIRE_THROW 1
 #endif
 
 #include <boost/test/unit_test.hpp>

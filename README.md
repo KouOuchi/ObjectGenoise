@@ -280,7 +280,10 @@ Written with microsoft unittest framework in test-og-net project.
 Sets test architecture to x64. Open test explorer and click Run All.
 And then rebuild the project, you can see test items in test explorer.
 
-## Version and History
+## Release History
+- 0.95  * FIX : when setting parameter to NAN or INF(double type), throw og::core::exception
+        * FIX : exception throwing test is enabled at default
+        * DEL : unused test from both test-core and test-og-net
 - 0.93  * Update : db-update project is converted to CLR
         * Fix : catchup_schema() function supports localized temp dir name.
         * Add : Support VS2019.

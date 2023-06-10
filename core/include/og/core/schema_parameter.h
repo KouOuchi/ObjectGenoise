@@ -17,7 +17,8 @@ class schema_object_parameter
 public:
   OG_COREAPI virtual ~schema_object_parameter() {}
   OG_COREAPI schema_object_parameter() {}
-  OG_COREAPI schema_object_parameter(string _schm_id, string _pid, string _param_name)
+  OG_COREAPI schema_object_parameter(string _schm_id, string _pid,
+                                     string _param_name)
     : schema_object_id_(_schm_id), pid_(_pid), param_name_(_param_name)
   {}
   string schema_object_id_;
@@ -34,7 +35,8 @@ class schema_relation_parameter
 public:
   OG_COREAPI virtual ~schema_relation_parameter() {}
   OG_COREAPI schema_relation_parameter() {}
-  OG_COREAPI schema_relation_parameter(string _schm_id, string _pid, string _param_name)
+  OG_COREAPI schema_relation_parameter(string _schm_id, string _pid,
+                                       string _param_name)
     : schema_relation_id_(_schm_id), pid_(_pid), param_name_(_param_name)
   {}
   string schema_relation_id_;
@@ -73,11 +75,26 @@ struct parameter_value_converter
     for (list<T>::iterator it = _list1.begin();
          it != _list1.end(); it++)
     {
-      _list2->push_back(*it);
+      parameter_value_variant val(*it);
+      parameter_check(val);
+
+      _list2->push_back(val);
+    }
+  }
+
+  void parameter_check(parameter_value_variant _val)
+  {
+    if (_val.type() == typeid(double))
+    {
+      double v = boost::get<double>(_val);
+      if (std::isnan(v) || std::isinf(v))
+      {
+        throw og::core::exception() <<
+                                    exception_message("nan or inf value(double) is not allowed.");
+      }
     }
   }
 };
-
 
 class parameter_basetype_visitor : public boost::static_visitor<void>
 {
@@ -102,10 +119,10 @@ class schema_parameter : public schema_base
 public:
   OG_COREAPI schema_parameter(schema* _schema);
   OG_COREAPI schema_parameter(schema* _schema,
-                   /*                   parameter_basetype_enum _basetype,*/
-                   string _param_id, string _param_type,
-                   string _comment, int _default_array_size, int _min_array_size,
-                   int _max_array_size);
+                              /*                   parameter_basetype_enum _basetype,*/
+                              string _param_id, string _param_type,
+                              string _comment, int _default_array_size, int _min_array_size,
+                              int _max_array_size);
   OG_COREAPI schema_parameter(schema* _schema, schema_parameter& _s);
 
   OG_COREAPI virtual ~schema_parameter();
@@ -207,7 +224,8 @@ public:
 
   //void get_parameter_names(list<string>* _names);
 
-  OG_COREAPI parameter_basetype_enum get_parameter_basetype_by_parameter_name(string _name);
+  OG_COREAPI parameter_basetype_enum get_parameter_basetype_by_parameter_name(
+    string _name);
 
   OG_COREAPI virtual string get_name()
   {
